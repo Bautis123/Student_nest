@@ -1,5 +1,6 @@
 import 'manage_listing_screen.dart';
 import 'add_listing_screen.dart';
+import 'choose_plan/choose_plan_screen.dart';
 import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
 import '../../models/property.dart';
@@ -134,6 +135,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ],
                     ),
                     const SizedBox(height: 24),
+                    _plansCard(),
+                    const SizedBox(height: 24),
 
                     // My listings header
                     Row(
@@ -247,6 +250,67 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 style: const TextStyle(fontSize: 11, color: AppTheme.gray),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _plansCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 46,
+            height: 46,
+            decoration: BoxDecoration(
+              color: AppTheme.primaryLight,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.workspace_premium_outlined,
+              color: AppTheme.primary,
+            ),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Plans & Billing',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.dark,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Choose Basic or Premium for your listings',
+                  style: TextStyle(fontSize: 12, color: AppTheme.gray),
+                ),
+              ],
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ChoosePlanScreen()),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(0, 42),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+            ),
+            child: const Text('Open'),
           ),
         ],
       ),
