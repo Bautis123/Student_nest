@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../utils/theme.dart';
+import '../../../../widgets/app_surface_card.dart';
 
 class PendingStatusCard extends StatelessWidget {
   final bool isMobileMoney;
@@ -13,6 +14,7 @@ class PendingStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final title =
         isMobileMoney
             ? 'Enter your PIN on your phone'
@@ -23,13 +25,9 @@ class PendingStatusCard extends StatelessWidget {
             ? 'We sent a payment prompt to the phone number provided. Complete it on your phone to activate the $planTitle plan.'
             : 'We are processing your bank payment details. Please wait while we confirm the transaction.';
 
-    return Container(
+    return AppSurfaceCard(
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
+      radius: 18,
       child: Column(
         children: [
           const CircularProgressIndicator(),
@@ -37,7 +35,7 @@ class PendingStatusCard extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: theme.textTheme.titleLarge?.copyWith(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: AppTheme.dark,
@@ -47,7 +45,7 @@ class PendingStatusCard extends StatelessWidget {
           Text(
             text,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 13,
               color: AppTheme.gray,
               height: 1.5,
@@ -58,3 +56,4 @@ class PendingStatusCard extends StatelessWidget {
     );
   }
 }
+

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../utils/theme.dart';
+import '../../../../widgets/app_surface_card.dart';
 
 class PaymentDetailsHeader extends StatelessWidget {
   final String amount;
@@ -13,29 +14,32 @@ class PaymentDetailsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final theme = Theme.of(context);
+    return AppSurfaceCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
+      radius: 18,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Enter payment details',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
             paymentLabel,
-            style: const TextStyle(fontSize: 13, color: AppTheme.gray),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 13,
+              color: AppTheme.gray,
+            ),
           ),
           const SizedBox(height: 14),
           Text(
             amount,
-            style: const TextStyle(
+            style: theme.textTheme.headlineMedium?.copyWith(
               fontSize: 28,
               fontWeight: FontWeight.bold,
               color: AppTheme.success,
@@ -46,3 +50,4 @@ class PaymentDetailsHeader extends StatelessWidget {
     );
   }
 }
+

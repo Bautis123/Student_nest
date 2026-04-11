@@ -13,9 +13,9 @@ class PlanFeatureTile extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: premium ? const Color(0xFFFFFBEB) : const Color(0xFFF8FAFC),
+        color: premium ? const Color(0xFFFFFBEB) : AppTheme.lightGray,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        border: Border.all(color: AppTheme.border),
       ),
       child: Text(
         text,
@@ -24,3 +24,4 @@ class PlanFeatureTile extends StatelessWidget {
     );
   }
 }
+

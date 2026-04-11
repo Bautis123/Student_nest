@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../utils/theme.dart';
+import '../../../../widgets/app_bottom_action_bar.dart';
+import '../../../../widgets/app_info_row.dart';
 
 class PlanSummaryBar extends StatelessWidget {
   final String title;
@@ -17,20 +19,16 @@ class PlanSummaryBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFE2E8F0))),
-      ),
+    return AppBottomActionBar(
       child: Column(
         children: [
-          _summaryRow('Selected plan', title, AppTheme.dark),
+          AppInfoRow(label: 'Selected plan', value: title),
           const SizedBox(height: 6),
-          _summaryRow(
-            'Price',
-            price,
-            isPremium ? AppTheme.success : AppTheme.dark,
+          AppInfoRow(
+            label: 'Price',
+            value: price,
+            valueColor: isPremium ? AppTheme.success : AppTheme.dark,
+            valueWeight: FontWeight.w700,
           ),
           const SizedBox(height: 14),
           SizedBox(
@@ -44,21 +42,5 @@ class PlanSummaryBar extends StatelessWidget {
       ),
     );
   }
-
-  Widget _summaryRow(String label, String value, Color valueColor) {
-    return Row(
-      children: [
-        Text(label, style: const TextStyle(fontSize: 13, color: AppTheme.gray)),
-        const Spacer(),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: valueColor,
-          ),
-        ),
-      ],
-    );
-  }
 }
+

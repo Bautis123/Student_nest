@@ -4,7 +4,6 @@ import '../../services/api_service.dart';
 import '../../utils/theme.dart';
 import '../landlord_main_screen.dart';
 import 'register_screen.dart';
-import '../admin/admin_dashboard_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -49,8 +48,8 @@ class _LoginScreenState extends State<LoginScreen> {
               context,
               MaterialPageRoute(builder: (_) => const AdminMainScreen()),
               (route) => false,
-              );
-        } else {
+            );
+          } else {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (_) => const LandlordMainScreen()),
@@ -71,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppTheme.lightGray,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -135,9 +134,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppTheme.error.withOpacity(0.1),
+                    color: AppTheme.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppTheme.error.withOpacity(0.3)),
+                    border: Border.all(
+                      color: AppTheme.error.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -264,3 +265,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+

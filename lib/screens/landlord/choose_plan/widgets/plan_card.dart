@@ -29,7 +29,7 @@ class PlanCard extends StatelessWidget {
     final borderColor =
         isSelected
             ? (premium ? const Color(0xFFF59E0B) : AppTheme.primary)
-            : const Color(0xFFE2E8F0);
+            : AppTheme.border;
 
     final bgColor =
         premium && isSelected ? const Color(0xFFFFFBEB) : Colors.white;
@@ -171,7 +171,7 @@ class PlanCard extends StatelessWidget {
         color: isSelected ? AppTheme.primary : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isSelected ? AppTheme.primary : const Color(0xFFE2E8F0),
+          color: isSelected ? AppTheme.primary : AppTheme.border,
         ),
       ),
       child: Text(
@@ -186,3 +186,4 @@ class PlanCard extends StatelessWidget {
     );
   }
 }
+

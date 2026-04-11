@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../utils/theme.dart';
+import '../../../../widgets/app_status_badge.dart';
+import '../../../../widgets/app_surface_card.dart';
 
 class ListingPaymentHeaderCard extends StatelessWidget {
   final bool isPremium;
@@ -13,6 +15,7 @@ class ListingPaymentHeaderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final subtitle =
         isPremium
             ? 'Premium listing subscription'
@@ -22,25 +25,21 @@ class ListingPaymentHeaderCard extends StatelessWidget {
             ? 'Covers 1 year premium badge and boosted placement'
             : 'Covers 1 year standard listing visibility';
 
-    return Container(
+    return AppSurfaceCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
+      radius: 18,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Roma Girls Hostel',
-                      style: TextStyle(
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                       ),
@@ -49,22 +48,18 @@ class ListingPaymentHeaderCard extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFFBEB),
+                  color: AppTheme.accentSoft,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: const Color(0xFFFDE68A)),
                 ),
-                child: const Text(
-                  'Expires in 5 days',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFFB45309),
-                  ),
+                child: const AppStatusBadge(
+                  label: 'Expires in 5 days',
+                  color: Color(0xFFB45309),
+                  fontSize: 11,
+                  horizontalPadding: 10,
+                  verticalPadding: 6,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -72,7 +67,10 @@ class ListingPaymentHeaderCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: const TextStyle(fontSize: 13, color: AppTheme.gray),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 13,
+              color: AppTheme.gray,
+            ),
           ),
           const SizedBox(height: 14),
           Container(
@@ -86,9 +84,9 @@ class ListingPaymentHeaderCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Amount to pay',
-                  style: TextStyle(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: AppTheme.success,
@@ -97,7 +95,7 @@ class ListingPaymentHeaderCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   amount,
-                  style: const TextStyle(
+                  style: theme.textTheme.headlineMedium?.copyWith(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: AppTheme.success,
@@ -106,7 +104,10 @@ class ListingPaymentHeaderCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   benefit,
-                  style: const TextStyle(fontSize: 11, color: AppTheme.gray),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    fontSize: 11,
+                    color: AppTheme.gray,
+                  ),
                 ),
               ],
             ),
@@ -116,3 +117,4 @@ class ListingPaymentHeaderCard extends StatelessWidget {
     );
   }
 }
+

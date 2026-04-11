@@ -1,4 +1,3 @@
-import 'dart:io';
 import '../network/api_client.dart';
 import '../../shared/models/property.dart';
 

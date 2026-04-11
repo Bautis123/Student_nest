@@ -1,6 +1,6 @@
 class AppConstants {
   // API base URL - points to your local backend for now
-  static const String baseUrl = 'http://192.168.52.17:5000/api';
+  static const String baseUrl = 'http://192.168.66.17:5000/api';
 
   // App info
   static const String appName = 'Student Nest';
@@ -9,6 +9,7 @@ class AppConstants {
   // Storage keys
   static const String tokenKey = 'auth_token';
   static const String userKey = 'user_data';
+  static const String themeModeKey = 'theme_mode';
 
   // Map defaults - centered on UNZA
   static const double defaultLat = -15.414429;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../utils/theme.dart';
+import '../../../../widgets/app_surface_card.dart';
 
 class PaymentStatusCard extends StatelessWidget {
   final String planTitle;
@@ -13,13 +14,10 @@ class PaymentStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final theme = Theme.of(context);
+    return AppSurfaceCard(
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
+      radius: 18,
       child: Column(
         children: [
           Container(
@@ -36,9 +34,9 @@ class PaymentStatusCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          const Text(
+          Text(
             'Payment successful',
-            style: TextStyle(
+            style: theme.textTheme.titleLarge?.copyWith(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: AppTheme.dark,
@@ -48,7 +46,7 @@ class PaymentStatusCard extends StatelessWidget {
           Text(
             '$planTitle plan activated successfully.',
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 13,
               color: AppTheme.gray,
               height: 1.5,
@@ -57,7 +55,7 @@ class PaymentStatusCard extends StatelessWidget {
           const SizedBox(height: 14),
           Text(
             amount,
-            style: const TextStyle(
+            style: theme.textTheme.headlineMedium?.copyWith(
               fontSize: 28,
               fontWeight: FontWeight.bold,
               color: AppTheme.success,
@@ -68,3 +66,4 @@ class PaymentStatusCard extends StatelessWidget {
     );
   }
 }
+

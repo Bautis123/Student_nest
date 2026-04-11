@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../utils/theme.dart';
+import '../../../widgets/app_surface_card.dart';
 import '../payment_details/payment_details_screen.dart';
 import 'listing_payment_state.dart';
 import 'widgets/listing_payment_header_card.dart';
@@ -27,7 +28,7 @@ class ListingPaymentView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppTheme.lightGray,
       appBar: AppBar(title: const Text('Listing Payment')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -52,13 +53,9 @@ class ListingPaymentView extends StatelessWidget {
   }
 
   Widget _methodsCard() {
-    return Container(
+    return AppSurfaceCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
+      radius: 18,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -109,3 +106,4 @@ class ListingPaymentView extends StatelessWidget {
     );
   }
 }
+

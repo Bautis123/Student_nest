@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../utils/constants.dart';
 import '../../../shared/models/user.dart';
@@ -28,6 +29,20 @@ class StorageService {
     final userStr = prefs.getString(AppConstants.userKey);
     if (userStr == null) return null;
     return User.fromJson(jsonDecode(userStr));
+  }
+
+  Future<void> saveThemeMode(ThemeMode mode) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(AppConstants.themeModeKey, mode.name);
+  }
+
+  Future<ThemeMode> getThemeMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedMode = prefs.getString(AppConstants.themeModeKey);
+    return ThemeMode.values.firstWhere(
+      (mode) => mode.name == storedMode,
+      orElse: () => ThemeMode.light,
+    );
   }
 
   Future<void> clearAll() async {

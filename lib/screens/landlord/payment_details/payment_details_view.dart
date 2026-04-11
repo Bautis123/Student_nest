@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../utils/theme.dart';
+import '../../../widgets/app_surface_card.dart';
 import '../payment_pending/payment_pending_screen.dart';
 import 'payment_details_state.dart';
 import 'widgets/bank_details_form.dart';
@@ -28,7 +29,7 @@ class PaymentDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppTheme.lightGray,
       appBar: AppBar(title: const Text('Payment Details')),
       body: Column(
         children: [
@@ -42,7 +43,7 @@ class PaymentDetailsView extends StatelessWidget {
                     paymentLabel: state.paymentLabel,
                   ),
                   const SizedBox(height: 16),
-                  _formCard(),
+                  _formCard(context),
                 ],
               ),
             ),
@@ -56,25 +57,28 @@ class PaymentDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _formCard() {
-    return Container(
+  Widget _formCard(BuildContext context) {
+    final theme = Theme.of(context);
+    return AppSurfaceCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
+      radius: 18,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             state.isMobileMoney ? 'Mobile money details' : 'Bank details',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Make sure the details match the account that will be billed.',
-            style: TextStyle(fontSize: 12, color: AppTheme.gray),
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontSize: 12,
+              color: AppTheme.gray,
+            ),
           ),
           const SizedBox(height: 16),
           state.isMobileMoney
@@ -94,3 +98,4 @@ class PaymentDetailsView extends StatelessWidget {
     );
   }
 }
+

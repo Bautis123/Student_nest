@@ -25,7 +25,7 @@ class PaymentMethodCard extends StatelessWidget {
           color: selected ? AppTheme.primaryLight : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: selected ? AppTheme.primary : const Color(0xFFE2E8F0),
+            color: selected ? AppTheme.primary : AppTheme.border,
             width: selected ? 2 : 1,
           ),
         ),
@@ -64,3 +64,4 @@ class PaymentMethodCard extends StatelessWidget {
     );
   }
 }
+

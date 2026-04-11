@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'admin/admin_dashboard_screen.dart';
 import 'settings_screen.dart';
-import '../utils/theme.dart';
 
 class AdminMainScreen extends StatefulWidget {
   const AdminMainScreen({super.key});
@@ -20,15 +19,17 @@ class _AdminMainScreenState extends State<AdminMainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final navTheme = Theme.of(context).bottomNavigationBarTheme;
+
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (i) => setState(() => _currentIndex = i),
-        selectedItemColor: const Color(0xFF1E293B),
-        unselectedItemColor: AppTheme.gray,
-        backgroundColor: Colors.white,
-        elevation: 8,
+        selectedItemColor: navTheme.selectedItemColor,
+        unselectedItemColor: navTheme.unselectedItemColor,
+        backgroundColor: navTheme.backgroundColor,
+        elevation: navTheme.elevation,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.admin_panel_settings_outlined),

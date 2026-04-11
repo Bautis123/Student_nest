@@ -23,7 +23,7 @@ class ChoosePlanView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppTheme.lightGray,
       appBar: AppBar(title: const Text('Choose Plan')),
       body: SafeArea(
         child: Column(
@@ -108,3 +108,4 @@ class ChoosePlanView extends StatelessWidget {
     );
   }
 }
+

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../models/property.dart';
 import '../../services/api_service.dart';
 import '../../utils/theme.dart';
@@ -18,11 +21,23 @@ class _BrowseScreenState extends State<BrowseScreen> {
   bool _isLoading = true;
   String? _error;
   String _searchQuery = '';
+  Timer? _searchDebounce;
+
+  int _propertiesVersion = 0;
+  int _cachedVersion = -1;
+  String _cachedQuery = '';
+  List<Property> _cachedFilteredProperties = const [];
 
   @override
   void initState() {
     super.initState();
     _loadProperties();
+  }
+
+  @override
+  void dispose() {
+    _searchDebounce?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadProperties() async {
@@ -34,6 +49,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
       final properties = await _api.getProperties();
       setState(() {
         _properties = properties;
+        _propertiesVersion++;
         _isLoading = false;
       });
     } catch (e) {
@@ -44,69 +60,195 @@ class _BrowseScreenState extends State<BrowseScreen> {
     }
   }
 
-  List<Property> get _filteredProperties {
-    if (_searchQuery.isEmpty) return _properties;
-    return _properties
-        .where(
-          (p) =>
-              p.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-              p.address.toLowerCase().contains(_searchQuery.toLowerCase()),
-        )
-        .toList();
+  void _onSearchChanged(String value) {
+    final query = value.trim();
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 250), () {
+      if (!mounted || _searchQuery == query) return;
+      setState(() => _searchQuery = query);
+    });
+  }
+
+  List<Property> _getFilteredProperties() {
+    if (_cachedVersion == _propertiesVersion && _cachedQuery == _searchQuery) {
+      return _cachedFilteredProperties;
+    }
+
+    final filtered = _searchQuery.isEmpty
+        ? _properties
+        : _properties
+            .where(
+              (p) =>
+                  p.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                  p.address.toLowerCase().contains(_searchQuery.toLowerCase()),
+            )
+            .toList(growable: false);
+
+    final result = _buildSuggestedOrder(filtered);
+
+    _cachedVersion = _propertiesVersion;
+    _cachedQuery = _searchQuery;
+    _cachedFilteredProperties = result;
+    return result;
+  }
+
+  List<Property> _buildSuggestedOrder(List<Property> properties) {
+    if (properties.length <= 1) return properties;
+
+    final remaining = List<Property>.from(properties);
+    final ordered = <Property>[];
+
+    void takeBest(
+      bool Function(Property property) predicate,
+      int Function(Property a, Property b) comparator,
+    ) {
+      final candidates = remaining.where(predicate).toList(growable: false);
+      if (candidates.isEmpty) return;
+      candidates.sort(comparator);
+      final selected = candidates.first;
+      ordered.add(selected);
+      remaining.removeWhere((p) => p.id == selected.id);
+    }
+
+    takeBest(
+      (p) => p.isPremium && p.distanceFromSchool != null,
+      (a, b) => a.distanceFromSchool!.compareTo(b.distanceFromSchool!),
+    ); // 1. Closest premium
+    takeBest(
+      (p) => !p.isPremium && p.distanceFromSchool != null,
+      (a, b) => a.distanceFromSchool!.compareTo(b.distanceFromSchool!),
+    ); // 2. Closest basic
+    takeBest(
+      (p) => p.isPremium && p.distanceFromSchool != null,
+      (a, b) => b.distanceFromSchool!.compareTo(a.distanceFromSchool!),
+    ); // 3. Furthest premium
+    takeBest(
+      (_) => true,
+      (a, b) {
+        final clickCompare = b.contactClickCount.compareTo(a.contactClickCount);
+        if (clickCompare != 0) return clickCompare;
+        return b.viewCount.compareTo(a.viewCount);
+      },
+    ); // 4. Most clicked
+    takeBest(
+      (p) => !p.isPremium && p.distanceFromSchool != null,
+      (a, b) => b.distanceFromSchool!.compareTo(a.distanceFromSchool!),
+    ); // 5. Furthest basic
+
+    remaining.sort((a, b) {
+      final aDistance = a.distanceFromSchool;
+      final bDistance = b.distanceFromSchool;
+      if (aDistance == null && bDistance == null) {
+        return b.contactClickCount.compareTo(a.contactClickCount);
+      }
+      if (aDistance == null) return 1;
+      if (bDistance == null) return -1;
+      return aDistance.compareTo(bDistance);
+    });
+
+    return [...ordered, ...remaining];
+  }
+
+  String? _coverUrlFor(Property? property) {
+    if (property == null || property.photos.isEmpty) return null;
+    final cover = property.photos.firstWhere(
+      (p) => p.isCover,
+      orElse: () => property.photos.first,
+    );
+    return cover.url;
   }
 
   @override
   Widget build(BuildContext context) {
+    final filteredProperties = _getFilteredProperties();
+    final featuredCoverUrl = _coverUrlFor(
+      filteredProperties.isNotEmpty ? filteredProperties.first : null,
+    );
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppTheme.lightGray,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 140,
+            expandedHeight: 220,
             floating: false,
             pinned: true,
             backgroundColor: AppTheme.primary,
             flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                color: AppTheme.primary,
-                padding: const EdgeInsets.fromLTRB(16, 60, 16, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Student Nest',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  if (featuredCoverUrl != null)
+                    CachedNetworkImage(
+                      imageUrl: featuredCoverUrl,
+                      fit: BoxFit.cover,
+                      memCacheHeight: 560,
+                      maxHeightDiskCache: 1080,
+                      placeholder:
+                          (_, __) => Container(color: AppTheme.primaryLight),
+                      errorWidget:
+                          (_, __, ___) => Container(color: AppTheme.primary),
+                    )
+                  else
+                    Container(color: AppTheme.primary),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withValues(alpha: 0.18),
+                          Colors.black.withValues(alpha: 0.45),
+                        ],
                       ),
                     ),
-                    const Text(
-                      'Find boarding houses near UNZA',
-                      style: TextStyle(color: Colors.white70, fontSize: 13),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      onChanged: (v) => setState(() => _searchQuery = v),
-                      style: const TextStyle(fontSize: 14),
-                      decoration: InputDecoration(
-                        hintText: 'Search by name or area...',
-                        hintStyle: TextStyle(
-                          color: Colors.grey[400],
-                          fontSize: 13,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 60, 16, 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Student Nest',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(blurRadius: 8, color: Colors.black45),
+                            ],
+                          ),
                         ),
-                        prefixIcon: const Icon(Icons.search, size: 20),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
+                        const Text(
+                          'Find boarding houses near UNZA',
+                          style: TextStyle(color: Colors.white70, fontSize: 13),
                         ),
-                      ),
+                        const Spacer(),
+                        TextField(
+                          onChanged: _onSearchChanged,
+                          style: const TextStyle(fontSize: 14),
+                          decoration: InputDecoration(
+                            hintText: 'Search by name or area...',
+                            hintStyle: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: 13,
+                            ),
+                            prefixIcon: const Icon(Icons.search, size: 20),
+                            filled: true,
+                            fillColor: Colors.white,
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 0,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -135,7 +277,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                 ),
               ),
             )
-          else if (_filteredProperties.isEmpty)
+          else if (filteredProperties.isEmpty)
             const SliverFillRemaining(
               child: Center(
                 child: Column(
@@ -160,8 +302,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
               padding: const EdgeInsets.all(16),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
-                  final property = _filteredProperties[index];
+                  final property = filteredProperties[index];
                   return PropertyCard(
+                    key: ValueKey(property.id),
                     property: property,
                     onTap: () {
                       Navigator.push(
@@ -174,7 +317,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                       );
                     },
                   );
-                }, childCount: _filteredProperties.length),
+                }, childCount: filteredProperties.length),
               ),
             ),
         ],

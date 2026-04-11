@@ -18,7 +18,7 @@ class PlanInfoBanner extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.primaryLight,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        border: Border.all(color: AppTheme.border),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,3 +40,4 @@ class PlanInfoBanner extends StatelessWidget {
     );
   }
 }
+

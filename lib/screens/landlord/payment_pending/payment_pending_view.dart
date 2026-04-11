@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../utils/theme.dart';
 import '../payment_success/payment_success_screen.dart';
 import 'payment_pending_state.dart';
 import 'widgets/pending_actions_bar.dart';
@@ -29,7 +30,7 @@ class PaymentPendingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppTheme.lightGray,
       appBar: AppBar(title: const Text('Payment Pending')),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -50,3 +51,4 @@ class PaymentPendingView extends StatelessWidget {
     );
   }
 }
+

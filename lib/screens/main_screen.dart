@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'student/browse_screen.dart';
 import 'student/map_screen.dart';
 import 'settings_screen.dart';
-import '../utils/theme.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -22,15 +21,17 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final navTheme = Theme.of(context).bottomNavigationBarTheme;
+
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (i) => setState(() => _currentIndex = i),
-        selectedItemColor: AppTheme.primary,
-        unselectedItemColor: AppTheme.gray,
-        backgroundColor: Colors.white,
-        elevation: 8,
+        selectedItemColor: navTheme.selectedItemColor,
+        unselectedItemColor: navTheme.unselectedItemColor,
+        backgroundColor: navTheme.backgroundColor,
+        elevation: navTheme.elevation,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_work_outlined),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../utils/theme.dart';
 import 'payment_success_state.dart';
 import 'widgets/payment_actions_bar.dart';
 import 'widgets/payment_status_card.dart';
@@ -16,7 +17,7 @@ class PaymentSuccessView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppTheme.lightGray,
       appBar: AppBar(title: const Text('Payment Success')),
       body: Column(
         children: [
@@ -49,3 +50,4 @@ class PaymentSuccessView extends StatelessWidget {
     );
   }
 }
+

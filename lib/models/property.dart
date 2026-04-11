@@ -22,6 +22,8 @@ class Property {
   final List<Photo> photos;
   final double? minPrice;
   final double? maxPrice;
+  final String? listingPlan;
+  final bool? isPremiumFlag;
 
   Property({
     required this.id,
@@ -47,6 +49,8 @@ class Property {
     this.photos = const [],
     this.minPrice,
     this.maxPrice,
+    this.listingPlan,
+    this.isPremiumFlag,
   });
 
   factory Property.fromJson(Map<String, dynamic> json) {
@@ -89,7 +93,20 @@ class Property {
           json['max_price'] != null
               ? double.parse(json['max_price'].toString())
               : null,
+      listingPlan:
+          (json['listing_plan'] ?? json['plan'] ?? json['subscription_plan'])
+              ?.toString(),
+      isPremiumFlag:
+          json['is_premium'] is bool
+              ? json['is_premium'] as bool
+              : (json['premium'] is bool ? json['premium'] as bool : null),
     );
+  }
+
+  bool get isPremium {
+    if (isPremiumFlag != null) return isPremiumFlag!;
+    final plan = listingPlan?.toLowerCase();
+    return plan == 'premium';
   }
 }
 

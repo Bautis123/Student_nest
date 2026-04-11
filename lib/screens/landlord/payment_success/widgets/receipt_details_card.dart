@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../utils/theme.dart';
+import '../../../../widgets/app_info_row.dart';
+import '../../../../widgets/app_surface_card.dart';
 
 class ReceiptDetailsCard extends StatelessWidget {
   final String planTitle;
@@ -17,45 +18,25 @@ class ReceiptDetailsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AppSurfaceCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
+      radius: 18,
       child: Column(
         children: [
-          _row('Property', 'Roma Girls Hostel'),
+          const AppInfoRow(label: 'Property', value: 'Roma Girls Hostel'),
           const SizedBox(height: 12),
-          _row('Plan', planTitle),
+          AppInfoRow(label: 'Plan', value: planTitle),
           const SizedBox(height: 12),
-          _row('Amount paid', amount),
+          AppInfoRow(label: 'Amount paid', value: amount),
           const SizedBox(height: 12),
-          _row('Payment method', paymentMethod),
+          AppInfoRow(label: 'Payment method', value: paymentMethod),
           const SizedBox(height: 12),
-          _row('Transaction ref', 'SN-2026-00124'),
+          const AppInfoRow(label: 'Transaction ref', value: 'SN-2026-00124'),
           const SizedBox(height: 12),
-          _row('Next expiry', nextExpiry),
+          AppInfoRow(label: 'Next expiry', value: nextExpiry),
         ],
       ),
     );
   }
-
-  Widget _row(String label, String value) {
-    return Row(
-      children: [
-        Text(label, style: const TextStyle(fontSize: 13, color: AppTheme.gray)),
-        const Spacer(),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: AppTheme.dark,
-          ),
-        ),
-      ],
-    );
-  }
 }
+

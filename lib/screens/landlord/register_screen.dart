@@ -79,7 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppTheme.lightGray,
       appBar: AppBar(
         title: const Text('Create Account'),
         backgroundColor: AppTheme.primary,
@@ -114,10 +114,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: AppTheme.success.withOpacity(0.1),
+                    color: AppTheme.success.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: AppTheme.success.withOpacity(0.3),
+                      color: AppTheme.success.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
@@ -176,9 +176,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppTheme.error.withOpacity(0.1),
+                    color: AppTheme.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppTheme.error.withOpacity(0.3)),
+                    border: Border.all(
+                      color: AppTheme.error.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -376,3 +378,4 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
+

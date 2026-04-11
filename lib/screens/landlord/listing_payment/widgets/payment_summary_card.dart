@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../utils/theme.dart';
+import '../../../../widgets/app_info_row.dart';
+import '../../../../widgets/app_surface_card.dart';
 
 class PaymentSummaryCard extends StatelessWidget {
   final String planTitle;
@@ -15,30 +17,35 @@ class PaymentSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final theme = Theme.of(context);
+    return AppSurfaceCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
+      radius: 18,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Payment summary',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: 14),
-          _row('Plan', planTitle),
+          AppInfoRow(label: 'Plan', value: planTitle),
           const SizedBox(height: 8),
-          _row('Listing fee', amount),
+          AppInfoRow(label: 'Listing fee', value: amount),
           const SizedBox(height: 8),
-          _row('Processing', 'Included'),
+          const AppInfoRow(label: 'Processing', value: 'Included'),
           const SizedBox(height: 12),
           const Divider(height: 1),
           const SizedBox(height: 12),
-          _row('Total', amount, bold: true, green: true),
+          AppInfoRow(
+            label: 'Total',
+            value: amount,
+            valueColor: AppTheme.success,
+            valueWeight: FontWeight.bold,
+          ),
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
@@ -51,26 +58,5 @@ class PaymentSummaryCard extends StatelessWidget {
       ),
     );
   }
-
-  Widget _row(
-    String label,
-    String value, {
-    bool bold = false,
-    bool green = false,
-  }) {
-    return Row(
-      children: [
-        Text(label, style: const TextStyle(fontSize: 13, color: AppTheme.gray)),
-        const Spacer(),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: bold ? FontWeight.bold : FontWeight.w600,
-            color: green ? AppTheme.success : AppTheme.dark,
-          ),
-        ),
-      ],
-    );
-  }
 }
+

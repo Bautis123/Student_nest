@@ -5,7 +5,6 @@ import 'utils/theme.dart';
 import 'screens/main_screen.dart';
 import 'screens/landlord_main_screen.dart';
 import 'services/api_service.dart';
-import 'models/user.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,17 +12,45 @@ void main() {
   runApp(const StudentNestApp());
 }
 
-class StudentNestApp extends StatelessWidget {
+class StudentNestApp extends StatefulWidget {
   const StudentNestApp({super.key});
 
   @override
+  State<StudentNestApp> createState() => _StudentNestAppState();
+}
+
+class _StudentNestAppState extends State<StudentNestApp> {
+  final AppThemeController _themeController = AppThemeController();
+
+  @override
+  void initState() {
+    super.initState();
+    _themeController.loadThemeMode();
+  }
+
+  @override
+  void dispose() {
+    _themeController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Student Nest',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      themeMode: ThemeMode.light,
-      home: const SplashRouter(),
+    return AppThemeScope(
+      controller: _themeController,
+      child: AnimatedBuilder(
+        animation: _themeController,
+        builder: (context, _) {
+          return MaterialApp(
+            title: 'Student Nest',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: _themeController.themeMode,
+            home: const SplashRouter(),
+          );
+        },
+      ),
     );
   }
 }
@@ -72,23 +99,42 @@ class _SplashRouterState extends State<SplashRouter> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.white,
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.home_work_rounded, size: 64, color: AppTheme.primary),
-            SizedBox(height: 16),
-            Text(
-              'Student Nest',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.dark,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+          decoration: BoxDecoration(
+            color: theme.cardColor,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: theme.dividerColor),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircleAvatar(
+                radius: 34,
+                backgroundColor: colorScheme.primary.withValues(alpha: 0.14),
+                child: Icon(
+                  Icons.home_work_rounded,
+                  size: 34,
+                  color: colorScheme.primary,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 16),
+              Text(
+                'Student Nest',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: theme.textTheme.titleLarge?.color,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
