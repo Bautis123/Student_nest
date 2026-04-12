@@ -6,8 +6,16 @@ import '../utils/theme.dart';
 class PropertyCard extends StatelessWidget {
   final Property property;
   final VoidCallback onTap;
+  final double? displayDistanceKm;
+  final bool preferWalkingDistance;
 
-  const PropertyCard({super.key, required this.property, required this.onTap});
+  const PropertyCard({
+    super.key,
+    required this.property,
+    required this.onTap,
+    this.displayDistanceKm,
+    this.preferWalkingDistance = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +36,10 @@ class PropertyCard extends StatelessWidget {
       if (property.amenities['security'] == true)
         const _AmenityChip(label: 'Security', icon: Icons.security_outlined),
     ];
+    final distanceKm =
+        preferWalkingDistance
+            ? displayDistanceKm
+            : (displayDistanceKm ?? property.straightLineDistanceKm);
 
     return RepaintBoundary(
       child: GestureDetector(
@@ -136,7 +148,7 @@ class PropertyCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    if (property.distanceFromSchool != null) ...[
+                    if (distanceKm != null) ...[
                       const SizedBox(height: 3),
                       Row(
                         children: [
@@ -147,7 +159,9 @@ class PropertyCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 3),
                           Text(
-                            '${property.distanceFromSchool!.toStringAsFixed(2)} km from ${property.schoolName ?? 'UNZA'}',
+                            preferWalkingDistance
+                                ? '${distanceKm.toStringAsFixed(2)} km walk to ${property.schoolName ?? 'UNZA'}'
+                                : '${distanceKm.toStringAsFixed(2)} km straight-line from ${property.schoolName ?? 'UNZA'}',
                             style: const TextStyle(
                               fontSize: 12,
                               color: AppTheme.primary,

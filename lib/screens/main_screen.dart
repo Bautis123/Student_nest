@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'student/browse_screen.dart';
-import 'student/map_screen.dart';
 import 'settings_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -15,7 +14,6 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const BrowseScreen(),
-    const MapScreen(),
     const SettingsScreen(),
   ];
 
@@ -37,11 +35,6 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.home_work_outlined),
             activeIcon: Icon(Icons.home_work_rounded),
             label: 'Browse',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map_outlined),
-            activeIcon: Icon(Icons.map_rounded),
-            label: 'Map',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_outlined),

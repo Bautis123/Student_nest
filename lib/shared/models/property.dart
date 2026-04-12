@@ -1,3 +1,6 @@
+import 'dart:math' as math;
+
+import '../../utils/constants.dart';
 import 'room.dart';
 import 'photo.dart';
 
@@ -19,6 +22,8 @@ class Property {
   final String? listingExpiresAt;
   final String createdAt;
   final String? schoolName;
+  final double? schoolLat;
+  final double? schoolLng;
   final String? landlordName;
   final String? landlordPhone;
   final List<Room> rooms;
@@ -46,6 +51,8 @@ class Property {
     this.listingExpiresAt,
     required this.createdAt,
     this.schoolName,
+    this.schoolLat,
+    this.schoolLng,
     this.landlordName,
     this.landlordPhone,
     this.rooms = const [],
@@ -57,6 +64,7 @@ class Property {
   });
 
   factory Property.fromJson(Map<String, dynamic> json) {
+    final rawPhotos = json['photos'] ?? json['cover_photo'];
     return Property(
       id: json['id'],
       landlordId: json['landlord_id'],
@@ -78,6 +86,14 @@ class Property {
       listingExpiresAt: json['listing_expires_at'],
       createdAt: json['created_at'],
       schoolName: json['school_name'],
+      schoolLat:
+          json['school_lat'] != null
+              ? double.tryParse(json['school_lat'].toString())
+              : null,
+      schoolLng:
+          json['school_lng'] != null
+              ? double.tryParse(json['school_lng'].toString())
+              : null,
       landlordName: json['landlord_name'],
       landlordPhone: json['landlord_phone'],
       rooms:
@@ -85,8 +101,8 @@ class Property {
               ? (json['rooms'] as List).map((r) => Room.fromJson(r)).toList()
               : [],
       photos:
-          json['photos'] != null
-              ? (json['photos'] as List).map((p) => Photo.fromJson(p)).toList()
+          rawPhotos != null
+              ? (rawPhotos as List).map((p) => Photo.fromJson(p)).toList()
               : [],
       minPrice:
           json['min_price'] != null
@@ -111,4 +127,49 @@ class Property {
     final plan = listingPlan?.toLowerCase();
     return plan == 'premium';
   }
+
+  bool get isUnzaSchool {
+    final normalizedSchool = schoolName?.toLowerCase() ?? '';
+    return normalizedSchool.contains('unza') ||
+        normalizedSchool.contains('university of zambia');
+  }
+
+  double? get resolvedSchoolLat {
+    if (isUnzaSchool) return AppConstants.defaultLat;
+    return schoolLat;
+  }
+
+  double? get resolvedSchoolLng {
+    if (isUnzaSchool) return AppConstants.defaultLng;
+    return schoolLng;
+  }
+
+  double? get straightLineDistanceKm {
+    if (resolvedSchoolLat != null && resolvedSchoolLng != null) {
+      return _distanceInKm(
+        latitude,
+        longitude,
+        resolvedSchoolLat!,
+        resolvedSchoolLng!,
+      );
+    }
+
+    return distanceFromSchool;
+  }
+
+  double _distanceInKm(double lat1, double lon1, double lat2, double lon2) {
+    const radiusKm = 6371.0;
+    final dLat = _toRadians(lat2 - lat1);
+    final dLon = _toRadians(lon2 - lon1);
+    final a =
+        math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(_toRadians(lat1)) *
+            math.cos(_toRadians(lat2)) *
+            math.sin(dLon / 2) *
+            math.sin(dLon / 2);
+    final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
+    return radiusKm * c;
+  }
+
+  double _toRadians(double degree) => degree * math.pi / 180.0;
 }

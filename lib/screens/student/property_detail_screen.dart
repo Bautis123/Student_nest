@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/property.dart';
 import '../../services/api_service.dart';
 import '../../utils/theme.dart';
-import 'map_screen.dart';
 import 'property_detail/photo_gallery_screen.dart';
 import 'property_detail/property_action_bar.dart';
 import 'property_detail/property_amenity_tile.dart';
@@ -11,6 +13,7 @@ import 'property_detail/property_cover_app_bar.dart';
 import 'property_detail/property_intro_section.dart';
 import 'property_detail/property_landlord_card.dart';
 import 'property_detail/property_photos_section.dart';
+import 'property_detail/property_route_map_sheet.dart';
 import 'property_detail/property_room_row.dart';
 
 class PropertyDetailScreen extends StatefulWidget {
@@ -25,6 +28,7 @@ class PropertyDetailScreen extends StatefulWidget {
 class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   final ApiService _api = ApiService();
   Property? _property;
+  double? _walkingDistanceKm;
   bool _isLoading = true;
 
   @override
@@ -36,12 +40,41 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   Future<void> _loadProperty() async {
     try {
       final property = await _api.getPropertyById(widget.propertyId);
+      final walkingDistance = await _fetchWalkingDistanceKm(property);
       setState(() {
         _property = property;
+        _walkingDistanceKm = walkingDistance;
         _isLoading = false;
       });
     } catch (e) {
       setState(() => _isLoading = false);
+    }
+  }
+
+  Future<double?> _fetchWalkingDistanceKm(Property property) async {
+    final schoolLat = property.resolvedSchoolLat;
+    final schoolLng = property.resolvedSchoolLng;
+    if (schoolLat == null || schoolLng == null) return null;
+
+    final origin = '${property.longitude},${property.latitude}';
+    final destination = '$schoolLng,$schoolLat';
+    final uri = Uri.parse(
+      'https://router.project-osrm.org/route/v1/walking/$origin;$destination'
+      '?overview=false',
+    );
+
+    try {
+      final response = await http.get(uri);
+      if (response.statusCode != 200) return null;
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      if ((data['code']?.toString().toLowerCase() ?? '') != 'ok') return null;
+      final routes = data['routes'] as List<dynamic>? ?? const [];
+      if (routes.isEmpty) return null;
+      final distanceMeters = (routes.first as Map<String, dynamic>)['distance'] as num?;
+      if (distanceMeters == null) return null;
+      return distanceMeters.toDouble() / 1000;
+    } catch (_) {
+      return null;
     }
   }
 
@@ -54,10 +87,14 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
   void _viewInMap() {
     if (_property == null) return;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => MapScreen(focusedPropertyId: _property!.id),
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      enableDrag: false,
+      backgroundColor: Colors.transparent,
+      builder: (_) => FractionallySizedBox(
+        heightFactor: 0.92,
+        child: PropertyRouteMapSheet(property: _property!),
       ),
     );
   }
@@ -159,7 +196,10 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  PropertyIntroSection(property: p),
+                  PropertyIntroSection(
+                    property: p,
+                    walkingDistanceKm: _walkingDistanceKm,
+                  ),
                   if (otherPhotos.isNotEmpty) ...[
                     const SizedBox(height: 20),
                     PropertyPhotosSection(

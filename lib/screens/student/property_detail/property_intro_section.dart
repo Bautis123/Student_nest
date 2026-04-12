@@ -4,11 +4,18 @@ import '../../../utils/theme.dart';
 
 class PropertyIntroSection extends StatelessWidget {
   final Property property;
+  final double? walkingDistanceKm;
 
-  const PropertyIntroSection({super.key, required this.property});
+  const PropertyIntroSection({
+    super.key,
+    required this.property,
+    this.walkingDistanceKm,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final distanceKm = walkingDistanceKm ?? property.straightLineDistanceKm;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -43,8 +50,8 @@ class PropertyIntroSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        if (property.distanceFromSchool != null) _distanceBadge(),
-        if (property.distanceFromSchool != null) const SizedBox(height: 8),
+        if (distanceKm != null) _distanceBadge(distanceKm),
+        if (distanceKm != null) const SizedBox(height: 8),
         Row(
           children: [
             const Icon(
@@ -86,7 +93,7 @@ class PropertyIntroSection extends StatelessWidget {
     );
   }
 
-  Widget _distanceBadge() {
+  Widget _distanceBadge(double distanceKm) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
@@ -99,7 +106,9 @@ class PropertyIntroSection extends StatelessWidget {
           const Icon(Icons.school_outlined, size: 14, color: AppTheme.primary),
           const SizedBox(width: 4),
           Text(
-            '${property.distanceFromSchool!.toStringAsFixed(2)} km from ${property.schoolName ?? 'UNZA'}',
+            walkingDistanceKm != null
+                ? '${distanceKm.toStringAsFixed(2)} km walk to ${property.schoolName ?? 'UNZA'}'
+                : '${distanceKm.toStringAsFixed(2)} km straight-line from ${property.schoolName ?? 'UNZA'}',
             style: const TextStyle(
               fontSize: 12,
               color: AppTheme.primary,

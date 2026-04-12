@@ -19,6 +19,14 @@ class _MapScreenState extends State<MapScreen> {
   final ApiService _api = ApiService();
   GoogleMapController? _mapController;
 
+  BitmapDescriptor _boardingHouseMarkerIcon = BitmapDescriptor.defaultMarkerWithHue(
+    BitmapDescriptor.hueAzure,
+  );
+  BitmapDescriptor _schoolMarkerIcon = BitmapDescriptor.defaultMarkerWithHue(
+    BitmapDescriptor.hueYellow,
+  );
+  bool _didAttemptMarkerIconLoad = false;
+
   List<Property> _properties = const [];
   List<Map<String, dynamic>> _schools = const [];
   Set<Marker> _markers = const {};
@@ -28,11 +36,23 @@ class _MapScreenState extends State<MapScreen> {
     AppConstants.defaultLat,
     AppConstants.defaultLng,
   );
+  static const LatLng _unzaLocation = LatLng(
+    AppConstants.defaultLat,
+    AppConstants.defaultLng,
+  );
 
   @override
   void initState() {
     super.initState();
     _loadMapData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_didAttemptMarkerIconLoad) return;
+    _didAttemptMarkerIconLoad = true;
+    _loadCustomMarkerIcons();
   }
 
   @override
@@ -72,28 +92,72 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  Future<void> _loadCustomMarkerIcons() async {
+    BitmapDescriptor boardingHouseIcon = _boardingHouseMarkerIcon;
+    BitmapDescriptor schoolIcon = _schoolMarkerIcon;
+
+    try {
+      boardingHouseIcon = await BitmapDescriptor.asset(
+        const ImageConfiguration(size: Size(42, 42)),
+        'assets/map_markers/boarding_house.png',
+      );
+    } catch (_) {}
+
+    try {
+      schoolIcon = await BitmapDescriptor.asset(
+        const ImageConfiguration(size: Size(42, 42)),
+        'assets/map_markers/school.png',
+      );
+    } catch (_) {}
+
+    if (!mounted) return;
+    setState(() {
+      _boardingHouseMarkerIcon = boardingHouseIcon;
+      _schoolMarkerIcon = schoolIcon;
+      _markers = _buildMarkers(properties: _properties, schools: _schools);
+    });
+  }
+
   Set<Marker> _buildMarkers({
     required List<Property> properties,
     required List<Map<String, dynamic>> schools,
   }) {
     final markers = <Marker>{};
+    var hasUnzaMarker = false;
 
     for (final school in schools) {
-      final lat = _toDouble(school['latitude'] ?? school['lat']);
-      final lng = _toDouble(school['longitude'] ?? school['lng']);
+      final name = school['name']?.toString() ?? 'School';
+      final isUnza = _looksLikeUnza(name);
+      final lat =
+          isUnza
+              ? AppConstants.defaultLat
+              : _toDouble(school['latitude'] ?? school['lat']);
+      final lng =
+          isUnza
+              ? AppConstants.defaultLng
+              : _toDouble(school['longitude'] ?? school['lng']);
       if (lat == null || lng == null) continue;
 
       final id = school['id']?.toString() ?? school['name']?.toString() ?? 'school';
-      final name = school['name']?.toString() ?? 'School';
+      if (isUnza) hasUnzaMarker = true;
 
       markers.add(
         Marker(
           markerId: MarkerId('school-$id'),
           position: LatLng(lat, lng),
-          icon: BitmapDescriptor.defaultMarkerWithHue(
-            BitmapDescriptor.hueAzure,
-          ),
+          icon: _schoolMarkerIcon,
           infoWindow: InfoWindow(title: name),
+        ),
+      );
+    }
+
+    if (!hasUnzaMarker) {
+      markers.add(
+        Marker(
+          markerId: const MarkerId('school-unza'),
+          position: _unzaLocation,
+          icon: _schoolMarkerIcon,
+          infoWindow: const InfoWindow(title: 'University of Zambia'),
         ),
       );
     }
@@ -104,11 +168,7 @@ class _MapScreenState extends State<MapScreen> {
         Marker(
           markerId: MarkerId('property-${property.id}'),
           position: LatLng(property.latitude, property.longitude),
-          icon: BitmapDescriptor.defaultMarkerWithHue(
-            property.isPremium
-                ? BitmapDescriptor.hueOrange
-                : BitmapDescriptor.hueRose,
-          ),
+          icon: _boardingHouseMarkerIcon,
           infoWindow: InfoWindow(
             title: property.title,
             snippet:
@@ -123,13 +183,26 @@ class _MapScreenState extends State<MapScreen> {
     return markers;
   }
 
+  bool _looksLikeUnza(String name) {
+    final normalized = name.toLowerCase();
+    return normalized.contains('unza') ||
+        normalized.contains('university of zambia');
+  }
+
   double? _toDouble(dynamic value) {
     if (value == null) return null;
     return double.tryParse(value.toString());
   }
 
   LatLng _initialCenter() {
-    final firstSchool = _schools.isNotEmpty ? _schools.first : null;
+    final unzaSchool = _schools.cast<Map<String, dynamic>?>().firstWhere(
+      (school) => _looksLikeUnza(school?['name']?.toString() ?? ''),
+      orElse: () => null,
+    );
+    if (unzaSchool != null) {
+      return const LatLng(AppConstants.defaultLat, AppConstants.defaultLng);
+    }
+    final firstSchool = unzaSchool ?? (_schools.isNotEmpty ? _schools.first : null);
     final schoolLat = _toDouble(firstSchool?['latitude'] ?? firstSchool?['lat']);
     final schoolLng = _toDouble(
       firstSchool?['longitude'] ?? firstSchool?['lng'],
