@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../../widgets/app_header_background.dart';
 
 class FullScreenPhoto extends StatefulWidget {
   final List<dynamic> photos;
@@ -37,11 +38,13 @@ class _FullScreenPhotoState extends State<FullScreenPhoto> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black87,
+        surfaceTintColor: Colors.transparent,
+        flexibleSpace: const AppHeaderBackground(),
         title: Text(
           '${_currentIndex + 1} / ${widget.photos.length}',
-          style: const TextStyle(color: Colors.white, fontSize: 16),
+          style: const TextStyle(color: Colors.black87, fontSize: 16),
         ),
         elevation: 0,
       ),

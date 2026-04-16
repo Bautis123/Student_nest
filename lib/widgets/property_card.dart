@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+
 import '../models/property.dart';
 import '../utils/theme.dart';
 
@@ -26,196 +27,234 @@ class PropertyCard extends StatelessWidget {
               orElse: () => property.photos.first,
             )
             : null;
-    final amenityChips = <Widget>[
-      if (property.amenities['wifi'] == true)
-        const _AmenityChip(label: 'WiFi', icon: Icons.wifi),
-      if (property.amenities['water'] == true)
-        const _AmenityChip(label: 'Water', icon: Icons.water_drop_outlined),
-      if (property.amenities['electricity'] == true)
-        const _AmenityChip(label: 'Electric', icon: Icons.bolt_outlined),
-      if (property.amenities['security'] == true)
-        const _AmenityChip(label: 'Security', icon: Icons.security_outlined),
-    ];
     final distanceKm =
         preferWalkingDistance
             ? displayDistanceKm
             : (displayDistanceKm ?? property.straightLineDistanceKm);
 
     return RepaintBoundary(
-      child: GestureDetector(
+      child: InkWell(
         onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
         child: Container(
-          margin: const EdgeInsets.only(bottom: 16),
+          margin: const EdgeInsets.only(bottom: 14),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            color: AppTheme.white,
+            borderRadius: BorderRadius.circular(18),
             border: Border.all(color: AppTheme.border),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.06),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Photo
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(16),
-                ),
-                child: SizedBox(
-                  height: 180,
-                  width: double.infinity,
-                  child:
-                      coverPhoto != null
-                          ? CachedNetworkImage(
-                            imageUrl: coverPhoto.url,
-                            fit: BoxFit.cover,
-                            memCacheHeight: 360,
-                            maxHeightDiskCache: 720,
-                            fadeInDuration: const Duration(milliseconds: 100),
-                            placeholder:
-                                (_, __) => Container(
-                                  color: AppTheme.primaryLight,
-                                  child: const Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  ),
-                                ),
-                            errorWidget: (_, __, ___) =>
-                                const _PropertyImagePlaceholder(),
-                          )
-                          : const _PropertyImagePlaceholder(),
-                ),
-              ),
-
               Padding(
-                padding: const EdgeInsets.all(14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
+                child: Row(
                   children: [
-                    // Title + available badge
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            property.title,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: AppTheme.dark,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppTheme.success.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Text(
-                            'Available',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: AppTheme.success,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryLight,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: const Icon(
+                        Icons.person_rounded,
+                        color: AppTheme.primary,
+                        size: 22,
+                      ),
                     ),
-                    const SizedBox(height: 6),
-
-                    // Location + distance
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.location_on_outlined,
-                          size: 14,
-                          color: AppTheme.gray,
-                        ),
-                        const SizedBox(width: 3),
-                        Expanded(
-                          child: Text(
-                            property.address,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppTheme.gray,
-                            ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            property.landlordName ?? 'Owner',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (distanceKm != null) ...[
-                      const SizedBox(height: 3),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.school_outlined,
-                            size: 14,
-                            color: AppTheme.primary,
-                          ),
-                          const SizedBox(width: 3),
-                          Text(
-                            preferWalkingDistance
-                                ? '${distanceKm.toStringAsFixed(2)} km walk to ${property.schoolName ?? 'UNZA'}'
-                                : '${distanceKm.toStringAsFixed(2)} km straight-line from ${property.schoolName ?? 'UNZA'}',
                             style: const TextStyle(
+                              fontSize: 16,
+                              color: AppTheme.dark,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          const Text(
+                            'Owner',
+                            style: TextStyle(
                               fontSize: 12,
-                              color: AppTheme.primary,
+                              color: AppTheme.gray,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ],
                       ),
-                    ],
-                    const SizedBox(height: 10),
-
-                    // Amenities
-                    Wrap(spacing: 6, runSpacing: 4, children: amenityChips),
-                    const SizedBox(height: 10),
-
-                    // Price + contact
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+                    if (property.isPremium)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primary,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: const Text(
+                          'Featured',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(0),
+                child: Stack(
+                  children: [
+                    SizedBox(
+                      height: 170,
+                      width: double.infinity,
+                      child:
+                          coverPhoto != null
+                              ? CachedNetworkImage(
+                                imageUrl: coverPhoto.url,
+                                fit: BoxFit.cover,
+                                memCacheHeight: 340,
+                                maxHeightDiskCache: 680,
+                                fadeInDuration: const Duration(milliseconds: 100),
+                                placeholder:
+                                    (_, __) => Container(
+                                      color: AppTheme.primaryLight,
+                                      child: const Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      ),
+                                    ),
+                                errorWidget:
+                                    (_, __, ___) =>
+                                        const _PropertyImagePlaceholder(),
+                              )
+                              : const _PropertyImagePlaceholder(),
+                    ),
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: 0.12),
+                              Colors.black.withValues(alpha: 0.42),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      left: 10,
+                      top: 10,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.34),
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.38),
+                          ),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
+                            Icon(
+                              Icons.star_rounded,
+                              color: Color(0xFFFFE34D),
+                              size: 15,
+                            ),
+                            SizedBox(width: 2),
                             Text(
-                              property.minPrice != null
-                                  ? 'From K${property.minPrice!.toStringAsFixed(0)}/mo'
-                                  : 'Price on request',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.primary,
+                              '4',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
-                            if (property.rooms.isNotEmpty)
-                              Text(
-                                '${property.rooms.length} room type${property.rooms.length > 1 ? 's' : ''}',
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  color: AppTheme.gray,
-                                ),
-                              ),
                           ],
                         ),
-                        ElevatedButton(
-                          onPressed: onTap,
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(100, 38),
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                          ),
-                          child: const Text(
-                            'View',
-                            style: TextStyle(fontSize: 13),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
+                    Positioned(
+                      right: 10,
+                      top: 10,
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.85),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(
+                          Icons.bookmark_add_outlined,
+                          color: AppTheme.gray,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      property.title,
+                      style: const TextStyle(
+                        fontSize: 19,
+                        color: AppTheme.dark,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      property.minPrice != null
+                          ? 'K${property.minPrice!.toStringAsFixed(0)}/month'
+                          : 'Price on request',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: AppTheme.gray,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    if (distanceKm != null) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        '${distanceKm.toStringAsFixed(1)} km away',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: AppTheme.dark,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -233,43 +272,14 @@ class _PropertyImagePlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 180,
+      height: 170,
       color: AppTheme.primaryLight,
       child: const Center(
         child: Icon(
           Icons.home_work_outlined,
-          size: 48,
+          size: 46,
           color: AppTheme.primary,
         ),
-      ),
-    );
-  }
-}
-
-class _AmenityChip extends StatelessWidget {
-  const _AmenityChip({required this.label, required this.icon});
-
-  final String label;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: AppTheme.primaryLight.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 11, color: AppTheme.primary),
-          const SizedBox(width: 3),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 11, color: AppTheme.primary),
-          ),
-        ],
       ),
     );
   }

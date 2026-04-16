@@ -93,16 +93,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       backgroundColor: AppTheme.lightGray,
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            expandedHeight: 130,
-            pinned: true,
-            automaticallyImplyLeading: false,
-            backgroundColor: AppTheme.primary,
-            flexibleSpace: FlexibleSpaceBar(
-              background: DashboardHeader(
-                landlordName: _landlordName ?? 'Landlord',
-              ),
-            ),
+          SliverToBoxAdapter(
+            child: DashboardHeader(landlordName: _landlordName ?? 'Landlord'),
           ),
           _buildContent(),
         ],
@@ -110,4 +102,3 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 }
-

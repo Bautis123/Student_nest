@@ -24,18 +24,23 @@ class DashboardListingCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(14),
         radius: 14,
+        showShadow: true,
         child: Row(
           children: [
             Container(
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: AppTheme.primaryLight,
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF9CCDFF), AppTheme.primary],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
                 Icons.home_work_outlined,
-                color: AppTheme.primary,
+                color: Colors.white,
                 size: 22,
               ),
             ),

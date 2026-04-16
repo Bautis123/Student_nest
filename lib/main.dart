@@ -105,32 +105,33 @@ class _SplashRouterState extends State<SplashRouter> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-          decoration: BoxDecoration(
-            color: theme.cardColor,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: theme.dividerColor),
-          ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 34,
-                backgroundColor: colorScheme.primary.withValues(alpha: 0.14),
-                child: Icon(
-                  Icons.home_work_rounded,
-                  size: 34,
+              Icon(
+                Icons.location_city_outlined,
+                size: 108,
+                color: theme.textTheme.bodyLarge?.color,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'StudentNest.',
+                style: TextStyle(
+                  fontSize: 52,
+                  fontWeight: FontWeight.w700,
                   color: colorScheme.primary,
+                  height: 1,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               Text(
-                'Student Nest',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: theme.textTheme.titleLarge?.color,
+                'Discover your ideal\nboarding house.',
+                textAlign: TextAlign.center,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],

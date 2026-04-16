@@ -1,11 +1,13 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/property.dart';
 import '../../services/api_service.dart';
+import '../../services/route_service.dart';
+import '../../utils/constants.dart';
 import '../../utils/theme.dart';
+import '../../widgets/app_header_background.dart';
 import 'property_detail/photo_gallery_screen.dart';
 import 'property_detail/property_action_bar.dart';
 import 'property_detail/property_amenity_tile.dart';
@@ -13,7 +15,6 @@ import 'property_detail/property_cover_app_bar.dart';
 import 'property_detail/property_intro_section.dart';
 import 'property_detail/property_landlord_card.dart';
 import 'property_detail/property_photos_section.dart';
-import 'property_detail/property_route_map_sheet.dart';
 import 'property_detail/property_room_row.dart';
 
 class PropertyDetailScreen extends StatefulWidget {
@@ -27,6 +28,7 @@ class PropertyDetailScreen extends StatefulWidget {
 
 class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   final ApiService _api = ApiService();
+  final RouteService _routeService = RouteService();
   Property? _property;
   double? _walkingDistanceKm;
   bool _isLoading = true;
@@ -56,23 +58,13 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
     final schoolLng = property.resolvedSchoolLng;
     if (schoolLat == null || schoolLng == null) return null;
 
-    final origin = '${property.longitude},${property.latitude}';
-    final destination = '$schoolLng,$schoolLat';
-    final uri = Uri.parse(
-      'https://router.project-osrm.org/route/v1/walking/$origin;$destination'
-      '?overview=false',
-    );
-
     try {
-      final response = await http.get(uri);
-      if (response.statusCode != 200) return null;
-      final data = jsonDecode(response.body) as Map<String, dynamic>;
-      if ((data['code']?.toString().toLowerCase() ?? '') != 'ok') return null;
-      final routes = data['routes'] as List<dynamic>? ?? const [];
-      if (routes.isEmpty) return null;
-      final distanceMeters = (routes.first as Map<String, dynamic>)['distance'] as num?;
-      if (distanceMeters == null) return null;
-      return distanceMeters.toDouble() / 1000;
+      return await _routeService.getWalkingDistanceKm(
+        fromLat: property.latitude,
+        fromLng: property.longitude,
+        toLat: schoolLat,
+        toLng: schoolLng,
+      );
     } catch (_) {
       return null;
     }
@@ -85,17 +77,163 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
     if (await canLaunchUrl(uri)) await launchUrl(uri);
   }
 
-  void _viewInMap() {
+  String _formatCoord(double value) => value.toStringAsFixed(6);
+
+  Future<void> _openInMaps() async {
     if (_property == null) return;
+
+    final property = _property!;
+    final originLat = property.latitude;
+    final originLng = property.longitude;
+    final destinationLat = property.resolvedSchoolLat ?? AppConstants.defaultLat;
+    final destinationLng = property.resolvedSchoolLng ?? AppConstants.defaultLng;
+
+    final isIos = defaultTargetPlatform == TargetPlatform.iOS;
+    if (isIos) {
+      _showIosMapsPicker(
+        originLat: originLat,
+        originLng: originLng,
+        destinationLat: destinationLat,
+        destinationLng: destinationLng,
+      );
+      return;
+    }
+
+    await _launchExternalUrl(
+      Uri.parse(
+        'https://www.google.com/maps/dir/?api=1'
+        '&origin=${_formatCoord(originLat)},${_formatCoord(originLng)}'
+        '&destination=${_formatCoord(destinationLat)},${_formatCoord(destinationLng)}'
+        '&travelmode=walking',
+      ),
+    );
+  }
+
+  Future<void> _openInYango() async {
+    if (_property == null) return;
+    try {
+      final hasLocation = await Geolocator.isLocationServiceEnabled();
+      if (!hasLocation) {
+        _showInfo('Location services are off. Turn them on and try again.');
+        return;
+      }
+
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.denied) {
+        _showInfo('Location permission denied.');
+        return;
+      }
+      if (permission == LocationPermission.deniedForever) {
+        _showInfo('Location permission denied forever. Enable it in settings.');
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+      );
+
+      final destinationLat = _property!.latitude;
+      final destinationLng = _property!.longitude;
+      final startLat = position.latitude;
+      final startLng = position.longitude;
+
+      final yangoAppUri = Uri.parse(
+        'yandextaxi://route?'
+        'start-lat=${_formatCoord(startLat)}&'
+        'start-lon=${_formatCoord(startLng)}&'
+        'end-lat=${_formatCoord(destinationLat)}&'
+        'end-lon=${_formatCoord(destinationLng)}&'
+        'tariffClass=econom',
+      );
+
+      final yangoWebUri = Uri.https('3.redirect.appmetrica.yandex.com', '/route', {
+        'start-lat': _formatCoord(startLat),
+        'start-lon': _formatCoord(startLng),
+        'end-lat': _formatCoord(destinationLat),
+        'end-lon': _formatCoord(destinationLng),
+        'tariffClass': 'econom',
+        'ref': 'studentnest',
+        'lang': 'en',
+        'appmetrica_tracking_id': '1178268795219780156',
+      });
+
+      if (await canLaunchUrl(yangoAppUri)) {
+        await _launchExternalUrl(yangoAppUri);
+      } else {
+        await _launchExternalUrl(yangoWebUri);
+      }
+    } catch (_) {
+      _showInfo('Could not get your current location right now.');
+    }
+  }
+
+  Future<void> _launchExternalUrl(Uri uri) async {
+    final didLaunch = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!didLaunch && mounted) {
+      _showInfo('Could not open the app right now.');
+    }
+  }
+
+  void _showInfo(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  void _showIosMapsPicker({
+    required double originLat,
+    required double originLng,
+    required double destinationLat,
+    required double destinationLng,
+  }) {
+    final appleMapsUri = Uri.parse(
+      'http://maps.apple.com/?saddr=${_formatCoord(originLat)},${_formatCoord(originLng)}'
+      '&daddr=${_formatCoord(destinationLat)},${_formatCoord(destinationLng)}'
+      '&dirflg=w',
+    );
+    final googleMapsUri = Uri.parse(
+      'comgooglemaps://?saddr=${_formatCoord(originLat)},${_formatCoord(originLng)}'
+      '&daddr=${_formatCoord(destinationLat)},${_formatCoord(destinationLng)}'
+      '&directionsmode=walking',
+    );
+
     showModalBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
-      enableDrag: false,
-      backgroundColor: Colors.transparent,
-      builder: (_) => FractionallySizedBox(
-        heightFactor: 0.92,
-        child: PropertyRouteMapSheet(property: _property!),
-      ),
+      builder: (_) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.map),
+                title: const Text('Apple Maps'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await _launchExternalUrl(appleMapsUri);
+                },
+              ),
+              FutureBuilder<bool>(
+                future: canLaunchUrl(googleMapsUri),
+                builder: (context, snapshot) {
+                  if (snapshot.data != true) return const SizedBox.shrink();
+                  return ListTile(
+                    leading: const Icon(Icons.map_outlined),
+                    title: const Text('Google Maps'),
+                    onTap: () async {
+                      Navigator.pop(context);
+                      await _launchExternalUrl(googleMapsUri);
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -169,7 +307,12 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
     if (_property == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Property')),
+        appBar: AppBar(
+          title: const Text('Property'),
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          flexibleSpace: const AppHeaderBackground(),
+        ),
         body: const Center(child: Text('Property not found')),
       );
     }
@@ -232,7 +375,8 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
         ],
       ),
       bottomNavigationBar: PropertyActionBar(
-        onViewMap: _viewInMap,
+        onOpenMaps: _openInMaps,
+        onOpenYango: _openInYango,
         onCall: _callLandlord,
         landlordName: p.landlordName ?? 'Landlord',
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../utils/theme.dart';
+import '../../../widgets/app_header_background.dart';
 
 class ManageLandlordAppBar extends StatelessWidget
     implements PreferredSizeWidget {
@@ -24,12 +25,14 @@ class ManageLandlordAppBar extends StatelessWidget
   Widget build(BuildContext context) {
     return AppBar(
       title: const Text('Manage Landlord'),
-      backgroundColor: AppTheme.primary,
-      foregroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
+      foregroundColor: AppTheme.dark,
+      surfaceTintColor: Colors.transparent,
+      flexibleSpace: const AppHeaderBackground(),
       elevation: 0,
       actions: [
         PopupMenuButton<String>(
-          icon: const Icon(Icons.more_vert, color: Colors.white),
+          icon: const Icon(Icons.more_vert, color: AppTheme.dark),
           onSelected: (value) {
             if (value == 'toggle') onToggleApproval();
             if (value == 'reset') onResetPassword();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../utils/theme.dart';
+import '../../../widgets/app_header_background.dart';
 import '../../../widgets/app_surface_card.dart';
 import '../payment_details/payment_details_screen.dart';
 import 'listing_payment_state.dart';
@@ -29,7 +30,12 @@ class ListingPaymentView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.lightGray,
-      appBar: AppBar(title: const Text('Listing Payment')),
+      appBar: AppBar(
+        title: const Text('Listing Payment'),
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        flexibleSpace: const AppHeaderBackground(),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(

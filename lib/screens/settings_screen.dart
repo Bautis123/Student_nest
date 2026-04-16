@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../services/api_service.dart';
 import '../utils/theme.dart';
+import '../widgets/app_header_background.dart';
 import 'landlord/dashboard_screen.dart';
 import 'landlord/login_screen.dart';
 import 'main_screen.dart';
@@ -76,8 +77,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Settings'),
-        backgroundColor: AppTheme.primary,
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        flexibleSpace: const AppHeaderBackground(),
         elevation: 0,
         automaticallyImplyLeading: false,
       ),
@@ -108,8 +110,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           if (_user?.role == 'admin')
-            SettingsSection(title: 'Admin Options', tiles: SettingsTileGroups.admin()),
-          SettingsSection(title: 'Support', tiles: SettingsTileGroups.support()),
+            SettingsSection(
+              title: 'Admin Options',
+              tiles: SettingsTileGroups.admin(),
+            ),
+          SettingsSection(
+            title: 'Support',
+            tiles: SettingsTileGroups.support(),
+          ),
           SettingsSection(title: 'Legal', tiles: SettingsTileGroups.legal()),
           SettingsSection(
             title: 'Account',
@@ -132,5 +140,4 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
-
 }

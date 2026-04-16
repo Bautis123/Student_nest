@@ -73,132 +73,67 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: AppTheme.lightGray,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 40),
-
-              // Logo
               Center(
-                child: Column(
-                  children: [
-                    Container(
-                      width: 72,
-                      height: 72,
-                      decoration: BoxDecoration(
-                        color: AppTheme.primary,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Icon(
-                        Icons.home_work_rounded,
-                        color: Colors.white,
-                        size: 36,
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    const Text(
-                      'Student Nest',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.dark,
-                      ),
-                    ),
-                    const Text(
-                      'Landlord Portal',
-                      style: TextStyle(fontSize: 14, color: AppTheme.gray),
-                    ),
-                  ],
+                child: Container(
+                  width: 190,
+                  height: 160,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryLight,
+                    borderRadius: BorderRadius.circular(26),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    Icons.meeting_room_outlined,
+                    color: AppTheme.primary,
+                    size: 82,
+                  ),
                 ),
               ),
-              const SizedBox(height: 40),
-
-              const Text(
-                'Sign In',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.dark,
+              const SizedBox(height: 22),
+              const Center(
+                child: Text(
+                  'Login',
+                  style: TextStyle(
+                    color: AppTheme.dark,
+                    fontSize: 46 / 2,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
-              const SizedBox(height: 6),
-              const Text(
-                'Enter your phone number and password',
-                style: TextStyle(fontSize: 13, color: AppTheme.gray),
-              ),
-              const SizedBox(height: 24),
-
-              // Error
+              const SizedBox(height: 18),
               if (_error != null) ...[
                 Container(
+                  width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: AppTheme.error.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: AppTheme.error.withValues(alpha: 0.3),
                     ),
                   ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.error_outline,
-                        color: AppTheme.error,
-                        size: 18,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          _error!,
-                          style: const TextStyle(
-                            color: AppTheme.error,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    _error!,
+                    style: const TextStyle(color: AppTheme.error, fontSize: 13),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
               ],
-
-              // Phone
-              const Text(
-                'Phone Number',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: AppTheme.dark,
-                ),
-              ),
-              const SizedBox(height: 6),
               TextField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  hintText: '09XXXXXXXX',
-                  prefixIcon: Icon(Icons.phone_outlined),
-                ),
+                decoration: const InputDecoration(hintText: 'Username'),
               ),
-              const SizedBox(height: 16),
-
-              // Password
-              const Text(
-                'Password',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: AppTheme.dark,
-                ),
-              ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 14),
               TextField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(
-                  hintText: '••••••••',
-                  prefixIcon: const Icon(Icons.lock_outlined),
+                  hintText: 'Password',
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscurePassword
@@ -212,9 +147,39 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
-
-              // Login button
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  const Expanded(
+                    child: Text(
+                      'Forgot Password ?',
+                      style: TextStyle(
+                        color: AppTheme.gray,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap:
+                        () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const RegisterScreen(),
+                          ),
+                        ),
+                    child: const Text(
+                      'Create Account?',
+                      style: TextStyle(
+                        color: AppTheme.primary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 18),
               ElevatedButton(
                 onPressed: _isLoading ? null : _login,
                 child:
@@ -227,36 +192,29 @@ class _LoginScreenState extends State<LoginScreen> {
                             strokeWidth: 2,
                           ),
                         )
-                        : const Text('Sign In'),
+                        : const Text('Login'),
               ),
-              const SizedBox(height: 16),
-
-              // Register link
-              Center(
-                child: GestureDetector(
-                  onTap:
-                      () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const RegisterScreen(),
-                        ),
-                      ),
-                  child: const Text.rich(
-                    TextSpan(
-                      text: "Don't have an account? ",
-                      style: TextStyle(color: AppTheme.gray, fontSize: 13),
-                      children: [
-                        TextSpan(
-                          text: 'Register',
-                          style: TextStyle(
-                            color: AppTheme.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
+              const SizedBox(height: 18),
+              const Center(
+                child: Text(
+                  'Or Sign up With',
+                  style: TextStyle(
+                    color: AppTheme.gray,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
+              ),
+              const SizedBox(height: 14),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _SocialChip(iconData: Icons.g_mobiledata_rounded),
+                  SizedBox(width: 16),
+                  _SocialChip(iconData: Icons.facebook_rounded),
+                  SizedBox(width: 16),
+                  _SocialChip(iconData: Icons.apple_rounded),
+                ],
               ),
             ],
           ),
@@ -266,3 +224,22 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
+class _SocialChip extends StatelessWidget {
+  final IconData iconData;
+
+  const _SocialChip({required this.iconData});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 52,
+      height: 52,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: AppTheme.border),
+      ),
+      child: Icon(iconData, color: AppTheme.dark, size: 28),
+    );
+  }
+}

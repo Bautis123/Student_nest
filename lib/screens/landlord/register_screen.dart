@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../services/api_service.dart';
 import '../../utils/theme.dart';
 
@@ -19,6 +20,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
+  bool _termsAccepted = true;
   String? _error;
   String? _success;
 
@@ -37,6 +39,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (_passwordController.text.length < 6) {
       setState(() => _error = 'Password must be at least 6 characters');
+      return;
+    }
+
+    if (!_termsAccepted) {
+      setState(() => _error = 'Please agree to the terms before registering');
       return;
     }
 
@@ -59,7 +66,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (result['user'] != null) {
         setState(() {
           _success =
-              'Registration successful! Your account is pending admin approval. You will be able to log in once approved.';
+              'Registration successful! Your account is pending admin approval.';
           _isLoading = false;
         });
       } else {
@@ -80,180 +87,90 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.lightGray,
-      appBar: AppBar(
-        title: const Text('Create Account'),
-        backgroundColor: AppTheme.primary,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.fromLTRB(20, 14, 20, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 8),
-
-              const Text(
-                'Join Student Nest',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.dark,
+              Center(
+                child: Container(
+                  width: 190,
+                  height: 160,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryLight,
+                    borderRadius: BorderRadius.circular(26),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    Icons.person_add_alt_1_rounded,
+                    color: AppTheme.primary,
+                    size: 84,
+                  ),
                 ),
               ),
-              const SizedBox(height: 6),
-              const Text(
-                'Create a landlord account to list your property',
-                style: TextStyle(fontSize: 13, color: AppTheme.gray),
+              const SizedBox(height: 18),
+              const Center(
+                child: Text(
+                  'Create Account',
+                  style: TextStyle(
+                    fontSize: 37,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.dark,
+                  ),
+                ),
               ),
-              const SizedBox(height: 24),
-
-              // Success message
+              const SizedBox(height: 18),
               if (_success != null) ...[
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: AppTheme.success.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppTheme.success.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(
-                        Icons.check_circle_outline,
-                        color: AppTheme.success,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Account Created!',
-                              style: TextStyle(
-                                color: AppTheme.success,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              _success!,
-                              style: const TextStyle(
-                                color: AppTheme.success,
-                                fontSize: 12,
-                                height: 1.4,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            GestureDetector(
-                              onTap: () => Navigator.pop(context),
-                              child: const Text(
-                                'Back to Login',
-                                style: TextStyle(
-                                  color: AppTheme.primary,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                _InfoBanner(
+                  color: AppTheme.success,
+                  icon: Icons.check_circle_outline,
+                  message: _success!,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
               ],
-
-              // Error
               if (_error != null) ...[
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.error.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: AppTheme.error.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.error_outline,
-                        color: AppTheme.error,
-                        size: 18,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          _error!,
-                          style: const TextStyle(
-                            color: AppTheme.error,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                _InfoBanner(
+                  color: AppTheme.error,
+                  icon: Icons.error_outline,
+                  message: _error!,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
               ],
-
               if (_success == null) ...[
-                // Full name
-                _fieldLabel('Full Name *'),
-                const SizedBox(height: 6),
                 TextField(
                   controller: _nameController,
                   textCapitalization: TextCapitalization.words,
                   decoration: const InputDecoration(
-                    hintText: 'John Banda',
+                    hintText: 'Name',
                     prefixIcon: Icon(Icons.person_outline),
                   ),
                 ),
-                const SizedBox(height: 16),
-
-                // Phone
-                _fieldLabel('Phone Number *'),
-                const SizedBox(height: 6),
-                TextField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    hintText: '09XXXXXXXX',
-                    prefixIcon: Icon(Icons.phone_outlined),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Email
-                _fieldLabel('Email (optional)'),
-                const SizedBox(height: 6),
+                const SizedBox(height: 10),
                 TextField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
-                    hintText: 'john@email.com',
+                    hintText: 'Email Address',
                     prefixIcon: Icon(Icons.email_outlined),
                   ),
                 ),
-                const SizedBox(height: 16),
-
-                // Password
-                _fieldLabel('Password *'),
-                const SizedBox(height: 6),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                    hintText: 'Phone Number',
+                    prefixIcon: Icon(Icons.phone_outlined),
+                  ),
+                ),
+                const SizedBox(height: 10),
                 TextField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
-                    hintText: 'Min. 6 characters',
-                    prefixIcon: const Icon(Icons.lock_outlined),
+                    hintText: 'Password',
+                    prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword
@@ -267,17 +184,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
-
-                // Confirm password
-                _fieldLabel('Confirm Password *'),
-                const SizedBox(height: 6),
+                const SizedBox(height: 10),
                 TextField(
                   controller: _confirmPasswordController,
                   obscureText: _obscureConfirm,
                   decoration: InputDecoration(
-                    hintText: 'Repeat your password',
-                    prefixIcon: const Icon(Icons.lock_outlined),
+                    hintText: 'Confirm Password',
+                    prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscureConfirm
@@ -291,37 +204,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
-
-                // Note about approval
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryLight,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.info_outline,
-                        color: AppTheme.primary,
-                        size: 16,
-                      ),
-                      SizedBox(width: 8),
-                      Expanded(
+                const SizedBox(height: 10),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Checkbox(
+                      value: _termsAccepted,
+                      onChanged:
+                          (v) => setState(() => _termsAccepted = v ?? false),
+                    ),
+                    const Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 10),
                         child: Text(
-                          'New accounts require admin approval before you can list properties.',
+                          'By registering, you are agreeing with our Terms of Use and Privacy Policy',
                           style: TextStyle(
-                            fontSize: 12,
-                            color: AppTheme.primary,
+                            fontSize: 14,
+                            color: AppTheme.dark,
+                            fontWeight: FontWeight.w500,
+                            height: 1.35,
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 24),
-
+                const SizedBox(height: 14),
                 ElevatedButton(
                   onPressed: _isLoading ? null : _register,
                   child:
@@ -334,48 +242,71 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               strokeWidth: 2,
                             ),
                           )
-                          : const Text('Create Account'),
+                          : const Text('Register'),
                 ),
-                const SizedBox(height: 16),
-
-                Center(
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerRight,
                   child: GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: const Text.rich(
-                      TextSpan(
-                        text: 'Already have an account? ',
-                        style: TextStyle(color: AppTheme.gray, fontSize: 13),
-                        children: [
-                          TextSpan(
-                            text: 'Sign In',
-                            style: TextStyle(
-                              color: AppTheme.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+                    child: const Text(
+                      'Already have an account?',
+                      style: TextStyle(
+                        color: AppTheme.gray,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
                 ),
               ],
-              const SizedBox(height: 30),
             ],
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _fieldLabel(String label) {
-    return Text(
-      label,
-      style: const TextStyle(
-        fontSize: 13,
-        fontWeight: FontWeight.w500,
-        color: AppTheme.dark,
+class _InfoBanner extends StatelessWidget {
+  final Color color;
+  final IconData icon;
+  final String message;
+
+  const _InfoBanner({
+    required this.color,
+    required this.icon,
+    required this.message,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: color, size: 18),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                color: color,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
-

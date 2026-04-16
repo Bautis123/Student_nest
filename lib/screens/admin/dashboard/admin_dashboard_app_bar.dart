@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../utils/theme.dart';
+import '../../../widgets/app_header_background.dart';
 
 class AdminDashboardAppBar extends StatelessWidget {
   final TabController controller;
@@ -13,54 +15,58 @@ class AdminDashboardAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final appBarColor = theme.appBarTheme.backgroundColor ?? colorScheme.primary;
-    final onAppBar = theme.appBarTheme.foregroundColor ?? colorScheme.onPrimary;
+    final onAppBar = theme.appBarTheme.foregroundColor ?? AppTheme.dark;
 
     return SliverAppBar(
       expandedHeight: 140,
       pinned: true,
       automaticallyImplyLeading: false,
-      backgroundColor: appBarColor,
+      backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
       flexibleSpace: FlexibleSpaceBar(
-        background: Container(
-          color: appBarColor,
-          padding: const EdgeInsets.fromLTRB(16, 60, 16, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Admin Panel',
-                style: TextStyle(
-                  color: onAppBar,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+        background: Stack(
+          fit: StackFit.expand,
+          children: [
+            const AppHeaderBackground(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 60, 16, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Admin Panel',
+                    style: TextStyle(
+                      color: onAppBar,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    'Bautis Digital Innovations',
+                    style: TextStyle(
+                      color: onAppBar.withValues(alpha: 0.7),
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: onAppBar.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: TabBar(
+                      controller: controller,
+                      indicatorColor: onAppBar,
+                      labelColor: onAppBar,
+                      unselectedLabelColor: onAppBar.withValues(alpha: 0.6),
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      tabs: tabs,
+                    ),
+                  ),
+                ],
               ),
-              Text(
-                'Bautis Digital Innovations',
-                style: TextStyle(
-                  color: onAppBar.withValues(alpha: 0.7),
-                  fontSize: 13,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                decoration: BoxDecoration(
-                  color: onAppBar.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: TabBar(
-                  controller: controller,
-                  indicatorColor: onAppBar,
-                  labelColor: onAppBar,
-                  unselectedLabelColor: onAppBar.withValues(alpha: 0.6),
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  tabs: tabs,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

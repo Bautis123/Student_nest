@@ -1,11 +1,13 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../models/property.dart';
 import '../../services/api_service.dart';
+import '../../services/route_service.dart';
 import '../../utils/theme.dart';
+import '../../widgets/app_header_background.dart';
 import '../../widgets/property_card.dart';
 import 'property_detail_screen.dart';
 
@@ -30,6 +32,8 @@ class BrowseScreen extends StatefulWidget {
 
 class _BrowseScreenState extends State<BrowseScreen> {
   final ApiService _api = ApiService();
+  final RouteService _routeService = RouteService();
+  final ScrollController _scrollController = ScrollController();
   List<Property> _properties = [];
   bool _isLoading = true;
   String? _error;
@@ -38,6 +42,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
   BrowseFilter _browseFilter = BrowseFilter.closest;
   final Map<String, double> _walkingDistanceByPropertyId = {};
   bool _loadingWalkingDistances = false;
+  int _distanceLoadCursor = 0;
+  static const int _distanceBatchSize = 8;
+  String _locationLabel = 'Locating...';
 
   int _propertiesVersion = 0;
   int _cachedVersion = -1;
@@ -48,12 +55,15 @@ class _BrowseScreenState extends State<BrowseScreen> {
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
+    unawaited(_loadCurrentLocationLabel());
     _loadProperties();
   }
 
   @override
   void dispose() {
     _searchDebounce?.cancel();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -66,10 +76,12 @@ class _BrowseScreenState extends State<BrowseScreen> {
       final properties = await _api.getProperties();
       setState(() {
         _properties = properties;
+        _walkingDistanceByPropertyId.clear();
+        _distanceLoadCursor = 0;
         _propertiesVersion++;
         _isLoading = false;
       });
-      unawaited(_loadWalkingDistances(properties));
+      unawaited(_loadNextDistanceBatch(properties));
     } catch (e) {
       setState(() {
         _error = 'Failed to load listings. Check your connection.';
@@ -79,18 +91,24 @@ class _BrowseScreenState extends State<BrowseScreen> {
   }
 
   Future<void> _loadWalkingDistances(List<Property> properties) async {
+    if (_distanceLoadCursor >= properties.length) return;
+    final batch = properties
+        .skip(_distanceLoadCursor)
+        .take(_distanceBatchSize)
+        .toList(growable: false);
+    if (batch.isEmpty) return;
+
     if (_loadingWalkingDistances) return;
     _loadingWalkingDistances = true;
 
     try {
-      final requests = properties
-          .take(30)
+      final requests = batch
           .map((property) async {
             final schoolLat = property.resolvedSchoolLat;
             final schoolLng = property.resolvedSchoolLng;
             if (schoolLat == null || schoolLng == null) return;
 
-            final distance = await _fetchWalkingDistanceKm(
+            final distance = await _routeService.getWalkingDistanceKm(
               fromLat: property.latitude,
               fromLng: property.longitude,
               toLat: schoolLat,
@@ -105,6 +123,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
 
       if (!mounted) return;
       setState(() {
+        _distanceLoadCursor += batch.length;
         _propertiesVersion++;
       });
     } finally {
@@ -112,31 +131,62 @@ class _BrowseScreenState extends State<BrowseScreen> {
     }
   }
 
-  Future<double?> _fetchWalkingDistanceKm({
-    required double fromLat,
-    required double fromLng,
-    required double toLat,
-    required double toLng,
-  }) async {
-    final origin = '$fromLng,$fromLat';
-    final destination = '$toLng,$toLat';
-    final uri = Uri.parse(
-      'https://router.project-osrm.org/route/v1/walking/$origin;$destination'
-      '?overview=false',
-    );
+  Future<void> _loadNextDistanceBatch(List<Property> properties) async {
+    await _loadWalkingDistances(properties);
+  }
 
+  Future<void> _loadCurrentLocationLabel() async {
+    const fallback = 'Lusaka, Zambia';
     try {
-      final response = await http.get(uri);
-      if (response.statusCode != 200) return null;
-      final data = jsonDecode(response.body) as Map<String, dynamic>;
-      if ((data['code']?.toString().toLowerCase() ?? '') != 'ok') return null;
-      final routes = data['routes'] as List<dynamic>? ?? const [];
-      if (routes.isEmpty) return null;
-      final distanceMeters = (routes.first as Map<String, dynamic>)['distance'] as num?;
-      if (distanceMeters == null) return null;
-      return distanceMeters.toDouble() / 1000;
+      final servicesEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!servicesEnabled) {
+        if (!mounted) return;
+        setState(() => _locationLabel = fallback);
+        return;
+      }
+
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        if (!mounted) return;
+        setState(() => _locationLabel = fallback);
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+      );
+
+      String label = fallback;
+      try {
+        final placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+        if (placemarks.isNotEmpty) {
+          final place = placemarks.first;
+          final city =
+              (place.locality ?? place.subAdministrativeArea ?? place.administrativeArea ?? '')
+                  .trim();
+          final country = (place.country ?? 'Zambia').trim();
+          if (city.isNotEmpty) {
+            label = '$city, $country';
+          } else if (country.isNotEmpty) {
+            label = country;
+          }
+        }
+      } catch (_) {
+        label = fallback;
+      }
+
+      if (!mounted) return;
+      setState(() => _locationLabel = label);
     } catch (_) {
-      return null;
+      if (!mounted) return;
+      setState(() => _locationLabel = fallback);
     }
   }
 
@@ -172,6 +222,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
                 .toList(growable: false);
 
     final result = _applyBrowseFilter(filtered);
+    if (_distanceLoadCursor < _properties.length) {
+      unawaited(_loadWalkingDistances(_properties));
+    }
 
     _cachedVersion = _propertiesVersion;
     _cachedQuery = _searchQuery;
@@ -181,16 +234,16 @@ class _BrowseScreenState extends State<BrowseScreen> {
   }
 
   List<Property> _applyBrowseFilter(List<Property> properties) {
+    final sortKeys = _buildSortKeys(properties);
+
     switch (_browseFilter) {
       case BrowseFilter.suggested:
-        return _buildSuggestedOrder(properties);
+        return _buildSuggestedOrder(properties, sortKeys);
       case BrowseFilter.closest:
         final sorted = List<Property>.from(properties);
         sorted.sort((a, b) {
-          final aDistance =
-              _walkingDistanceByPropertyId[a.id] ?? a.straightLineDistanceKm;
-          final bDistance =
-              _walkingDistanceByPropertyId[b.id] ?? b.straightLineDistanceKm;
+          final aDistance = sortKeys[a.id]?.distanceKm;
+          final bDistance = sortKeys[b.id]?.distanceKm;
           if (aDistance == null && bDistance == null) return 0;
           if (aDistance == null) return 1;
           if (bDistance == null) return -1;
@@ -200,8 +253,8 @@ class _BrowseScreenState extends State<BrowseScreen> {
       case BrowseFilter.cheapest:
         final sorted = List<Property>.from(properties);
         sorted.sort((a, b) {
-          final aPrice = a.minPrice;
-          final bPrice = b.minPrice;
+          final aPrice = sortKeys[a.id]?.price;
+          final bPrice = sortKeys[b.id]?.price;
           if (aPrice == null && bPrice == null) return 0;
           if (aPrice == null) return 1;
           if (bPrice == null) return -1;
@@ -211,18 +264,41 @@ class _BrowseScreenState extends State<BrowseScreen> {
       case BrowseFilter.mostClicked:
         final sorted = List<Property>.from(properties);
         sorted.sort((a, b) {
-          final clickCompare = b.contactClickCount.compareTo(a.contactClickCount);
+          final clickCompare = (sortKeys[b.id]?.clicks ?? 0).compareTo(
+            sortKeys[a.id]?.clicks ?? 0,
+          );
           if (clickCompare != 0) return clickCompare;
-          return b.viewCount.compareTo(a.viewCount);
+          return (sortKeys[b.id]?.views ?? 0).compareTo(
+            sortKeys[a.id]?.views ?? 0,
+          );
         });
         return sorted;
       case BrowseFilter.premiumOnly:
-        final filtered = properties.where((p) => p.isPremium).toList(growable: false);
-        return _buildSuggestedOrder(filtered);
+        final filtered = properties
+            .where((p) => p.isPremium)
+            .toList(growable: false);
+        return _buildSuggestedOrder(filtered, sortKeys);
       case BrowseFilter.basicOnly:
-        final filtered = properties.where((p) => !p.isPremium).toList(growable: false);
-        return _buildSuggestedOrder(filtered);
+        final filtered = properties
+            .where((p) => !p.isPremium)
+            .toList(growable: false);
+        return _buildSuggestedOrder(filtered, sortKeys);
     }
+  }
+
+  Map<String, _BrowseSortKey> _buildSortKeys(List<Property> properties) {
+    final keys = <String, _BrowseSortKey>{};
+    for (final property in properties) {
+      keys[property.id] = _BrowseSortKey(
+        distanceKm:
+            _walkingDistanceByPropertyId[property.id] ??
+            property.straightLineDistanceKm,
+        price: property.minPrice,
+        clicks: property.contactClickCount,
+        views: property.viewCount,
+      );
+    }
+    return keys;
   }
 
   Widget _filterBar() {
@@ -238,7 +314,12 @@ class _BrowseScreenState extends State<BrowseScreen> {
           return ChoiceChip(
             label: Text(filter.label),
             selected: selected,
-            onSelected: (_) => setState(() => _browseFilter = filter),
+            onSelected: (_) {
+              setState(() => _browseFilter = filter);
+              if (_distanceLoadCursor < _properties.length) {
+                unawaited(_loadWalkingDistances(_properties));
+              }
+            },
             selectedColor: AppTheme.primary.withValues(alpha: 0.18),
             labelStyle: TextStyle(
               color: selected ? AppTheme.primary : AppTheme.gray,
@@ -262,7 +343,10 @@ class _BrowseScreenState extends State<BrowseScreen> {
     );
   }
 
-  List<Property> _buildSuggestedOrder(List<Property> properties) {
+  List<Property> _buildSuggestedOrder(
+    List<Property> properties,
+    Map<String, _BrowseSortKey> sortKeys,
+  ) {
     if (properties.length <= 1) return properties;
 
     final remaining = List<Property>.from(properties);
@@ -281,32 +365,38 @@ class _BrowseScreenState extends State<BrowseScreen> {
     }
 
     takeBest(
-      (p) => p.isPremium && p.straightLineDistanceKm != null,
-      (a, b) => a.straightLineDistanceKm!.compareTo(b.straightLineDistanceKm!),
+      (p) => p.isPremium && sortKeys[p.id]?.distanceKm != null,
+      (a, b) =>
+          sortKeys[a.id]!.distanceKm!.compareTo(sortKeys[b.id]!.distanceKm!),
     ); // 1. Closest premium
     takeBest(
-      (p) => !p.isPremium && p.straightLineDistanceKm != null,
-      (a, b) => a.straightLineDistanceKm!.compareTo(b.straightLineDistanceKm!),
+      (p) => !p.isPremium && sortKeys[p.id]?.distanceKm != null,
+      (a, b) =>
+          sortKeys[a.id]!.distanceKm!.compareTo(sortKeys[b.id]!.distanceKm!),
     ); // 2. Closest basic
     takeBest(
-      (p) => p.isPremium && p.straightLineDistanceKm != null,
-      (a, b) => b.straightLineDistanceKm!.compareTo(a.straightLineDistanceKm!),
+      (p) => p.isPremium && sortKeys[p.id]?.distanceKm != null,
+      (a, b) =>
+          sortKeys[b.id]!.distanceKm!.compareTo(sortKeys[a.id]!.distanceKm!),
     ); // 3. Furthest premium
     takeBest((_) => true, (a, b) {
-      final clickCompare = b.contactClickCount.compareTo(a.contactClickCount);
+      final clickCompare = sortKeys[b.id]!.clicks.compareTo(
+        sortKeys[a.id]!.clicks,
+      );
       if (clickCompare != 0) return clickCompare;
-      return b.viewCount.compareTo(a.viewCount);
+      return sortKeys[b.id]!.views.compareTo(sortKeys[a.id]!.views);
     }); // 4. Most clicked
     takeBest(
-      (p) => !p.isPremium && p.straightLineDistanceKm != null,
-      (a, b) => b.straightLineDistanceKm!.compareTo(a.straightLineDistanceKm!),
+      (p) => !p.isPremium && sortKeys[p.id]?.distanceKm != null,
+      (a, b) =>
+          sortKeys[b.id]!.distanceKm!.compareTo(sortKeys[a.id]!.distanceKm!),
     ); // 5. Furthest basic
 
     remaining.sort((a, b) {
-      final aDistance = a.straightLineDistanceKm;
-      final bDistance = b.straightLineDistanceKm;
+      final aDistance = sortKeys[a.id]?.distanceKm;
+      final bDistance = sortKeys[b.id]?.distanceKm;
       if (aDistance == null && bDistance == null) {
-        return b.contactClickCount.compareTo(a.contactClickCount);
+        return sortKeys[b.id]!.clicks.compareTo(sortKeys[a.id]!.clicks);
       }
       if (aDistance == null) return 1;
       if (bDistance == null) return -1;
@@ -318,38 +408,36 @@ class _BrowseScreenState extends State<BrowseScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final filteredProperties = _getFilteredProperties();
 
     return Scaffold(
       backgroundColor: AppTheme.lightGray,
       body: CustomScrollView(
+        controller: _scrollController,
         slivers: [
           SliverAppBar(
-            expandedHeight: 130,
+            expandedHeight: 156,
             floating: false,
             pinned: true,
-            backgroundColor: AppTheme.primary,
+            backgroundColor: Colors.transparent,
             surfaceTintColor: Colors.transparent,
             shadowColor: Colors.transparent,
             scrolledUnderElevation: 0,
-            toolbarHeight: 68,
+            toolbarHeight: 86,
             titleSpacing: 16,
-            title: const Column(
+            title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Student Nest',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  'Your Location',
+                  style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
-                  'Find boarding houses near UNZA',
-                  style: TextStyle(color: Colors.white70, fontSize: 13),
+                  _locationLabel,
+                  style: theme.textTheme.titleLarge,
                 ),
               ],
             ),
@@ -359,28 +447,41 @@ class _BrowseScreenState extends State<BrowseScreen> {
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                 child: TextField(
                   onChanged: _onSearchChanged,
-                  style: const TextStyle(fontSize: 14),
+                  style: theme.textTheme.bodyLarge,
                   decoration: InputDecoration(
-                    hintText: 'Search by name or area...',
-                    hintStyle: TextStyle(color: Colors.grey[400], fontSize: 13),
-                    prefixIcon: const Icon(Icons.search, size: 20),
+                    hintText: 'Search',
+                    prefixIcon: const Icon(Icons.search_rounded, size: 22),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: AppTheme.surface,
                     contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
                   ),
                 ),
               ),
             ),
-            flexibleSpace: Container(color: AppTheme.primary),
+            flexibleSpace: const AppHeaderBackground(),
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 2),
               child: _filterBar(),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+              child: Row(
+                children: [
+                  _QuickPill(
+                    icon: Icons.home_work_outlined,
+                    label: '${filteredProperties.length} listings',
+                  ),
+                  const SizedBox(width: 8),
+                  _QuickPill(
+                    icon: Icons.explore_outlined,
+                    label: _browseFilter.label,
+                  ),
+                ],
+              ),
             ),
           ),
           if (_isLoading)
@@ -430,14 +531,15 @@ class _BrowseScreenState extends State<BrowseScreen> {
             )
           else
             SliverPadding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
                   final property = filteredProperties[index];
                   return PropertyCard(
                     key: ValueKey(property.id),
                     property: property,
-                    displayDistanceKm: _walkingDistanceByPropertyId[property.id],
+                    displayDistanceKm:
+                        _walkingDistanceByPropertyId[property.id],
                     preferWalkingDistance: true,
                     onTap: () {
                       Navigator.push(
@@ -457,4 +559,63 @@ class _BrowseScreenState extends State<BrowseScreen> {
       ),
     );
   }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    if (_scrollController.position.pixels <
+        _scrollController.position.maxScrollExtent - 700) {
+      return;
+    }
+    if (_distanceLoadCursor < _properties.length) {
+      unawaited(_loadWalkingDistances(_properties));
+    }
+  }
+}
+
+class _QuickPill extends StatelessWidget {
+  const _QuickPill({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: AppTheme.border),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 15, color: AppTheme.primary),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.dark,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BrowseSortKey {
+  final double? distanceKm;
+  final double? price;
+  final int clicks;
+  final int views;
+
+  const _BrowseSortKey({
+    required this.distanceKm,
+    required this.price,
+    required this.clicks,
+    required this.views,
+  });
 }

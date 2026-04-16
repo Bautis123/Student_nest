@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../utils/theme.dart';
+import '../../../widgets/app_header_background.dart';
 import '../../../widgets/app_surface_card.dart';
 import '../payment_pending/payment_pending_screen.dart';
 import 'payment_details_state.dart';
@@ -30,7 +31,12 @@ class PaymentDetailsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.lightGray,
-      appBar: AppBar(title: const Text('Payment Details')),
+      appBar: AppBar(
+        title: const Text('Payment Details'),
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        flexibleSpace: const AppHeaderBackground(),
+      ),
       body: Column(
         children: [
           Expanded(

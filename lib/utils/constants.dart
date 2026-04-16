@@ -12,8 +12,8 @@ class AppConstants {
   static const String themeModeKey = 'theme_mode';
 
   // Map defaults - centered on UNZA (Great East Road campus area)
-  static const double defaultLat = -15.3875;
-  static const double defaultLng = 28.3228;
+  static const double defaultLat = -15.394722;
+  static const double defaultLng = 28.332222;
   static const double defaultZoom = 14.0;
   static const String googleMapsApiKey =
       'AIzaSyANlhraCJif7hxb5jwrJJXC-0C0ttB2tJI';

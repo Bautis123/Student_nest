@@ -26,9 +26,9 @@ class SettingsTile extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(16),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
         child: Row(
           children: [
             SettingsTileIcon(icon: icon, iconColor: iconColor),
@@ -42,8 +42,8 @@ class SettingsTile extends StatelessWidget {
             ),
             Icon(
               Icons.chevron_right,
-              color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.8),
-              size: 18,
+              color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+              size: 20,
             ),
           ],
         ),

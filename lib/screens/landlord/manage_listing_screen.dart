@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/property.dart';
 import '../../services/api_service.dart';
 import '../../utils/theme.dart';
+import '../../widgets/app_header_background.dart';
 import 'manage_listing/manage_listing_details_tab.dart';
 import 'manage_listing/manage_listing_photos_tab.dart';
 import 'manage_listing/manage_listing_rooms_tab.dart';
@@ -118,12 +119,14 @@ class _ManageListingScreenState extends State<ManageListingScreen>
           style: const TextStyle(fontSize: 16),
           overflow: TextOverflow.ellipsis,
         ),
-        backgroundColor: AppTheme.primary,
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
+        foregroundColor: AppTheme.dark,
+        surfaceTintColor: Colors.transparent,
+        flexibleSpace: const AppHeaderBackground(),
         elevation: 0,
         actions: [
           PopupMenuButton<Object?>(
-            icon: const Icon(Icons.more_vert, color: Colors.white),
+            icon: const Icon(Icons.more_vert, color: AppTheme.dark),
             onSelected: _handleMenuAction,
             itemBuilder: (_) => [
               PopupMenuItem(
@@ -159,9 +162,9 @@ class _ManageListingScreenState extends State<ManageListingScreen>
         ],
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.white,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white60,
+          indicatorColor: AppTheme.primary,
+          labelColor: AppTheme.primary,
+          unselectedLabelColor: AppTheme.gray,
           tabs: const [
             Tab(text: 'Details'),
             Tab(text: 'Photos'),

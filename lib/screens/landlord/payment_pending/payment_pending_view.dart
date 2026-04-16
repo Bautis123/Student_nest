@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../utils/theme.dart';
+import '../../../widgets/app_header_background.dart';
 import '../payment_success/payment_success_screen.dart';
 import 'payment_pending_state.dart';
 import 'widgets/pending_actions_bar.dart';
@@ -31,7 +32,12 @@ class PaymentPendingView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.lightGray,
-      appBar: AppBar(title: const Text('Payment Pending')),
+      appBar: AppBar(
+        title: const Text('Payment Pending'),
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        flexibleSpace: const AppHeaderBackground(),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

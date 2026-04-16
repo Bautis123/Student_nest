@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../services/api_service.dart';
 import '../../utils/constants.dart';
 import '../../utils/theme.dart';
+import '../../widgets/app_header_background.dart';
 import 'add_listing/add_listing_success_dialog.dart';
 import 'add_listing/widgets/add_listing_action_bar.dart';
 import 'add_listing/widgets/add_listing_error_banner.dart';
@@ -235,15 +236,17 @@ class _AddListingScreenState extends State<AddListingScreen> {
       backgroundColor: AppTheme.lightGray,
       appBar: AppBar(
         title: const Text('Add Listing'),
-        backgroundColor: AppTheme.primary,
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
+        foregroundColor: AppTheme.dark,
+        surfaceTintColor: Colors.transparent,
+        flexibleSpace: const AppHeaderBackground(),
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4),
           child: LinearProgressIndicator(
             value: (_currentPage + 1) / 3,
-            backgroundColor: Colors.white.withValues(alpha: 0.3),
-            valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+            backgroundColor: AppTheme.primary.withValues(alpha: 0.18),
+            valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primary),
           ),
         ),
       ),

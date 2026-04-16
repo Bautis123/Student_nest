@@ -23,7 +23,7 @@ class SettingsSwitchTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(
         children: [
           SettingsTileIcon(icon: icon, iconColor: iconColor),

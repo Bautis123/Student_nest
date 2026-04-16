@@ -21,6 +21,9 @@ class DashboardStatCard extends StatelessWidget {
     return AppSurfaceCard(
       padding: const EdgeInsets.all(14),
       radius: 14,
+      showShadow: true,
+      color: color.withValues(alpha: 0.08),
+      borderColor: color.withValues(alpha: 0.28),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -28,7 +31,7 @@ class DashboardStatCard extends StatelessWidget {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              color: color.withValues(alpha: 0.18),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 16),
@@ -44,7 +47,11 @@ class DashboardStatCard extends StatelessWidget {
           ),
           Text(
             label,
-            style: const TextStyle(fontSize: 11, color: AppTheme.gray),
+            style: TextStyle(
+              fontSize: 11,
+              color: AppTheme.dark.withValues(alpha: 0.75),
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),
