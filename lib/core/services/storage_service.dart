@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../utils/constants.dart';
-import '../../../shared/models/user.dart';
+import '../../../models/user.dart';
 
 class StorageService {
   static final StorageService _instance = StorageService._internal();

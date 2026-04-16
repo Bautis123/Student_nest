@@ -1,5 +1,5 @@
 import '../network/api_client.dart';
-import '../../shared/models/property.dart';
+import '../../models/property.dart';
 
 class PropertyService {
   final ApiClient _client = ApiClient();
