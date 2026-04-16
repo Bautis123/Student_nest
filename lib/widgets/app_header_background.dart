@@ -47,6 +47,24 @@ class AppHeaderBackground extends StatelessWidget {
                 color: AppTheme.accent.withValues(alpha: 0.30),
               ),
             ),
+            Positioned.fill(
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        AppTheme.lightGray.withValues(alpha: 0.36),
+                        AppTheme.lightGray,
+                      ],
+                      stops: [0.30, 0.78, 1.0],
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
