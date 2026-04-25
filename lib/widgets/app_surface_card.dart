@@ -5,12 +5,12 @@ class AppSurfaceCard extends StatelessWidget {
   const AppSurfaceCard({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.all(16),
+    this.padding = const EdgeInsets.all(14),
     this.margin,
-    this.radius = 14,
+    this.radius = 18,
     this.color = AppTheme.white,
     this.borderColor = AppTheme.border,
-    this.showShadow = false,
+    this.showShadow = true,
   });
 
   final Widget child;
@@ -34,8 +34,8 @@ class AppSurfaceCard extends StatelessWidget {
             showShadow
                 ? [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 16,
+                    color: const Color(0xFF667085).withValues(alpha: 0.08),
+                    blurRadius: 18,
                     offset: const Offset(0, 8),
                   ),
                 ]

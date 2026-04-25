@@ -3,7 +3,8 @@ import 'settings_tile_icon.dart';
 import 'settings_tile_text.dart';
 
 class SettingsSwitchTile extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
+  final String? assetIcon;
   final Color iconColor;
   final String title;
   final String subtitle;
@@ -12,13 +13,14 @@ class SettingsSwitchTile extends StatelessWidget {
 
   const SettingsSwitchTile({
     super.key,
-    required this.icon,
+    this.icon,
+    this.assetIcon,
     required this.iconColor,
     required this.title,
     required this.subtitle,
     required this.value,
     required this.onChanged,
-  });
+  }) : assert(icon != null || assetIcon != null);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,11 @@ class SettingsSwitchTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(
         children: [
-          SettingsTileIcon(icon: icon, iconColor: iconColor),
+          SettingsTileIcon(
+            icon: icon,
+            assetIcon: assetIcon,
+            iconColor: iconColor,
+          ),
           const SizedBox(width: 12),
           Expanded(child: SettingsTileText(title: title, subtitle: subtitle)),
           Switch(value: value, onChanged: onChanged),

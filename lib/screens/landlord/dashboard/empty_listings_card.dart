@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../utils/student_nest_icons.dart';
 import '../../../utils/theme.dart';
 import '../../../widgets/app_surface_card.dart';
 
@@ -12,7 +13,11 @@ class EmptyListingsCard extends StatelessWidget {
       child: const Center(
         child: Column(
           children: [
-            Icon(Icons.home_work_outlined, size: 48, color: AppTheme.gray),
+            StudentNestIcon(
+              StudentNestIcons.building,
+              size: 48,
+              color: AppTheme.gray,
+            ),
             SizedBox(height: 12),
             Text(
               'No listings yet',
@@ -32,4 +37,3 @@ class EmptyListingsCard extends StatelessWidget {
     );
   }
 }
-

@@ -68,6 +68,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/icons/student_nest/
     - assets/map_markers/boarding_house.png
     - assets/map_markers/school.png
 

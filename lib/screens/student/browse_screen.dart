@@ -150,7 +150,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
       }
 
       final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
 
       String label = fallback;
@@ -162,7 +164,10 @@ class _BrowseScreenState extends State<BrowseScreen> {
         if (placemarks.isNotEmpty) {
           final place = placemarks.first;
           final city =
-              (place.locality ?? place.subAdministrativeArea ?? place.administrativeArea ?? '')
+              (place.locality ??
+                      place.subAdministrativeArea ??
+                      place.administrativeArea ??
+                      '')
                   .trim();
           final country = (place.country ?? 'Zambia').trim();
           if (city.isNotEmpty) {
@@ -279,10 +284,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                     style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13),
                   ),
                   const SizedBox(height: 2),
-                  Text(
-                    _locationLabel,
-                    style: theme.textTheme.titleLarge,
-                  ),
+                  Text(_locationLabel, style: theme.textTheme.titleLarge),
                 ],
               ),
             ),
@@ -290,15 +292,71 @@ class _BrowseScreenState extends State<BrowseScreen> {
               preferredSize: const Size.fromHeight(64),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                child: TextField(
-                  onChanged: _onSearchChanged,
-                  style: theme.textTheme.bodyLarge,
-                  decoration: InputDecoration(
-                    hintText: 'Search',
-                    prefixIcon: const Icon(Icons.search_rounded, size: 22),
-                    filled: true,
-                    fillColor: AppTheme.surface,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                child: Container(
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF63799B).withValues(alpha: 0.10),
+                        blurRadius: 14,
+                        offset: const Offset(0, 7),
+                      ),
+                    ],
+                  ),
+                  child: TextField(
+                    onChanged: _onSearchChanged,
+                    style: const TextStyle(
+                      color: Color(0xFF131B2C),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Search by location or name',
+                      hintStyle: const TextStyle(
+                        color: Color(0xFF8E96A8),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      prefixIcon: const Padding(
+                        padding: EdgeInsets.only(left: 12, right: 8),
+                        child: Icon(
+                          Icons.search_rounded,
+                          size: 32,
+                          color: Color(0xFF667085),
+                        ),
+                      ),
+                      prefixIconConstraints: const BoxConstraints(
+                        minWidth: 54,
+                        minHeight: 52,
+                      ),
+                      suffixIcon: Padding(
+                        padding: const EdgeInsets.fromLTRB(4, 6, 8, 6),
+                        child: Material(
+                          color: AppTheme.primary,
+                          shape: const CircleBorder(),
+                          child: InkWell(
+                            onTap: _openFiltersSheet,
+                            customBorder: const CircleBorder(),
+                            child: const SizedBox(
+                              width: 40,
+                              height: 40,
+                              child: Icon(
+                                Icons.tune_rounded,
+                                size: 22,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      filled: false,
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 17),
+                    ),
                   ),
                 ),
               ),
@@ -307,14 +365,26 @@ class _BrowseScreenState extends State<BrowseScreen> {
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  BrowseFilterButton(onTap: _openFiltersSheet),
-                  const SizedBox(height: 8),
-                  BrowseCountPill(
-                    label: '${filteredProperties.length} boarding houses',
+                  Row(
+                    children: [
+                      BrowseFilterButton(onTap: _openFiltersSheet),
+                      const SizedBox(width: 16),
+                      Container(
+                        width: 1,
+                        height: 32,
+                        color: const Color(0xFFD6DCE8),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: BrowseCountPill(
+                          label: '${filteredProperties.length} boarding houses',
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -335,7 +405,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
             const SliverFillRemaining(child: BrowseEmptyState())
           else
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 104),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
                   final property = filteredProperties[index];

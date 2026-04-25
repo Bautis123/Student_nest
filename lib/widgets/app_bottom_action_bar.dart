@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import '../utils/theme.dart';
 
 class AppBottomActionBar extends StatelessWidget {
   const AppBottomActionBar({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.fromLTRB(16, 10, 16, 14),
+    this.padding = const EdgeInsets.fromLTRB(16, 12, 16, 16),
     this.withTopBorder = true,
-    this.backgroundColor = AppTheme.white,
+    this.backgroundColor = Colors.transparent,
   });
 
   final Widget child;
@@ -24,16 +23,16 @@ class AppBottomActionBar extends StatelessWidget {
         border:
             withTopBorder
                 ? const Border(
-                  top: BorderSide(color: AppTheme.border, width: 1),
+                  top: BorderSide(color: Colors.transparent, width: 0),
                 )
                 : null,
         boxShadow:
             withTopBorder
                 ? [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.03),
-                    blurRadius: 10,
-                    offset: const Offset(0, -3),
+                    color: const Color(0xFF667085).withValues(alpha: 0.06),
+                    blurRadius: 18,
+                    offset: const Offset(0, -6),
                   ),
                 ]
                 : null,

@@ -24,6 +24,13 @@ const isAdmin = (req, res, next) => {
   next();
 };
 
+const isOwnerAdmin = (req, res, next) => {
+  if (req.user.role !== 'admin' || req.user.access_level !== 'owner') {
+    return res.status(403).json({ message: 'Owner admin access only' });
+  }
+  next();
+};
+
 const isLandlord = (req, res, next) => {
   if (req.user.role !== 'landlord') {
     return res.status(403).json({ message: 'Landlord access only' });
@@ -31,4 +38,4 @@ const isLandlord = (req, res, next) => {
   next();
 };
 
-module.exports = { verifyToken, isAdmin, isLandlord };
+module.exports = { verifyToken, isAdmin, isOwnerAdmin, isLandlord };

@@ -1,0 +1,33 @@
+<section class="panel view hidden" id="landlordsPanel">
+  <div class="panel-header stacked">
+    <div>
+      <h2>Landlord management</h2>
+      <p class="muted small">Approve, suspend, or review landlord accounts.</p>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" id="landlordSearch" placeholder="Search landlords" />
+      <select id="landlordStatusFilter">
+        <option value="all">All statuses</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="suspended">Suspended</option>
+        <option value="rejected">Rejected</option>
+      </select>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Landlord</th>
+          <th>Contact</th>
+          <th>Properties</th>
+          <th>Status</th>
+          <th>Joined</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="landlordsBody"></tbody>
+    </table>
+  </div>
+</section>

@@ -16,10 +16,10 @@ class AppTheme {
 
   static const Color dark = Color(0xFF252B33);
   static const Color gray = Color(0xFF6E7782);
-  static const Color lightGray = Color(0xFFF3F4F6);
+  static const Color lightGray = Color(0xFFF7FAFF);
   static const Color white = Color(0xFFFFFFFF);
-  static const Color border = Color(0xFFC9CDD3);
-  static const Color surface = Color(0xFFF7F8FA);
+  static const Color border = Color(0xFFE2E6EE);
+  static const Color surface = Color(0xFFFFFFFF);
   static const Color darkSurface = Color(0xFF11161C);
   static const Color darkCard = Color(0xFF171E26);
   static const Color darkBorder = Color(0xFF2A3440);
@@ -101,7 +101,7 @@ class AppTheme {
           minimumSize: const Size(double.infinity, 56),
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
           ),
           textStyle: GoogleFonts.poppins(
             fontSize: 17,
@@ -116,7 +116,7 @@ class AppTheme {
           minimumSize: const Size(double.infinity, 56),
           side: const BorderSide(color: border),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
           ),
           textStyle: GoogleFonts.poppins(
             fontSize: 17,
@@ -144,23 +144,23 @@ class AppTheme {
         prefixIconColor: gray,
         suffixIconColor: gray,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(18),
           borderSide: const BorderSide(color: border),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(18),
           borderSide: const BorderSide(color: border),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(18),
           borderSide: const BorderSide(color: primary, width: 1.4),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(18),
           borderSide: const BorderSide(color: error),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(18),
           borderSide: const BorderSide(color: error, width: 1.4),
         ),
       ),
@@ -169,7 +169,7 @@ class AppTheme {
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
           side: const BorderSide(color: border),
         ),
       ),
@@ -181,7 +181,7 @@ class AppTheme {
           fontWeight: FontWeight.w500,
           color: white,
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
       dividerColor: border,
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -197,7 +197,7 @@ class AppTheme {
           fontSize: 12,
           fontWeight: FontWeight.w500,
         ),
-        elevation: 10,
+        elevation: 0,
       ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
@@ -290,7 +290,7 @@ class AppTheme {
           minimumSize: const Size(double.infinity, 56),
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
           ),
           textStyle: GoogleFonts.poppins(
             fontSize: 17,
@@ -304,7 +304,7 @@ class AppTheme {
           minimumSize: const Size(double.infinity, 56),
           side: const BorderSide(color: darkBorder),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
           ),
           textStyle: GoogleFonts.poppins(
             fontSize: 17,
@@ -330,23 +330,23 @@ class AppTheme {
           color: darkMuted,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(18),
           borderSide: const BorderSide(color: darkBorder),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(18),
           borderSide: const BorderSide(color: darkBorder),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(18),
           borderSide: const BorderSide(color: Color(0xFF54A8FF), width: 1.4),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(18),
           borderSide: const BorderSide(color: error),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(18),
           borderSide: const BorderSide(color: error, width: 1.4),
         ),
       ),
@@ -355,7 +355,7 @@ class AppTheme {
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
           side: const BorderSide(color: darkBorder),
         ),
       ),
@@ -367,7 +367,7 @@ class AppTheme {
           fontWeight: FontWeight.w500,
           color: white,
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
       dividerColor: darkBorder,
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -383,7 +383,7 @@ class AppTheme {
           fontSize: 12,
           fontWeight: FontWeight.w500,
         ),
-        elevation: 10,
+        elevation: 0,
       ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {

@@ -1,0 +1,39 @@
+<section class="panel view hidden" id="propertiesPanel">
+  <div class="panel-header stacked">
+    <div>
+      <h2>Property management</h2>
+      <p class="muted small">Moderate listings before students rely on them.</p>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" id="propertySearch" placeholder="Search properties" />
+      <select id="propertyStatusFilter">
+        <option value="all">All statuses</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+        <option value="inactive">Inactive</option>
+      </select>
+      <select id="propertySort">
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+        <option value="updated">Recently updated</option>
+      </select>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Landlord</th>
+          <th>Completeness</th>
+          <th>Status</th>
+          <th>Expiry</th>
+          <th>Updated</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="propertiesBody"></tbody>
+    </table>
+  </div>
+</section>

@@ -2,9 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../models/property.dart';
+import '../utils/student_nest_icons.dart';
 import '../utils/theme.dart';
 
-class PropertyCard extends StatelessWidget {
+class PropertyCard extends StatefulWidget {
   final Property property;
   final VoidCallback onTap;
   final double? displayDistanceKm;
@@ -19,7 +20,23 @@ class PropertyCard extends StatelessWidget {
   });
 
   @override
+  State<PropertyCard> createState() => _PropertyCardState();
+}
+
+class _PropertyCardState extends State<PropertyCard> {
+  bool _isSaved = false;
+
+  void _toggleSaved() {
+    setState(() => _isSaved = !_isSaved);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final property = widget.property;
+    final onTap = widget.onTap;
+    final displayDistanceKm = widget.displayDistanceKm;
+    final preferWalkingDistance = widget.preferWalkingDistance;
+
     final coverPhoto =
         property.photos.isNotEmpty
             ? property.photos.firstWhere(
@@ -33,107 +50,45 @@ class PropertyCard extends StatelessWidget {
             : (displayDistanceKm ?? property.straightLineDistanceKm);
 
     return RepaintBoundary(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
-        child: Container(
+      child: Container(
           margin: const EdgeInsets.only(bottom: 14),
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 14),
           decoration: BoxDecoration(
-            color: AppTheme.white,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppTheme.border),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
+                color: const Color(0xFF667085).withValues(alpha: 0.08),
                 blurRadius: 18,
                 offset: const Offset(0, 8),
               ),
             ],
           ),
-          child: Column(
+        child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: AppTheme.primaryLight,
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: const Icon(
-                        Icons.person_rounded,
-                        color: AppTheme.primary,
-                        size: 22,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            property.landlordName ?? 'Owner',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: AppTheme.dark,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          const Text(
-                            'Owner',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppTheme.gray,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (property.isPremium)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primary,
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: const Text(
-                          'Featured',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
+              _LandlordHeader(
+                name: property.landlordName ?? 'Owner',
+                isSaved: _isSaved,
+                onSaveTap: _toggleSaved,
               ),
               ClipRRect(
-                borderRadius: BorderRadius.circular(0),
+                borderRadius: BorderRadius.circular(8),
                 child: Stack(
                   children: [
                     SizedBox(
-                      height: 170,
+                      height: 150,
                       width: double.infinity,
                       child:
                           coverPhoto != null
                               ? CachedNetworkImage(
                                 imageUrl: coverPhoto.url,
                                 fit: BoxFit.cover,
-                                memCacheHeight: 340,
-                                maxHeightDiskCache: 680,
-                                fadeInDuration: const Duration(milliseconds: 100),
+                        memCacheHeight: 272,
+                        maxHeightDiskCache: 544,
+                                fadeInDuration: const Duration(
+                                  milliseconds: 100,
+                                ),
                                 placeholder:
                                     (_, __) => Container(
                                       color: AppTheme.primaryLight,
@@ -149,116 +104,301 @@ class PropertyCard extends StatelessWidget {
                               )
                               : const _PropertyImagePlaceholder(),
                     ),
-                    Positioned.fill(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              Colors.black.withValues(alpha: 0.12),
-                              Colors.black.withValues(alpha: 0.42),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
+                    const Positioned(
                       left: 10,
                       top: 10,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.34),
-                          borderRadius: BorderRadius.circular(999),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.38),
-                          ),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.star_rounded,
-                              color: Color(0xFFFFE34D),
-                              size: 15,
-                            ),
-                            SizedBox(width: 2),
-                            Text(
-                              '4',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
+                      child: _ImageBadge(
+                        icon: Icons.star_rounded,
+                        iconColor: Color(0xFFFFD426),
+                        label: '4.0',
                       ),
                     ),
                     Positioned(
                       right: 10,
-                      top: 10,
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.85),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(
-                          Icons.bookmark_add_outlined,
-                          color: AppTheme.gray,
-                          size: 18,
-                        ),
+                      bottom: 10,
+                      child: _ImageBadge(
+                        icon: Icons.image_outlined,
+                        iconColor: Colors.white,
+                        label:
+                            '${property.photos.isEmpty ? 0 : property.photos.length} photos',
                       ),
                     ),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.fromLTRB(8, 12, 4, 0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      property.title,
-                      style: const TextStyle(
-                        fontSize: 19,
-                        color: AppTheme.dark,
-                        fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: _PropertySummary(
+                        property: property,
+                        distanceKm: distanceKm,
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      property.minPrice != null
-                          ? 'K${property.minPrice!.toStringAsFixed(0)}/month'
-                          : 'Price on request',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: AppTheme.gray,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    if (distanceKm != null) ...[
-                      const SizedBox(height: 6),
-                      Text(
-                        '${distanceKm.toStringAsFixed(1)} km away',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: AppTheme.dark,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+                    const SizedBox(width: 8),
+                    _ViewDetailsButton(onTap: onTap),
                   ],
                 ),
               ),
             ],
+          ),
+      ),
+    );
+  }
+}
+
+class _LandlordHeader extends StatelessWidget {
+  const _LandlordHeader({
+    required this.name,
+    required this.isSaved,
+    required this.onSaveTap,
+  });
+
+  final String name;
+  final bool isSaved;
+  final VoidCallback onSaveTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppTheme.primaryLight,
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: const StudentNestIcon(
+              StudentNestIcons.profile,
+              color: AppTheme.primary,
+              size: 28,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          color: Color(0xFF111827),
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    const StudentNestIcon(
+                      StudentNestIcons.verified,
+                      color: AppTheme.primary,
+                      size: 15,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                const Text(
+                  'Owner',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF111827),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Material(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            child: InkWell(
+              onTap: onSaveTap,
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFE6EAF2)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF64748B).withValues(alpha: 0.10),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: StudentNestIcon(
+                  StudentNestIcons.save,
+                  color: isSaved ? AppTheme.primary : const Color(0xFF111827),
+                  size: 22,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ImageBadge extends StatelessWidget {
+  const _ImageBadge({
+    required this.icon,
+    required this.iconColor,
+    required this.label,
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.70),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: iconColor, size: 13),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PropertySummary extends StatelessWidget {
+  const _PropertySummary({required this.property, required this.distanceKm});
+
+  final Property property;
+  final double? distanceKm;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          property.title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Color(0xFF111827),
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 6),
+        RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text:
+                    property.minPrice != null
+                        ? 'K${property.minPrice!.toStringAsFixed(0)}'
+                        : 'Price',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: AppTheme.primary,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              TextSpan(
+                text: property.minPrice != null ? ' /month' : ' on request',
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: Color(0xFF111827),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (distanceKm != null) ...[
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              const StudentNestIcon(
+                StudentNestIcons.mapPin,
+                size: 15,
+                color: Color(0xFF4B5563),
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  '${distanceKm!.toStringAsFixed(1)} km away',
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF98A2B3),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _ViewDetailsButton extends StatelessWidget {
+  const _ViewDetailsButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppTheme.primaryLight,
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: const SizedBox(
+          height: 40,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 14),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'View Details',
+                  style: TextStyle(
+                    color: AppTheme.primary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                SizedBox(width: 12),
+                Icon(Icons.arrow_forward, color: AppTheme.primary, size: 16),
+              ],
+            ),
           ),
         ),
       ),
@@ -272,12 +412,12 @@ class _PropertyImagePlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 170,
+      height: 150,
       color: AppTheme.primaryLight,
       child: const Center(
-        child: Icon(
-          Icons.home_work_outlined,
-          size: 46,
+        child: StudentNestIcon(
+          StudentNestIcons.building,
+          size: 36,
           color: AppTheme.primary,
         ),
       ),

@@ -1,0 +1,45 @@
+<section class="panel view hidden" id="logsPanel">
+  <div class="panel-header stacked">
+    <div>
+      <h2>Admin logs</h2>
+      <p class="muted small">Audit trail for approvals, suspensions, deletions, and manual payments.</p>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" id="logSearch" placeholder="Search logs" />
+      <select id="logActionFilter">
+        <option value="all">All actions</option>
+        <option value="landlord_approved">Landlord approved</option>
+        <option value="landlord_suspended">Landlord suspended</option>
+        <option value="landlord_deleted">Landlord deleted</option>
+        <option value="property_approved">Property approved</option>
+        <option value="property_rejected">Property rejected</option>
+        <option value="property_deleted">Property deleted</option>
+        <option value="payment_recorded">Payment recorded</option>
+        <option value="admin_created">Admin created</option>
+      </select>
+      <select id="logEntityFilter">
+        <option value="all">All entities</option>
+        <option value="landlord">Landlords</option>
+        <option value="property">Properties</option>
+        <option value="payment">Payments</option>
+        <option value="admin">Admins</option>
+      </select>
+      <select id="logStatusFilter">
+        <option value="all">All statuses</option>
+        <option value="success">Success</option>
+        <option value="failed">Failed</option>
+      </select>
+      <input id="logDateFrom" type="date" aria-label="Date from" />
+      <input id="logDateTo" type="date" aria-label="Date to" />
+      <button class="ghost-button" id="clearLogFiltersButton" type="button">Clear</button>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Time</th><th>Admin</th><th>Action</th><th>Entity</th><th>Message</th><th>Status</th><th>Details</th></tr>
+      </thead>
+      <tbody id="logsBody"></tbody>
+    </table>
+  </div>
+</section>

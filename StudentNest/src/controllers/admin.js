@@ -1,5 +1,16 @@
 const { acceptsLanguages } = require('express/lib/request');
 const pool = require('../config/db');
+const { getAdminLogs, recordAdminLog } = require('../services/adminLogService');
+
+const ensureAdminAccessLevelColumn = async () => {
+  await pool.query(
+    `ALTER TABLE users
+     ADD COLUMN IF NOT EXISTS access_level VARCHAR(40)`
+  );
+};
+
+const isOwner = (user) =>
+  user?.role === 'admin' && user?.access_level === 'owner';
 
 // Get all landlords (pending and approved)
 const getLandlords = async (req, res) => {
@@ -44,6 +55,14 @@ const updateLandlordStatus = async (req, res) => {
       landlord: result.rows[0]
     });
 
+    await recordAdminLog(req, {
+      action: is_approved ? 'landlord_approved' : 'landlord_suspended',
+      entityType: 'landlord',
+      entityId: id,
+      message: is_approved ? 'Approved landlord account' : 'Suspended landlord account',
+      metadata: { landlord: result.rows[0] },
+    });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
@@ -61,11 +80,36 @@ const getProperties = async (req, res) => {
         u.full_name AS landlord_name,
         u.phone AS landlord_phone,
         s.name AS school_name,
-        COUNT(r.id) AS room_types
+        COALESCE(room_counts.room_types, 0) AS room_types,
+        COALESCE(photo_counts.photo_count, 0) AS photo_count,
+        COALESCE(photo_lists.photos, '[]') AS photos
       FROM properties p
       LEFT JOIN users u ON p.landlord_id = u.id
       LEFT JOIN schools s ON p.nearest_school_id = s.id
-      LEFT JOIN rooms r ON p.id = r.property_id
+      LEFT JOIN (
+        SELECT property_id, COUNT(*) AS room_types
+        FROM rooms
+        GROUP BY property_id
+      ) room_counts ON p.id = room_counts.property_id
+      LEFT JOIN (
+        SELECT property_id, COUNT(*) AS photo_count
+        FROM photos
+        GROUP BY property_id
+      ) photo_counts ON p.id = photo_counts.property_id
+      LEFT JOIN (
+        SELECT
+          property_id,
+          JSON_AGG(
+            JSON_BUILD_OBJECT(
+              'id', id,
+              'url', url,
+              'is_cover', is_cover
+            )
+            ORDER BY is_cover DESC, id ASC
+          ) AS photos
+        FROM photos
+        GROUP BY property_id
+      ) photo_lists ON p.id = photo_lists.property_id
     `;
 
     if (status === 'pending') {
@@ -74,7 +118,7 @@ const getProperties = async (req, res) => {
       query += ` WHERE p.is_approved = true`;
     }
 
-    query += ` GROUP BY p.id, u.full_name, u.phone, s.name ORDER BY p.created_at DESC`;
+    query += ` ORDER BY p.created_at DESC`;
 
     const result = await pool.query(query);
 
@@ -111,6 +155,14 @@ const updatePropertyStatus = async (req, res) => {
       property: result.rows[0]
     });
 
+    await recordAdminLog(req, {
+      action: is_approved ? 'property_approved' : 'property_rejected',
+      entityType: 'property',
+      entityId: id,
+      message: is_approved ? 'Approved property listing' : 'Rejected property listing',
+      metadata: { property: result.rows[0] },
+    });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
@@ -133,6 +185,14 @@ const deleteProperty = async (req, res) => {
 
     res.json({ message: 'Property deleted successfully' });
 
+    await recordAdminLog(req, {
+      action: 'property_deleted',
+      entityType: 'property',
+      entityId: id,
+      message: 'Deleted property listing',
+      metadata: { property: result.rows[0] },
+    });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
@@ -144,27 +204,46 @@ const getStats = async (req, res) => {
   try {
     const [
       totalLandlords,
+      approvedLandlords,
       pendingLandlords,
       totalProperties,
+      approvedProperties,
       pendingProperties,
       activeProperties,
+      totalPayments,
+      successfulPayments,
+      pendingPayments,
+      failedPayments,
       totalRevenue
     ] = await Promise.all([
       pool.query(`SELECT COUNT(*) FROM users WHERE role = 'landlord'`),
+      pool.query(`SELECT COUNT(*) FROM users WHERE role = 'landlord' AND is_approved = true`),
       pool.query(`SELECT COUNT(*) FROM users WHERE role = 'landlord' AND is_approved = false`),
+      pool.query(`SELECT COUNT(*) FROM properties`),
       pool.query(`SELECT COUNT(*) FROM properties WHERE is_approved = true`),
       pool.query(`SELECT COUNT(*) FROM properties WHERE is_approved = false`),
       pool.query(`SELECT COUNT(*) FROM properties WHERE is_approved = true AND is_active = true`),
+      pool.query(`SELECT COUNT(*) FROM payments`),
+      pool.query(`SELECT COUNT(*) FROM payments WHERE status = 'confirmed'`),
+      pool.query(`SELECT COUNT(*) FROM payments WHERE status = 'pending'`),
+      pool.query(`SELECT COUNT(*) FROM payments WHERE status = 'failed'`),
       pool.query(`SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'confirmed'`),
     ]);
 
     res.json({
       stats: {
         total_landlords: parseInt(totalLandlords.rows[0].count),
+        approved_landlords: parseInt(approvedLandlords.rows[0].count),
         pending_landlords: parseInt(pendingLandlords.rows[0].count),
         total_properties: parseInt(totalProperties.rows[0].count),
+        approved_properties: parseInt(approvedProperties.rows[0].count),
         pending_properties: parseInt(pendingProperties.rows[0].count),
+        rejected_properties: 0,
         active_properties: parseInt(activeProperties.rows[0].count),
+        total_payments: parseInt(totalPayments.rows[0].count),
+        successful_payments: parseInt(successfulPayments.rows[0].count),
+        pending_payments: parseInt(pendingPayments.rows[0].count),
+        failed_payments: parseInt(failedPayments.rows[0].count),
         total_revenue: parseFloat(totalRevenue.rows[0].total),
       }
     });
@@ -176,10 +255,18 @@ const getStats = async (req, res) => {
 
 // Create admin account
 const createAdmin = async (req, res) => {
-  const { full_name, phone, email, password } = req.body;
+  const { full_name, phone, email, password, access_level } = req.body;
   const bcrypt = require('bcryptjs');
 
   try {
+    if (!isOwner(req.user)) {
+      return res.status(403).json({
+        message: 'Only owner admins can create admin accounts'
+      });
+    }
+
+    await ensureAdminAccessLevelColumn();
+
     const existing = await pool.query(
       'SELECT id FROM users WHERE phone = $1', [phone]
     );
@@ -189,17 +276,26 @@ const createAdmin = async (req, res) => {
     }
 
     const password_hash = await bcrypt.hash(password, 10);
+    const normalizedAccessLevel = access_level === 'owner' ? 'owner' : 'manager';
 
     const result = await pool.query(
-      `INSERT INTO users (full_name, phone, email, password_hash, role, is_approved)
-       VALUES ($1, $2, $3, $4, 'admin', true)
-       RETURNING id, full_name, phone, email, role`,
-      [full_name, phone, email, password_hash]
+      `INSERT INTO users (full_name, phone, email, password_hash, role, is_approved, access_level)
+       VALUES ($1, $2, $3, $4, 'admin', true, $5)
+       RETURNING id, full_name, phone, email, role, access_level`,
+      [full_name, phone, email, password_hash, normalizedAccessLevel]
     );
 
     res.status(201).json({
       message: 'Admin created successfully',
       admin: result.rows[0]
+    });
+
+    await recordAdminLog(req, {
+      action: 'admin_created',
+      entityType: 'admin',
+      entityId: result.rows[0].id,
+      message: 'Created admin account',
+      metadata: { admin: result.rows[0] },
     });
 
   } catch (err) {
@@ -231,6 +327,14 @@ const updateLandlord = async (req, res) => {
     }
 
     res.json({ landlord: result.rows[0] });
+
+    await recordAdminLog(req, {
+      action: 'landlord_updated',
+      entityType: 'landlord',
+      entityId: id,
+      message: 'Updated landlord details',
+      metadata: { changes: req.body, landlord: result.rows[0] },
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
@@ -249,6 +353,13 @@ const resetLandlordPassword = async (req, res) => {
       [password_hash, id]
     );
     res.json({ message: 'Password reset successfully' });
+
+    await recordAdminLog(req, {
+      action: 'landlord_password_reset',
+      entityType: 'landlord',
+      entityId: id,
+      message: 'Reset landlord password',
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
@@ -265,6 +376,13 @@ const deleteLandlord = async (req, res) => {
       [id, 'landlord']
     );
     res.json({ message: 'Landlord deleted successfully' });
+
+    await recordAdminLog(req, {
+      action: 'landlord_deleted',
+      entityType: 'landlord',
+      entityId: id,
+      message: 'Deleted landlord account',
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
@@ -293,23 +411,101 @@ const recordPayment = async (req, res) => {
     property_id,
     amount,
     payment_method,
+    mobile_money_provider,
+    bank_name,
     payment_reference,
     duration_months,
     status
   } = req.body;
 
   try {
+    if (!property_id || !amount) {
+      return res.status(400).json({
+        message: 'Property and amount are required'
+      });
+    }
+
+    const propertyCheck = await pool.query(
+      `SELECT id, landlord_id FROM properties WHERE id = $1`,
+      [property_id]
+    );
+
+    if (propertyCheck.rows.length === 0) {
+      return res.status(400).json({
+        message: 'Selected property was not found'
+      });
+    }
+
+    const resolvedLandlordId = propertyCheck.rows[0].landlord_id;
+
+    if (landlord_id && landlord_id !== resolvedLandlordId) {
+      return res.status(400).json({
+        message: 'Selected property does not belong to the selected landlord'
+      });
+    }
+
     const paid_at = new Date();
     const expires_at = new Date();
     expires_at.setMonth(expires_at.getMonth() + (duration_months || 12));
 
+    await pool.query(
+      `ALTER TABLE payments
+       ADD COLUMN IF NOT EXISTS payment_reference TEXT,
+       ADD COLUMN IF NOT EXISTS mobile_money_provider VARCHAR(40),
+       ADD COLUMN IF NOT EXISTS bank_name VARCHAR(120),
+       ADD COLUMN IF NOT EXISTS duration_months INTEGER,
+       ADD COLUMN IF NOT EXISTS expires_at TIMESTAMP`
+    );
+
+    const columnsResult = await pool.query(
+      `SELECT column_name
+       FROM information_schema.columns
+       WHERE table_name = 'payments'`
+    );
+    const paymentColumns = new Set(
+      columnsResult.rows.map((row) => row.column_name)
+    );
+
+    const valuesByColumn = {
+      landlord_id: resolvedLandlordId,
+      property_id,
+      amount,
+      payment_method,
+      mobile_money_provider: payment_method === 'mobile_money' ? mobile_money_provider : null,
+      bank_name: payment_method === 'bank_transfer' ? bank_name : null,
+      payment_reference,
+      reference: payment_reference,
+      transaction_reference: payment_reference,
+      duration_months: duration_months || 12,
+      status: status || 'confirmed',
+      paid_at,
+      expires_at,
+    };
+
+    const insertColumns = [
+      'landlord_id',
+      'property_id',
+      'amount',
+      'payment_method',
+      'mobile_money_provider',
+      'bank_name',
+      'payment_reference',
+      'reference',
+      'transaction_reference',
+      'duration_months',
+      'status',
+      'paid_at',
+      'expires_at',
+    ].filter((column) => paymentColumns.has(column));
+
+    const insertValues = insertColumns.map((column) => valuesByColumn[column]);
+    const placeholders = insertColumns.map((_, index) => `$${index + 1}`);
+
     const result = await pool.query(
-      `INSERT INTO payments
-        (landlord_id, property_id, amount, payment_method, payment_reference, status, paid_at, expires_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `INSERT INTO payments (${insertColumns.join(', ')})
+       VALUES (${placeholders.join(', ')})
        RETURNING *`,
-      [landlord_id, property_id, amount, payment_method,
-       payment_reference, status || 'confirmed', paid_at, expires_at]
+      insertValues
     );
 
     await pool.query(
@@ -318,6 +514,312 @@ const recordPayment = async (req, res) => {
     );
 
     res.status(201).json({ payment: result.rows[0] });
+
+    await recordAdminLog(req, {
+      action: 'payment_recorded',
+      entityType: 'payment',
+      entityId: result.rows[0].id,
+      message: 'Recorded manual payment',
+      metadata: {
+        payment: result.rows[0],
+        property_id,
+        landlord_id: resolvedLandlordId,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const getAdminProfile = async (req, res) => {
+  try {
+    await ensureAdminAccessLevelColumn();
+    const result = await pool.query(
+      `SELECT id, full_name, phone, email, role, access_level, created_at
+       FROM users
+       WHERE id = $1 AND role = 'admin'`,
+      [req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Admin profile not found' });
+    }
+
+    res.json({ admin: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const updateAdminProfile = async (req, res) => {
+  const { full_name, email } = req.body;
+
+  try {
+    await ensureAdminAccessLevelColumn();
+    const result = await pool.query(
+      `UPDATE users
+       SET full_name = COALESCE($1, full_name),
+           email = COALESCE($2, email)
+       WHERE id = $3 AND role = 'admin'
+       RETURNING id, full_name, phone, email, role, access_level, created_at`,
+      [full_name, email, req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Admin profile not found' });
+    }
+
+    res.json({ admin: result.rows[0] });
+
+    await recordAdminLog(req, {
+      action: 'admin_profile_updated',
+      entityType: 'admin',
+      entityId: req.user.id,
+      message: 'Updated own admin profile',
+      metadata: { admin: result.rows[0] },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const getAdmins = async (req, res) => {
+  try {
+    await ensureAdminAccessLevelColumn();
+    const result = await pool.query(
+      `SELECT id, full_name, phone, email, role, access_level, is_approved, created_at
+       FROM users
+       WHERE role = 'admin'
+       ORDER BY created_at DESC`
+    );
+
+    res.json({
+      count: result.rows.length,
+      admins: result.rows,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const getAdminDetails = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await ensureAdminAccessLevelColumn();
+
+    const canViewStats = isOwner(req.user) || String(req.user.id) === String(id);
+    if (!canViewStats) {
+      return res.status(403).json({
+        message: 'Only owner admins can view other admins stats'
+      });
+    }
+
+    const adminResult = await pool.query(
+      `SELECT id, full_name, phone, email, role, access_level, is_approved, created_at
+       FROM users
+       WHERE id = $1 AND role = 'admin'`,
+      [id]
+    );
+
+    if (adminResult.rows.length === 0) {
+      return res.status(404).json({ message: 'Admin not found' });
+    }
+
+    await pool.query(
+      `CREATE TABLE IF NOT EXISTS admin_logs (
+        id BIGSERIAL PRIMARY KEY,
+        admin_id UUID,
+        admin_access_level VARCHAR(40),
+        action VARCHAR(80) NOT NULL,
+        entity_type VARCHAR(80) NOT NULL,
+        entity_id TEXT,
+        status VARCHAR(40) DEFAULT 'success',
+        message TEXT,
+        metadata JSONB DEFAULT '{}'::jsonb,
+        ip_address TEXT,
+        user_agent TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      )`
+    );
+
+    const [
+      totalActions,
+      actionBreakdown,
+      entityBreakdown,
+      dailyActivity,
+      recentActions
+    ] = await Promise.all([
+      pool.query(
+        `SELECT COUNT(*)::int AS count
+         FROM admin_logs
+         WHERE admin_id = $1`,
+        [id]
+      ),
+      pool.query(
+        `SELECT action, COUNT(*)::int AS count
+         FROM admin_logs
+         WHERE admin_id = $1
+         GROUP BY action
+         ORDER BY count DESC, action ASC`,
+        [id]
+      ),
+      pool.query(
+        `SELECT entity_type, COUNT(*)::int AS count
+         FROM admin_logs
+         WHERE admin_id = $1
+         GROUP BY entity_type
+         ORDER BY count DESC, entity_type ASC`,
+        [id]
+      ),
+      pool.query(
+        `SELECT DATE(created_at) AS day, COUNT(*)::int AS count
+         FROM admin_logs
+         WHERE admin_id = $1
+           AND created_at >= NOW() - INTERVAL '30 days'
+         GROUP BY DATE(created_at)
+         ORDER BY day DESC
+         LIMIT 30`,
+        [id]
+      ),
+      pool.query(
+        `SELECT action, entity_type, entity_id, message, status, created_at
+         FROM admin_logs
+         WHERE admin_id = $1
+         ORDER BY created_at DESC
+         LIMIT 8`,
+        [id]
+      ),
+    ]);
+
+    res.json({
+      admin: adminResult.rows[0],
+      stats: {
+        total_actions: totalActions.rows[0].count,
+        action_breakdown: actionBreakdown.rows,
+        entity_breakdown: entityBreakdown.rows,
+        daily_activity: dailyActivity.rows,
+        payments_recorded:
+          actionBreakdown.rows.find((row) => row.action === 'payment_recorded')?.count || 0,
+        properties_approved:
+          actionBreakdown.rows.find((row) => row.action === 'property_approved')?.count || 0,
+        properties_rejected:
+          actionBreakdown.rows.find((row) => row.action === 'property_rejected')?.count || 0,
+        landlords_approved:
+          actionBreakdown.rows.find((row) => row.action === 'landlord_approved')?.count || 0,
+        landlords_suspended:
+          actionBreakdown.rows.find((row) => row.action === 'landlord_suspended')?.count || 0,
+        destructive_actions: actionBreakdown.rows
+          .filter((row) => row.action.includes('deleted') || row.action.includes('suspended') || row.action.includes('rejected'))
+          .reduce((sum, row) => sum + Number(row.count || 0), 0),
+        recent_actions: recentActions.rows,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const updateAdminAccess = async (req, res) => {
+  const { id } = req.params;
+  const { access_level } = req.body;
+
+  try {
+    if (!isOwner(req.user)) {
+      return res.status(403).json({
+        message: 'Only owner admins can update admin access'
+      });
+    }
+
+    await ensureAdminAccessLevelColumn();
+
+    const normalizedAccessLevel = access_level === 'owner' ? 'owner' : 'manager';
+    const result = await pool.query(
+      `UPDATE users
+       SET access_level = $1
+       WHERE id = $2 AND role = 'admin'
+       RETURNING id, full_name, phone, email, role, access_level, created_at`,
+      [normalizedAccessLevel, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Admin not found' });
+    }
+
+    res.json({ admin: result.rows[0] });
+
+    await recordAdminLog(req, {
+      action: 'admin_access_updated',
+      entityType: 'admin',
+      entityId: id,
+      message: `Updated admin access to ${normalizedAccessLevel}`,
+      metadata: { admin: result.rows[0] },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const deleteAdmin = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    if (!isOwner(req.user)) {
+      return res.status(403).json({
+        message: 'Only owner admins can delete admin accounts'
+      });
+    }
+
+    await ensureAdminAccessLevelColumn();
+
+    const target = await pool.query(
+      `SELECT id, full_name, access_level
+       FROM users
+       WHERE id = $1 AND role = 'admin'`,
+      [id]
+    );
+
+    if (target.rows.length === 0) {
+      return res.status(404).json({ message: 'Admin not found' });
+    }
+
+    if (target.rows[0].access_level === 'owner') {
+      return res.status(403).json({ message: 'Owner admin cannot be deleted' });
+    }
+
+    await pool.query(
+      `DELETE FROM users WHERE id = $1 AND role = 'admin'`,
+      [id]
+    );
+
+    res.json({ message: 'Admin deleted successfully' });
+
+    await recordAdminLog(req, {
+      action: 'admin_deleted',
+      entityType: 'admin',
+      entityId: id,
+      message: 'Deleted admin account',
+      metadata: { admin: target.rows[0] },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const getLogs = async (req, res) => {
+  try {
+    const logs = await getAdminLogs(req.query);
+    res.json({
+      count: logs.length,
+      logs,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
@@ -336,5 +838,12 @@ module.exports = {
   resetLandlordPassword,
   deleteLandlord,
   getPayments,
-  recordPayment
+  recordPayment,
+  getLogs,
+  getAdminProfile,
+  updateAdminProfile,
+  getAdmins,
+  getAdminDetails,
+  updateAdminAccess,
+  deleteAdmin
 };

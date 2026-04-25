@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../models/property.dart';
+import '../../../utils/student_nest_icons.dart';
 import '../../../utils/theme.dart';
 
 class PropertyIntroSection extends StatelessWidget {
@@ -54,8 +55,8 @@ class PropertyIntroSection extends StatelessWidget {
         if (distanceKm != null) const SizedBox(height: 8),
         Row(
           children: [
-            const Icon(
-              Icons.location_on_outlined,
+            const StudentNestIcon(
+              StudentNestIcons.mapPin,
               size: 16,
               color: AppTheme.gray,
             ),
@@ -103,7 +104,11 @@ class PropertyIntroSection extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.school_outlined, size: 14, color: AppTheme.primary),
+          const StudentNestIcon(
+            StudentNestIcons.university,
+            size: 14,
+            color: AppTheme.primary,
+          ),
           const SizedBox(width: 4),
           Text(
             walkingDistanceKm != null

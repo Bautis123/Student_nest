@@ -1,0 +1,45 @@
+<section class="view hidden" id="accountsPanel">
+  <div class="accounts-grid">
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <h2>My admin profile</h2>
+          <p class="muted small">This profile personalizes your admin workspace and audit trail.</p>
+        </div>
+        <button class="ghost-button" id="editProfileButton" type="button">Edit profile</button>
+      </div>
+      <div class="profile-card-body" id="adminProfileCard"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <h2>Admin accounts</h2>
+          <p class="muted small">View and add trusted people who can manage Student Nest.</p>
+        </div>
+        <button class="action-button compact" id="createAdminButton" type="button">Add admin</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Admin</th><th>Contact</th><th>Access</th><th>Status</th><th>Created</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="adminsBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="view hidden" id="adminStatsPanel">
+  <section class="panel">
+    <div class="panel-header">
+      <div>
+        <h2 id="adminStatsTitle">Admin stats</h2>
+        <p class="muted small" id="adminStatsSubtitle">Checks and balances for this admin account.</p>
+      </div>
+      <button class="ghost-button" type="button" data-tab="accounts">Back to accounts</button>
+    </div>
+    <div class="admin-stats-page" id="adminStatsPage"></div>
+  </section>
+</section>

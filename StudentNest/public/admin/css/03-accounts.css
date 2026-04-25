@@ -1,0 +1,89 @@
+﻿.overview-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
+  gap: 14px;
+}
+
+.accounts-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.78fr) minmax(0, 1.22fr);
+  gap: 14px;
+}
+
+.profile-card-body {
+  display: grid;
+  gap: 18px;
+  padding: 18px;
+}
+
+.profile-hero,
+.admin-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-account-card {
+  display: grid;
+  width: 100%;
+  grid-template-columns: auto minmax(160px, 1.1fr) minmax(160px, 1fr) minmax(180px, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid transparent;
+  border-radius: 18px;
+  background: transparent;
+  padding: 8px;
+  color: inherit;
+  text-align: left;
+}
+
+.admin-account-card:not(:disabled):hover {
+  border-color: var(--border);
+  background: var(--soft);
+}
+
+.admin-account-card:disabled {
+  cursor: default;
+  opacity: 0.78;
+}
+
+.admin-account-main strong {
+  color: var(--primary);
+}
+
+.admin-card-badges,
+.admin-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-card-actions span {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  padding: 8px 11px;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.admin-card-actions .danger {
+  border-color: rgba(220, 58, 51, 0.2);
+  color: var(--danger);
+}
+
+.link-button {
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  padding: 0;
+  text-align: left;
+  font-weight: 900;
+}
+
+.profile-hero h3 {
+  margin-bottom: 2px;
+  font-size: 22px;
+}
+

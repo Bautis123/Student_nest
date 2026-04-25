@@ -1,0 +1,126 @@
+﻿.photo-section {
+  display: grid;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.photo-section h3 {
+  margin-bottom: 0;
+  font-size: 16px;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.photo-tile {
+  position: relative;
+  overflow: hidden;
+  min-height: 150px;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--soft);
+}
+
+.photo-tile button {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.photo-tile img {
+  display: block;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.photo-tile figcaption {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.78);
+  color: #fff;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.photo-viewer {
+  width: 100vw;
+  max-width: none;
+  height: 100vh;
+  max-height: none;
+  border: 0;
+  background: rgba(5, 10, 20, 0.94);
+  padding: 0;
+}
+
+.photo-viewer::backdrop {
+  background: rgba(5, 10, 20, 0.72);
+}
+
+.photo-viewer img {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  max-width: min(92vw, 1200px);
+  max-height: 82vh;
+  transform: translate(-50%, -50%);
+  border-radius: 16px;
+  object-fit: contain;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+.viewer-close,
+.viewer-nav {
+  position: absolute;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  padding: 10px 14px;
+  font-weight: 900;
+}
+
+.viewer-close {
+  top: 18px;
+  right: 18px;
+}
+
+.viewer-prev {
+  left: 18px;
+  top: 50%;
+}
+
+.viewer-next {
+  right: 18px;
+  top: 50%;
+}
+
+.viewer-caption {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+  color: #fff;
+  text-align: center;
+  font-weight: 850;
+}
+
+.empty-photo-state {
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+  background: var(--soft);
+  color: var(--muted);
+  padding: 18px;
+  text-align: center;
+  font-weight: 800;
+}
+

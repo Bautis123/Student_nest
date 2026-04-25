@@ -1,0 +1,186 @@
+﻿.panel {
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.panel-header.stacked {
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.search-input {
+  min-width: min(280px, 100%);
+}
+
+.activity-list,
+.quick-actions {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+}
+
+.activity-item {
+  display: grid;
+  gap: 4px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--soft);
+  padding: 12px;
+}
+
+.activity-item strong {
+  font-size: 14px;
+}
+
+.activity-item span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.quick-actions button {
+  display: grid;
+  gap: 4px;
+  border-radius: 16px;
+  padding: 14px;
+  text-align: left;
+}
+
+.quick-actions span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.integration-note {
+  margin: 16px 16px 0;
+  border: 1px solid rgba(27, 130, 241, 0.18);
+  border-radius: 16px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 860px;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 14px 16px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+td {
+  font-size: 14px;
+  font-weight: 650;
+}
+
+tr:last-child td {
+  border-bottom: 0;
+}
+
+.meta-stack {
+  display: grid;
+  gap: 4px;
+}
+
+.meta-stack span,
+.hint-list {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.badge.approved,
+.badge.confirmed,
+.badge.success {
+  background: rgba(23, 166, 88, 0.1);
+  color: var(--success);
+}
+
+.badge.pending {
+  background: rgba(255, 139, 44, 0.12);
+  color: var(--warning);
+}
+
+.badge.rejected,
+.badge.failed,
+.badge.inactive {
+  background: rgba(220, 58, 51, 0.1);
+  color: var(--danger);
+}
+
+.badge.owner {
+  background: rgba(27, 130, 241, 0.12);
+  color: var(--primary-dark);
+}
+
+.badge.manager {
+  background: rgba(102, 112, 133, 0.12);
+  color: var(--muted);
+}
+
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.row-actions button {
+  border-radius: 999px;
+  padding: 8px 11px;
+  font-size: 12px;
+}
+
+.row-actions .danger {
+  border-color: rgba(220, 58, 51, 0.2);
+  color: var(--danger);
+}
+
+.row-actions .primary {
+  border-color: rgba(27, 130, 241, 0.28);
+  color: var(--primary);
+}
+
+.empty-state,
+.loading-state,

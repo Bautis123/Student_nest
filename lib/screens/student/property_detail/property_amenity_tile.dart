@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import '../../../utils/student_nest_icons.dart';
 import '../../../utils/theme.dart';
 
 class PropertyAmenityTile extends StatelessWidget {
   final String label;
-  final IconData icon;
+  final IconData? icon;
+  final String? assetIcon;
   final bool available;
 
   const PropertyAmenityTile({
     super.key,
     required this.label,
-    required this.icon,
+    this.icon,
+    this.assetIcon,
     required this.available,
-  });
+  }) : assert(icon != null || assetIcon != null);
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +33,17 @@ class PropertyAmenityTile extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 16,
-            color: available ? AppTheme.primary : AppTheme.gray,
-          ),
+          assetIcon != null
+              ? StudentNestIcon(
+                assetIcon!,
+                size: 16,
+                color: available ? AppTheme.primary : AppTheme.gray,
+              )
+              : Icon(
+                icon,
+                size: 16,
+                color: available ? AppTheme.primary : AppTheme.gray,
+              ),
           const SizedBox(width: 6),
           Text(
             label,

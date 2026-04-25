@@ -1,0 +1,66 @@
+<div class="toast hidden" id="toast"></div>
+
+<dialog class="modal" id="confirmModal">
+  <form method="dialog" class="modal-card">
+    <h2 id="confirmTitle">Confirm action</h2>
+    <p class="muted" id="confirmMessage"></p>
+    <label class="hidden" id="reasonField">
+      Admin note or reason
+      <textarea id="reasonInput" rows="4" placeholder="Add a short reason for the audit trail"></textarea>
+    </label>
+    <div class="modal-actions">
+      <button class="ghost-button" value="cancel" type="submit">Cancel</button>
+      <button class="action-button" id="confirmActionButton" value="confirm" type="submit">Confirm</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="modal" id="detailModal">
+  <div class="modal-card detail-card">
+    <div class="modal-heading">
+      <h2 id="detailTitle">Details</h2>
+      <button class="ghost-button" id="closeDetailButton" type="button">Close</button>
+    </div>
+    <div id="detailContent"></div>
+  </div>
+</dialog>
+
+<dialog class="modal" id="profileModal">
+  <form class="modal-card" id="profileForm">
+    <div class="modal-heading">
+      <h2>Edit admin profile</h2>
+      <button class="ghost-button" id="closeProfileModal" type="button">Close</button>
+    </div>
+    <label>Full name <input id="profileNameInput" name="full_name" required /></label>
+    <label>Email <input id="profileEmailInput" name="email" type="email" /></label>
+    <p class="muted small">Phone number is used for login and is not editable here.</p>
+    <div class="modal-actions">
+      <button class="ghost-button" type="button" id="cancelProfileButton">Cancel</button>
+      <button class="action-button" type="submit">Save profile</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="modal" id="adminAccountModal">
+  <form class="modal-card" id="adminAccountForm">
+    <div class="modal-heading">
+      <h2>Add admin account</h2>
+      <button class="ghost-button" id="closeAdminAccountModal" type="button">Close</button>
+    </div>
+    <label>Full name <input name="full_name" required /></label>
+    <label>Phone number <input name="phone" required /></label>
+    <label>Email <input name="email" type="email" /></label>
+    <label>Temporary password <input name="password" type="password" minlength="6" required /></label>
+    <label>
+      Access level
+      <select name="access_level">
+        <option value="manager">Manager access</option>
+        <option value="owner">Full owner access</option>
+      </select>
+    </label>
+    <div class="modal-actions">
+      <button class="ghost-button" type="button" id="cancelAdminAccountButton">Cancel</button>
+      <button class="action-button" type="submit">Create admin</button>
+    </div>
+  </form>
+</dialog>

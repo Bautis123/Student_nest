@@ -1,0 +1,73 @@
+﻿@media (max-width: 980px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    height: auto;
+  }
+
+  .side-nav {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .side-link {
+    text-align: center;
+  }
+
+  .overview-grid,
+  .accounts-grid,
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .shell {
+    padding: 14px;
+  }
+
+  .login-view {
+    min-height: calc(100vh - 28px);
+  }
+
+  .login-panel,
+  .topbar,
+  .sidebar {
+    padding: 16px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .side-nav,
+  .overview-grid,
+  .accounts-grid,
+  .admin-stats-grid,
+  .admin-summary-grid,
+  .stats-grid,
+  .photo-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-account-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .admin-card-badges,
+  .admin-card-actions {
+    grid-column: 1 / -1;
+  }
+
+  .toolbar {
+    display: grid;
+  }
+
+  .search-input,
+  select {
+    width: 100%;
+  }
+}

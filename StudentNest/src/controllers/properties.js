@@ -99,7 +99,9 @@ const getProperties = async (req, res) => {
       ) lp ON true
       LEFT JOIN photos ph ON p.id = ph.property_id
       LEFT JOIN rooms r ON p.id = r.property_id
-      WHERE p.is_approved = true AND p.is_active = true
+      WHERE p.is_approved = true
+        AND p.is_active = true
+        AND (p.listing_expires_at IS NULL OR p.listing_expires_at > NOW())
     `;
 
     const params = [];
@@ -178,7 +180,10 @@ const getPropertyById = async (req, res) => {
          ORDER BY pm.paid_at DESC NULLS LAST
          LIMIT 1
        ) lp ON true
-       WHERE p.id = $1 AND p.is_approved = true`,
+       WHERE p.id = $1
+         AND p.is_approved = true
+         AND p.is_active = true
+         AND (p.listing_expires_at IS NULL OR p.listing_expires_at > NOW())`,
       [id]
     );
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../models/property.dart';
+import '../../../utils/student_nest_icons.dart';
 import '../../../utils/theme.dart';
 import 'property_amenity_tile.dart';
 import 'property_room_row.dart';
@@ -30,22 +31,22 @@ class PropertyAmenitiesSection extends StatelessWidget {
           children: [
             PropertyAmenityTile(
               label: 'WiFi',
-              icon: Icons.wifi,
+              assetIcon: StudentNestIcons.wifi,
               available: property.amenities['wifi'] == true,
             ),
             PropertyAmenityTile(
               label: 'Water',
-              icon: Icons.water_drop_outlined,
+              assetIcon: StudentNestIcons.utilities,
               available: property.amenities['water'] == true,
             ),
             PropertyAmenityTile(
               label: 'Electricity',
-              icon: Icons.bolt_outlined,
+              assetIcon: StudentNestIcons.utilities,
               available: property.amenities['electricity'] == true,
             ),
             PropertyAmenityTile(
               label: 'Security',
-              icon: Icons.security_outlined,
+              assetIcon: StudentNestIcons.safety,
               available: property.amenities['security'] == true,
             ),
           ],

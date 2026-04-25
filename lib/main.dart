@@ -1,4 +1,3 @@
-import 'screens/admin_main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'utils/theme.dart';
@@ -83,11 +82,6 @@ class _SplashRouterState extends State<SplashRouter> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const LandlordMainScreen()),
-      );
-    } else if (user.role == 'admin') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const AdminMainScreen()),
       );
     } else {
       Navigator.pushReplacement(

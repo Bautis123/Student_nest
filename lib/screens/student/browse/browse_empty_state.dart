@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../utils/student_nest_icons.dart';
 import '../../../utils/theme.dart';
 
 class BrowseEmptyState extends StatelessWidget {
@@ -10,7 +11,11 @@ class BrowseEmptyState extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.home_work_outlined, size: 48, color: AppTheme.gray),
+          StudentNestIcon(
+            StudentNestIcons.building,
+            size: 48,
+            color: AppTheme.gray,
+          ),
           SizedBox(height: 12),
           Text('No listings found', style: TextStyle(color: AppTheme.gray)),
         ],

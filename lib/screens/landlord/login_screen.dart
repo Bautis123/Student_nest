@@ -1,4 +1,3 @@
-import '../admin_main_screen.dart';
 import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
 import '../../utils/theme.dart';
@@ -46,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
           if (role == 'admin') {
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (_) => const AdminMainScreen()),
+              MaterialPageRoute(builder: (_) => const LandlordMainScreen()),
               (route) => false,
             );
           } else {

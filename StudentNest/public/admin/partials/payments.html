@@ -1,0 +1,38 @@
+<section class="panel view hidden" id="paymentsPanel">
+  <div class="panel-header stacked">
+    <div>
+      <h2>Payments management</h2>
+      <p class="muted small">Track listing payments and manual verification work.</p>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" id="paymentSearch" placeholder="Search payments" />
+      <select id="paymentStatusFilter">
+        <option value="all">All statuses</option>
+        <option value="confirmed">Confirmed</option>
+        <option value="pending">Pending</option>
+        <option value="failed">Failed</option>
+      </select>
+      <button class="action-button compact" id="recordPaymentButton" type="button">Record payment</button>
+    </div>
+  </div>
+  <div class="integration-note">
+    Payment records may come from mobile money, bank transfer, cash/manual confirmation, or future gateway integrations.
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Payer</th>
+          <th>Property</th>
+          <th>Amount</th>
+          <th>Method</th>
+          <th>Reference</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="paymentsBody"></tbody>
+    </table>
+  </div>
+</section>

@@ -109,11 +109,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onOpenLandlordDashboard: _openLandlordDashboard,
               ),
             ),
-          if (_user?.role == 'admin')
-            SettingsSection(
-              title: 'Admin Options',
-              tiles: SettingsTileGroups.admin(),
-            ),
           SettingsSection(
             title: 'Support',
             tiles: SettingsTileGroups.support(),

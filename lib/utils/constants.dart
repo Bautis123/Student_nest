@@ -1,6 +1,6 @@
 class AppConstants {
   // API base URL - points to your local backend for now
-  static const String baseUrl = 'http://192.168.66.17:5000/api';
+  static const String baseUrl = 'http://192.168.60.17:5000/api';
 
   // App info
   static const String appName = 'Student Nest';

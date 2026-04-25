@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/student_nest_icons.dart';
+
 class SettingsTileIcon extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
+  final String? assetIcon;
   final Color iconColor;
 
   const SettingsTileIcon({
     super.key,
-    required this.icon,
+    this.icon,
+    this.assetIcon,
     required this.iconColor,
-  });
+  }) : assert(icon != null || assetIcon != null);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +23,10 @@ class SettingsTileIcon extends StatelessWidget {
         color: iconColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Icon(icon, color: iconColor, size: 18),
+      child:
+          assetIcon != null
+              ? StudentNestIcon(assetIcon!, color: iconColor, size: 18)
+              : Icon(icon, color: iconColor, size: 18),
     );
   }
 }

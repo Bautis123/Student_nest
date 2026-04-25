@@ -1,0 +1,59 @@
+<dialog class="modal" id="paymentModal">
+  <form class="modal-card" id="paymentForm">
+    <div class="modal-heading">
+      <h2>Record manual payment</h2>
+      <button class="ghost-button" id="closePaymentModal" type="button">Close</button>
+    </div>
+    <label>Landlord <select id="paymentLandlordInput" name="landlord_id" required></select></label>
+    <label>Property <select id="paymentPropertyInput" name="property_id" required></select></label>
+    <label>Amount paid <input id="paymentAmountInput" name="amount" type="number" min="1" step="0.01" required /></label>
+    <label>
+      Payment method
+      <select id="paymentMethodInput" name="payment_method" required>
+        <option value="mobile_money">Mobile money</option>
+        <option value="bank_transfer">Bank transfer</option>
+        <option value="cash">Cash</option>
+        <option value="other">Other</option>
+      </select>
+    </label>
+    <label id="mobileProviderField">
+      Mobile money provider
+      <select name="mobile_money_provider">
+        <option value="mtn">MTN Mobile Money</option>
+        <option value="airtel">Airtel Money</option>
+        <option value="zamtel">Zamtel Kwacha</option>
+      </select>
+    </label>
+    <label id="bankNameField" class="hidden">Bank name <input name="bank_name" placeholder="Bank name" /></label>
+    <label id="paymentReferenceField">Reference <input id="paymentReferenceInput" name="payment_reference" required /></label>
+    <label>
+      Listing duration
+      <select name="duration_months">
+        <option value="1">1 month</option>
+        <option value="3">3 months</option>
+        <option value="6">6 months</option>
+        <option value="12" selected>12 months</option>
+      </select>
+    </label>
+    <label>
+      Status
+      <select name="status">
+        <option value="confirmed" selected>Confirmed</option>
+        <option value="pending">Pending review</option>
+        <option value="failed">Failed</option>
+      </select>
+    </label>
+    <div class="modal-actions">
+      <button class="ghost-button" type="button" id="cancelPaymentButton">Cancel</button>
+      <button class="action-button" type="submit">Save payment</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="photo-viewer" id="photoViewer">
+  <button class="viewer-close" id="closePhotoViewer" type="button">Close</button>
+  <button class="viewer-nav viewer-prev" id="prevPhotoButton" type="button">Previous</button>
+  <img id="photoViewerImage" alt="Listing photo full screen" />
+  <button class="viewer-nav viewer-next" id="nextPhotoButton" type="button">Next</button>
+  <div class="viewer-caption" id="photoViewerCaption"></div>
+</dialog>
