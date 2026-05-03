@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/property.dart';
@@ -7,11 +8,8 @@ import '../../utils/theme.dart';
 import '../../widgets/app_header_background.dart';
 import 'property_detail/photo_gallery_screen.dart';
 import 'property_detail/property_action_bar.dart';
-import 'property_detail/property_cover_app_bar.dart';
 import 'property_detail/property_detail_sections.dart';
 import 'property_detail/property_intro_section.dart';
-import 'property_detail/property_landlord_card.dart';
-import 'property_detail/property_photos_section.dart';
 import 'property_detail/property_route_actions.dart';
 
 class PropertyDetailScreen extends StatefulWidget {
@@ -93,13 +91,12 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
   void _viewAllPhotos() {
     final p = _property!;
-    final otherPhotos = p.photos.where((ph) => !ph.isCover).toList();
-    if (otherPhotos.isEmpty) return;
+    if (p.photos.isEmpty) return;
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => PhotoGalleryScreen(photos: otherPhotos, title: p.title),
+        builder: (_) => PhotoGalleryScreen(photos: p.photos, title: p.title),
       ),
     );
   }
@@ -130,52 +127,232 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
               orElse: () => p.photos.first,
             )
             : null;
-    final otherPhotos =
-        p.photos.where((ph) => ph.id != coverPhoto?.id).toList();
+    final photoCount = p.photos.length;
 
     return Scaffold(
       backgroundColor: AppTheme.lightGray,
-      body: CustomScrollView(
-        slivers: [
-          PropertyCoverAppBar(coverPhoto: coverPhoto),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
+      body: Stack(
+        children: [
+          const _SoftBackground(),
+          Positioned.fill(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                16,
+                MediaQuery.paddingOf(context).top + 52,
+                16,
+                190,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  PropertyIntroSection(
-                    property: p,
-                    walkingDistanceKm: _walkingDistanceKm,
+                  const _TopButtons(),
+                  const SizedBox(height: 20),
+                  _PropertyPhotoHero(
+                    coverPhoto: coverPhoto,
+                    photoCount: photoCount,
+                    onTap: p.photos.isNotEmpty ? _viewAllPhotos : null,
                   ),
-                  if (otherPhotos.isNotEmpty) ...[
-                    const SizedBox(height: 20),
-                    PropertyPhotosSection(
-                      photos: otherPhotos,
-                      onViewAll: _viewAllPhotos,
+                  const SizedBox(height: 14),
+                  _DetailCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        PropertyIntroSection(
+                          property: p,
+                          walkingDistanceKm: _walkingDistanceKm,
+                        ),
+                        const SizedBox(height: 22),
+                        PropertyAmenitiesSection(property: p),
+                        if (p.rooms.isNotEmpty) ...[
+                          const SizedBox(height: 24),
+                          PropertyRoomsSection(property: p),
+                        ],
+                      ],
                     ),
-                  ],
-                  const SizedBox(height: 20),
-                  PropertyAmenitiesSection(property: p),
-                  if (p.rooms.isNotEmpty) ...[
-                    const SizedBox(height: 20),
-                    PropertyRoomsSection(property: p),
-                  ],
-                  const SizedBox(height: 20),
-                  PropertyLandlordCard(property: p),
-                  const SizedBox(height: 100),
+                  ),
                 ],
               ),
             ),
           ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: PropertyActionBar(
+              onOpenMaps: _openInMaps,
+              onOpenYango: _openInYango,
+              onCall: _callLandlord,
+              landlordName: p.landlordName ?? 'Landlord',
+            ),
+          ),
         ],
       ),
-      bottomNavigationBar: PropertyActionBar(
-        onOpenMaps: _openInMaps,
-        onOpenYango: _openInYango,
-        onCall: _callLandlord,
-        landlordName: p.landlordName ?? 'Landlord',
+    );
+  }
+}
+
+class _SoftBackground extends StatelessWidget {
+  const _SoftBackground();
+
+  @override
+  Widget build(BuildContext context) {
+    return const ColoredBox(
+      color: AppTheme.lightGray,
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: SizedBox(height: 260, child: AppHeaderBackground()),
       ),
+    );
+  }
+}
+
+class _TopButtons extends StatelessWidget {
+  const _TopButtons();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _RoundIconButton(
+          icon: Icons.arrow_back_ios_new_rounded,
+          onTap: () => Navigator.pop(context),
+        ),
+        _RoundIconButton(icon: Icons.favorite_border_rounded, onTap: () {}),
+      ],
+    );
+  }
+}
+
+class _RoundIconButton extends StatelessWidget {
+  const _RoundIconButton({required this.icon, required this.onTap});
+
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      elevation: 0,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: SizedBox(
+          width: 48,
+          height: 48,
+          child: Icon(icon, color: AppTheme.dark, size: 22),
+        ),
+      ),
+    );
+  }
+}
+
+class _PropertyPhotoHero extends StatelessWidget {
+  const _PropertyPhotoHero({
+    required this.coverPhoto,
+    required this.photoCount,
+    this.onTap,
+  });
+
+  final Photo? coverPhoto;
+  final int photoCount;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 1.56,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Material(
+          color: AppTheme.primaryLight,
+          child: InkWell(
+            onTap: onTap,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (coverPhoto != null)
+                  CachedNetworkImage(
+                    imageUrl: coverPhoto!.url,
+                    fit: BoxFit.cover,
+                    placeholder:
+                        (_, __) => Container(color: AppTheme.primaryLight),
+                    errorWidget: (_, __, ___) => const _PhotoFallback(),
+                  )
+                else
+                  const _PhotoFallback(),
+                Positioned(
+                  right: 16,
+                  bottom: 16,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.68),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.65),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.image_outlined,
+                          color: Colors.white,
+                          size: 17,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '$photoCount photo${photoCount == 1 ? '' : 's'}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PhotoFallback extends StatelessWidget {
+  const _PhotoFallback();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Icon(Icons.home_work_outlined, size: 64, color: AppTheme.primary),
+    );
+  }
+}
+
+class _DetailCard extends StatelessWidget {
+  const _DetailCard({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 18, 16, 18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppTheme.border),
+      ),
+      child: child,
     );
   }
 }

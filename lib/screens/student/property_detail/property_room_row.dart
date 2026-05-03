@@ -13,28 +13,34 @@ class PropertyRoomRow extends StatelessWidget {
     final isFull = room.availableRooms == 0;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: isFull ? const Color(0xFFFFF5F5) : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color:
-              isFull
-                  ? AppTheme.error.withValues(alpha: 0.3)
-                  : AppTheme.border,
-        ),
+      padding: const EdgeInsets.symmetric(vertical: 13),
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: AppTheme.border)),
       ),
       child: Row(
         children: [
           Expanded(child: _details(isFull)),
-          Text(
-            'K${room.pricePerMonth.toStringAsFixed(0)}/mo',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: isFull ? AppTheme.gray : AppTheme.primary,
+          const SizedBox(width: 8),
+          Flexible(
+            flex: 0,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                'K${room.pricePerMonth.toStringAsFixed(0)}/mo',
+                maxLines: 1,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: isFull ? AppTheme.gray : AppTheme.primary,
+                ),
+              ),
             ),
+          ),
+          const SizedBox(width: 4),
+          Icon(
+            Icons.chevron_right_rounded,
+            color: isFull ? AppTheme.gray : AppTheme.primary,
+            size: 24,
           ),
         ],
       ),
@@ -47,9 +53,17 @@ class PropertyRoomRow extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(
-              room.roomType[0].toUpperCase() + room.roomType.substring(1),
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+            Flexible(
+              child: Text(
+                room.roomType[0].toUpperCase() + room.roomType.substring(1),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: AppTheme.dark,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
             ),
             const SizedBox(width: 8),
             AppStatusBadge(
@@ -57,16 +71,16 @@ class PropertyRoomRow extends StatelessWidget {
               color: isFull ? AppTheme.error : AppTheme.success,
               fontSize: 10,
               horizontalPadding: 7,
-              verticalPadding: 2,
+              verticalPadding: 3,
               radius: 10,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w700,
             ),
           ],
         ),
-        const SizedBox(height: 3),
+        const SizedBox(height: 4),
         Text(
           '${room.studentsPerRoom} student${room.studentsPerRoom > 1 ? 's' : ''} per room',
-          style: const TextStyle(fontSize: 12, color: AppTheme.gray),
+          style: const TextStyle(fontSize: 13, color: Color(0xFF8A94A6)),
         ),
       ],
     );

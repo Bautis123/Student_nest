@@ -26,15 +26,19 @@ class PropertyIntroSection extends StatelessWidget {
             Expanded(
               child: Text(
                 property.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  height: 1.2,
+                  fontWeight: FontWeight.w800,
                   color: AppTheme.dark,
                 ),
               ),
             ),
+            const SizedBox(width: 8),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
               decoration: BoxDecoration(
                 color: AppTheme.success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
@@ -44,39 +48,43 @@ class PropertyIntroSection extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11,
                   color: AppTheme.success,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 14),
         if (distanceKm != null) _distanceBadge(distanceKm),
-        if (distanceKm != null) const SizedBox(height: 8),
+        if (distanceKm != null) const SizedBox(height: 16),
         Row(
           children: [
             const StudentNestIcon(
               StudentNestIcons.mapPin,
-              size: 16,
-              color: AppTheme.gray,
+              size: 17,
+              color: Color(0xFFA0A8B8),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 8),
             Expanded(
               child: Text(
                 property.address,
-                style: const TextStyle(color: AppTheme.gray, fontSize: 13),
+                style: const TextStyle(
+                  color: Color(0xFF8A94A6),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
         ),
         if (property.description != null &&
             property.description!.isNotEmpty) ...[
-          const SizedBox(height: 20),
+          const SizedBox(height: 22),
           const Text(
             'About',
             style: TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
               color: AppTheme.dark,
             ),
           ),
@@ -85,7 +93,7 @@ class PropertyIntroSection extends StatelessWidget {
             property.description!,
             style: const TextStyle(
               fontSize: 13,
-              color: AppTheme.gray,
+              color: Color(0xFF697386),
               height: 1.6,
             ),
           ),
@@ -96,28 +104,32 @@ class PropertyIntroSection extends StatelessWidget {
 
   Widget _distanceBadge(double distanceKm) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: AppTheme.primaryLight,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
           const StudentNestIcon(
             StudentNestIcons.university,
-            size: 14,
+            size: 16,
             color: AppTheme.primary,
           ),
-          const SizedBox(width: 4),
-          Text(
-            walkingDistanceKm != null
-                ? '${distanceKm.toStringAsFixed(2)} km walk to ${property.schoolName ?? 'UNZA'}'
-                : '${distanceKm.toStringAsFixed(2)} km straight-line from ${property.schoolName ?? 'UNZA'}',
-            style: const TextStyle(
-              fontSize: 12,
-              color: AppTheme.primary,
-              fontWeight: FontWeight.w500,
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              walkingDistanceKm != null
+                  ? '${distanceKm.toStringAsFixed(2)} km walk to ${property.schoolName ?? 'UNZA'}'
+                  : '${distanceKm.toStringAsFixed(2)} km from ${property.schoolName ?? 'UNZA'}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppTheme.primary,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],

@@ -20,14 +20,14 @@ class PropertyAmenitiesSection extends StatelessWidget {
           'Amenities',
           style: TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
             color: AppTheme.dark,
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 14),
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: 10,
+          runSpacing: 10,
           children: [
             PropertyAmenityTile(
               label: 'WiFi',
@@ -72,11 +72,11 @@ class PropertyRoomsSection extends StatelessWidget {
           'Room Types',
           style: TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
             color: AppTheme.dark,
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 14),
         ...property.rooms.map((room) => PropertyRoomRow(room: room)),
       ],
     );
