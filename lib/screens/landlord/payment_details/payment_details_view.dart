@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../utils/app_design.dart';
 import '../../../utils/theme.dart';
-import '../../../widgets/app_header_background.dart';
 import '../../../widgets/app_surface_card.dart';
 import '../payment_pending/payment_pending_screen.dart';
 import 'payment_details_state.dart';
@@ -30,12 +30,13 @@ class PaymentDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.lightGray,
+      backgroundColor: AppDesign.page(context),
       appBar: AppBar(
         title: const Text('Payment Details'),
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppDesign.surface(context),
+        foregroundColor: AppDesign.text(context),
         surfaceTintColor: Colors.transparent,
-        flexibleSpace: const AppHeaderBackground(),
+        scrolledUnderElevation: 0,
       ),
       body: Column(
         children: [

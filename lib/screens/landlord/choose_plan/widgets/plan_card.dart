@@ -59,7 +59,7 @@ class PlanCard extends StatelessWidget {
             ...features.map(
               (item) => Padding(
                 padding: const EdgeInsets.only(bottom: 10),
-                child: PlanFeatureTile(text: item, premium: premium),
+                child: PlanFeatureTile(text: item),
               ),
             ),
             const SizedBox(height: 6),
@@ -96,39 +96,13 @@ class PlanCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.dark,
-              ),
-            ),
-            if (premium)
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFF7ED),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: const Color(0xFFFCD34D)),
-                ),
-                child: const Text(
-                  'Premium badge',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFFB45309),
-                  ),
-                ),
-              ),
-          ],
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.dark,
+          ),
         ),
         const SizedBox(height: 8),
         Text(
@@ -175,12 +149,12 @@ class PlanCard extends StatelessWidget {
         ),
       ),
       child: Text(
-        isSelected ? 'Selected' : 'Tap to choose',
+        isSelected ? 'Selected' : 'Select $title',
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: isSelected ? Colors.white : AppTheme.dark,
+          color: isSelected ? Colors.white : AppTheme.primary,
         ),
       ),
     );

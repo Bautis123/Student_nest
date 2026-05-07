@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../models/property.dart';
 import '../../services/api_service.dart';
+import '../../utils/app_design.dart';
 import '../../utils/theme.dart';
-import '../../widgets/app_header_background.dart';
 import 'manage_listing/manage_listing_details_tab.dart';
 import 'manage_listing/manage_listing_photos_tab.dart';
 import 'manage_listing/manage_listing_rooms_tab.dart';
@@ -112,21 +112,21 @@ class _ManageListingScreenState extends State<ManageListingScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.lightGray,
+      backgroundColor: AppDesign.page(context),
       appBar: AppBar(
         title: Text(
           _property.title,
-          style: const TextStyle(fontSize: 16),
+          style: TextStyle(fontSize: 16, color: AppDesign.text(context)),
           overflow: TextOverflow.ellipsis,
         ),
-        backgroundColor: Colors.transparent,
-        foregroundColor: AppTheme.dark,
+        backgroundColor: AppDesign.surface(context),
+        foregroundColor: AppDesign.text(context),
         surfaceTintColor: Colors.transparent,
-        flexibleSpace: const AppHeaderBackground(),
         elevation: 0,
+        scrolledUnderElevation: 0,
         actions: [
           PopupMenuButton<Object?>(
-            icon: const Icon(Icons.more_vert, color: AppTheme.dark),
+            icon: Icon(Icons.more_vert, color: AppDesign.text(context)),
             onSelected: _handleMenuAction,
             itemBuilder: (_) => [
               PopupMenuItem(
@@ -162,9 +162,9 @@ class _ManageListingScreenState extends State<ManageListingScreen>
         ],
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: AppTheme.primary,
-          labelColor: AppTheme.primary,
-          unselectedLabelColor: AppTheme.gray,
+          indicatorColor: AppDesign.accent,
+          labelColor: AppDesign.accent,
+          unselectedLabelColor: AppDesign.muted(context),
           tabs: const [
             Tab(text: 'Details'),
             Tab(text: 'Photos'),
@@ -174,22 +174,37 @@ class _ManageListingScreenState extends State<ManageListingScreen>
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : TabBarView(
-              controller: _tabController,
-              children: [
-                ManageListingDetailsTab(
-                  property: _property,
-                  onUpdated: _loadFullProperty,
+          : Theme(
+              data: Theme.of(context).copyWith(
+                inputDecorationTheme:
+                    Theme.of(context).inputDecorationTheme.copyWith(
+                  prefixIconColor: AppDesign.subtle(context),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(18),
+                    borderSide: const BorderSide(
+                      color: AppDesign.accent,
+                      width: 1.4,
+                    ),
+                  ),
                 ),
-                ManageListingPhotosTab(
-                  property: _property,
-                  onUpdated: _loadFullProperty,
-                ),
-                ManageListingRoomsTab(
-                  property: _property,
-                  onUpdated: _loadFullProperty,
-                ),
-              ],
+              ),
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  ManageListingDetailsTab(
+                    property: _property,
+                    onUpdated: _loadFullProperty,
+                  ),
+                  ManageListingPhotosTab(
+                    property: _property,
+                    onUpdated: _loadFullProperty,
+                  ),
+                  ManageListingRoomsTab(
+                    property: _property,
+                    onUpdated: _loadFullProperty,
+                  ),
+                ],
+              ),
             ),
     );
   }

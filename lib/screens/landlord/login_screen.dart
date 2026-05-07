@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
-import '../../utils/theme.dart';
+import '../../utils/app_design.dart';
 import '../landlord_main_screen.dart';
 import 'widgets/login_screen_content.dart';
 
@@ -69,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.lightGray,
+      backgroundColor: AppDesign.page(context),
       body: LoginScreenContent(
         phoneController: _phoneController,
         passwordController: _passwordController,

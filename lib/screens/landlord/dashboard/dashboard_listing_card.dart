@@ -1,6 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../models/property.dart';
-import '../../../utils/theme.dart';
+import '../../../utils/app_design.dart';
 import '../../../widgets/app_status_badge.dart';
 import '../../../widgets/app_surface_card.dart';
 
@@ -16,32 +17,42 @@ class DashboardListingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isApproved = property.isApproved;
+    final status = _listingStatus(property);
+    final address = _sentenceCase(property.address);
+    final coverPhoto =
+        property.photos.isNotEmpty
+            ? property.photos.firstWhere(
+              (p) => p.isCover,
+              orElse: () => property.photos.first,
+            )
+            : null;
 
     return GestureDetector(
       onTap: onTap,
       child: AppSurfaceCard(
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(14),
-        radius: 14,
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        radius: 22,
         showShadow: true,
         child: Row(
           children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF9CCDFF), AppTheme.primary],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(
-                Icons.home_work_outlined,
-                color: Colors.white,
-                size: 22,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: SizedBox(
+                width: 52,
+                height: 52,
+                child:
+                    coverPhoto != null
+                        ? CachedNetworkImage(
+                          imageUrl: coverPhoto.url,
+                          fit: BoxFit.cover,
+                          placeholder:
+                              (_, __) => const _ListingThumbnailPlaceholder(),
+                          errorWidget:
+                              (_, __, ___) =>
+                                  const _ListingThumbnailPlaceholder(),
+                        )
+                        : const _ListingThumbnailPlaceholder(),
               ),
             ),
             const SizedBox(width: 12),
@@ -49,65 +60,141 @@ class DashboardListingCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    property.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: AppTheme.dark,
-                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          property.title,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 14,
+                            color: AppDesign.text(context),
+                            height: 1.25,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      AppStatusBadge(
+                        label: status.label,
+                        color: status.color,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 4),
                   Text(
-                    property.address,
-                    style: const TextStyle(fontSize: 12, color: AppTheme.gray),
+                    address,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppDesign.muted(context),
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(
-                        Icons.visibility_outlined,
-                        size: 12,
-                        color: AppTheme.gray,
-                      ),
-                      const SizedBox(width: 3),
-                      Text(
-                        '${property.viewCount} views',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: AppTheme.gray,
-                        ),
+                      _MetricText(
+                        icon: Icons.visibility_outlined,
+                        value: property.viewCount,
+                        label: 'views',
                       ),
                       const SizedBox(width: 10),
-                      const Icon(
-                        Icons.phone_outlined,
-                        size: 12,
-                        color: AppTheme.gray,
-                      ),
-                      const SizedBox(width: 3),
-                      Text(
-                        '${property.contactClickCount} clicks',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: AppTheme.gray,
-                        ),
+                      _MetricText(
+                        icon: Icons.phone_outlined,
+                        value: property.contactClickCount,
+                        label: 'clicks',
                       ),
                     ],
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 8),
-            AppStatusBadge(
-              label: isApproved ? 'Active' : 'Pending',
-              color: isApproved ? AppTheme.success : AppTheme.warning,
-            ),
           ],
         ),
       ),
     );
   }
+
+  String _sentenceCase(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return trimmed;
+    return trimmed[0].toUpperCase() + trimmed.substring(1);
+  }
+
+  _ListingStatus _listingStatus(Property property) {
+    final expiresAt = property.listingExpiresAt;
+    final parsed = expiresAt == null ? null : DateTime.tryParse(expiresAt);
+    final isExpired =
+        !property.isActive ||
+        (parsed != null && parsed.isBefore(DateTime.now()));
+
+    if (!property.isApproved) {
+      return const _ListingStatus('Pending', Color(0xFFF59E0B));
+    }
+    if (isExpired) {
+      return const _ListingStatus('Expired', Color(0xFF64748B));
+    }
+    return const _ListingStatus('Active', AppDesign.accent);
+  }
 }
 
+class _MetricText extends StatelessWidget {
+  const _MetricText({
+    required this.icon,
+    required this.value,
+    required this.label,
+  });
+
+  final IconData icon;
+  final int value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final color =
+        value == 0
+            ? AppDesign.muted(context).withValues(alpha: 0.55)
+            : AppDesign.muted(context);
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 12, color: color),
+        const SizedBox(width: 3),
+        Text(
+          '$value $label',
+          style: TextStyle(
+            fontSize: 11,
+            color: color,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ListingStatus {
+  const _ListingStatus(this.label, this.color);
+
+  final String label;
+  final Color color;
+}
+
+class _ListingThumbnailPlaceholder extends StatelessWidget {
+  const _ListingThumbnailPlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: AppDesign.accentTint(context),
+      child: const Icon(
+        Icons.home_work_outlined,
+        color: AppDesign.accent,
+        size: 29,
+      ),
+    );
+  }
+}

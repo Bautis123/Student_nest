@@ -4,9 +4,14 @@ import '../../../utils/student_nest_icons.dart';
 import '../../../utils/theme.dart';
 
 class BrowseFilterButton extends StatelessWidget {
-  const BrowseFilterButton({super.key, required this.onTap});
+  const BrowseFilterButton({
+    super.key,
+    required this.onTap,
+    this.foregroundColor = AppTheme.primary,
+  });
 
   final VoidCallback onTap;
+  final Color foregroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -32,19 +37,19 @@ class BrowseFilterButton extends StatelessWidget {
               ),
             ],
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               StudentNestIcon(
                 StudentNestIcons.filter,
                 size: 17,
-                color: AppTheme.primary,
+                color: foregroundColor,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 'Filters',
                 style: TextStyle(
-                  color: AppTheme.primary,
+                  color: foregroundColor,
                   fontSize: 13,
                   fontWeight: FontWeight.w800,
                 ),

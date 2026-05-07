@@ -4,8 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../services/api_service.dart';
 import '../../utils/constants.dart';
-import '../../utils/theme.dart';
-import '../../widgets/app_header_background.dart';
+import '../../utils/app_design.dart';
 import 'add_listing/add_listing_success_dialog.dart';
 import 'add_listing/widgets/add_listing_action_bar.dart';
 import 'add_listing/widgets/add_listing_error_banner.dart';
@@ -233,89 +232,119 @@ class _AddListingScreenState extends State<AddListingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.lightGray,
+      backgroundColor: AppDesign.page(context),
       appBar: AppBar(
         title: const Text('Add Listing'),
-        backgroundColor: Colors.transparent,
-        foregroundColor: AppTheme.dark,
+        backgroundColor: AppDesign.surface(context),
+        foregroundColor: AppDesign.text(context),
         surfaceTintColor: Colors.transparent,
-        flexibleSpace: const AppHeaderBackground(),
         elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: LinearProgressIndicator(
-            value: (_currentPage + 1) / 3,
-            backgroundColor: AppTheme.primary.withValues(alpha: 0.18),
-            valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primary),
-          ),
+        centerTitle: true,
+        titleTextStyle: TextStyle(
+          color: AppDesign.text(context),
+          fontSize: 18,
+          fontWeight: FontWeight.w800,
         ),
       ),
-      body: Column(
-        children: [
-          AddListingStepHeader(currentPage: _currentPage),
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                AddListingDetailsPage(
-                  titleController: _titleController,
-                  addressController: _addressController,
-                  descriptionController: _descriptionController,
-                  schools: _schools,
-                  selectedSchoolId: _selectedSchoolId,
-                  hasWifi: _hasWifi,
-                  hasWater: _hasWater,
-                  hasElectricity: _hasElectricity,
-                  hasSecurity: _hasSecurity,
-                  onSchoolChanged: (value) => setState(() => _selectedSchoolId = value),
-                  onWifiChanged: (value) => setState(() => _hasWifi = value),
-                  onWaterChanged: (value) => setState(() => _hasWater = value),
-                  onElectricityChanged: (value) => setState(() => _hasElectricity = value),
-                  onSecurityChanged: (value) => setState(() => _hasSecurity = value),
-                ),
-                AddListingLocationPage(
-                  selectedLocation: _selectedLocation,
-                  isLoading: _isLoading,
-                  onUseMyLocation: _useMyLocation,
-                  onMapCreated: (controller) => _mapController = controller,
-                  onLocationSelected: (location) {
-                    setState(() => _selectedLocation = location);
-                  },
-                ),
-                AddListingRoomsPage(
-                  rooms: _rooms,
-                  roomTypes: _roomTypes,
-                  onAddRoom: () => setState(() => _rooms.add(_createDefaultRoom())),
-                  onRemoveRoom: (index) => setState(() => _rooms.removeAt(index)),
-                  onRoomTypeChanged: (index, value) {
-                    setState(() => _rooms[index]['room_type'] = value);
-                  },
-                  onPriceChanged: (index, value) {
-                    _rooms[index]['price_per_month'] = value;
-                  },
-                  onStudentsChanged: (index, value) {
-                    setState(() => _rooms[index]['students_per_room'] = value);
-                  },
-                  onTotalRoomsChanged: (index, value) {
-                    setState(() {
-                      _rooms[index]['total_rooms'] = value;
-                      _rooms[index]['available_rooms'] = value;
-                    });
-                  },
-                ),
-              ],
+      body: Theme(
+        data: Theme.of(context).copyWith(
+          inputDecorationTheme: InputDecorationTheme(
+            filled: true,
+            fillColor: AppDesign.surface(context),
+            hintStyle: TextStyle(color: AppDesign.subtle(context)),
+            labelStyle: TextStyle(color: AppDesign.muted(context)),
+            prefixIconColor: AppDesign.muted(context),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 15,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: AppDesign.border(context)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: AppDesign.border(context)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: AppDesign.accent, width: 1.4),
             ),
           ),
-          AddListingErrorBanner(message: _error),
-          AddListingActionBar(
-            currentPage: _currentPage,
-            isLoading: _isLoading,
-            onBack: _prevPage,
-            onNext: _nextPage,
-            onSubmit: _submitListing,
-          ),
-        ],
+        ),
+        child: Column(
+          children: [
+            AddListingStepHeader(currentPage: _currentPage),
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  AddListingDetailsPage(
+                    titleController: _titleController,
+                    addressController: _addressController,
+                    descriptionController: _descriptionController,
+                    schools: _schools,
+                    selectedSchoolId: _selectedSchoolId,
+                    hasWifi: _hasWifi,
+                    hasWater: _hasWater,
+                    hasElectricity: _hasElectricity,
+                    hasSecurity: _hasSecurity,
+                    onSchoolChanged:
+                        (value) => setState(() => _selectedSchoolId = value),
+                    onWifiChanged: (value) => setState(() => _hasWifi = value),
+                    onWaterChanged:
+                        (value) => setState(() => _hasWater = value),
+                    onElectricityChanged:
+                        (value) => setState(() => _hasElectricity = value),
+                    onSecurityChanged:
+                        (value) => setState(() => _hasSecurity = value),
+                  ),
+                  AddListingLocationPage(
+                    selectedLocation: _selectedLocation,
+                    isLoading: _isLoading,
+                    onUseMyLocation: _useMyLocation,
+                    onMapCreated: (controller) => _mapController = controller,
+                    onLocationSelected: (location) {
+                      setState(() => _selectedLocation = location);
+                    },
+                  ),
+                  AddListingRoomsPage(
+                    rooms: _rooms,
+                    roomTypes: _roomTypes,
+                    onAddRoom:
+                        () => setState(() => _rooms.add(_createDefaultRoom())),
+                    onRemoveRoom:
+                        (index) => setState(() => _rooms.removeAt(index)),
+                    onRoomTypeChanged: (index, value) {
+                      setState(() => _rooms[index]['room_type'] = value);
+                    },
+                    onPriceChanged: (index, value) {
+                      _rooms[index]['price_per_month'] = value;
+                    },
+                    onStudentsChanged: (index, value) {
+                      setState(() => _rooms[index]['students_per_room'] = value);
+                    },
+                    onTotalRoomsChanged: (index, value) {
+                      setState(() {
+                        _rooms[index]['total_rooms'] = value;
+                        _rooms[index]['available_rooms'] = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            AddListingErrorBanner(message: _error),
+            AddListingActionBar(
+              currentPage: _currentPage,
+              isLoading: _isLoading,
+              onBack: _prevPage,
+              onNext: _nextPage,
+              onSubmit: _submitListing,
+            ),
+          ],
+        ),
       ),
     );
   }

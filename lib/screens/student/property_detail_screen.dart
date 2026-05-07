@@ -4,8 +4,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../models/property.dart';
 import '../../services/api_service.dart';
 import '../../services/route_service.dart';
+import '../../utils/app_design.dart';
 import '../../utils/theme.dart';
-import '../../widgets/app_header_background.dart';
 import 'property_detail/photo_gallery_screen.dart';
 import 'property_detail/property_action_bar.dart';
 import 'property_detail/property_detail_sections.dart';
@@ -111,9 +111,10 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Property'),
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppDesign.surface(context),
+          foregroundColor: AppDesign.text(context),
           surfaceTintColor: Colors.transparent,
-          flexibleSpace: const AppHeaderBackground(),
+          scrolledUnderElevation: 0,
         ),
         body: const Center(child: Text('Property not found')),
       );
@@ -196,10 +197,7 @@ class _SoftBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return const ColoredBox(
       color: AppTheme.lightGray,
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: SizedBox(height: 260, child: AppHeaderBackground()),
-      ),
+      child: SizedBox.expand(),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../models/property.dart';
 import '../../../services/api_service.dart';
+import '../../../utils/app_design.dart';
 import '../../../utils/theme.dart';
 import 'widgets/manage_listing_cover_photo_card.dart';
 import 'widgets/manage_listing_empty_photos.dart';
@@ -106,18 +107,18 @@ class _ManageListingPhotosTabState extends State<ManageListingPhotosTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Cover Photo',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: AppTheme.dark,
+              color: AppDesign.text(context),
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'This is the main photo students see on listing cards',
-            style: TextStyle(fontSize: 12, color: AppTheme.gray),
+            style: TextStyle(fontSize: 12, color: AppDesign.muted(context)),
           ),
           const SizedBox(height: 12),
           ManageListingCoverPhotoCard(
@@ -129,12 +130,12 @@ class _ManageListingPhotosTabState extends State<ManageListingPhotosTab> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'All Photos',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: AppTheme.dark,
+                  color: AppDesign.text(context),
                 ),
               ),
               ElevatedButton.icon(
@@ -154,16 +155,22 @@ class _ManageListingPhotosTabState extends State<ManageListingPhotosTab> {
                   style: const TextStyle(fontSize: 12),
                 ),
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: AppDesign.accent,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
                   minimumSize: const Size(0, 36),
                   padding: const EdgeInsets.symmetric(horizontal: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Tap a photo to set it as cover',
-            style: TextStyle(fontSize: 12, color: AppTheme.gray),
+            style: TextStyle(fontSize: 12, color: AppDesign.muted(context)),
           ),
           const SizedBox(height: 12),
           if (otherPhotos.isEmpty && coverPhoto == null)

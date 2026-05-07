@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/theme.dart';
+import '../../../../utils/app_design.dart';
 
 class ListingCounter extends StatelessWidget {
   const ListingCounter({
@@ -27,10 +27,10 @@ class ListingCounter extends StatelessWidget {
         const SizedBox(width: 12),
         Text(
           '$value',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: AppTheme.dark,
+            color: AppDesign.text(context),
           ),
         ),
         const SizedBox(width: 12),
@@ -57,10 +57,10 @@ class _CounterButton extends StatelessWidget {
         width: 30,
         height: 30,
         decoration: BoxDecoration(
-          color: AppTheme.primaryLight,
+          color: AppDesign.accentTint(context),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(icon, size: 16, color: AppTheme.primary),
+        child: Icon(icon, size: 16, color: AppDesign.accent),
       ),
     );
   }

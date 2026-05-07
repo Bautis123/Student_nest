@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/theme.dart';
+import '../../../../utils/app_design.dart';
 
 class ManageListingEmptyPhotos extends StatelessWidget {
   const ManageListingEmptyPhotos({super.key});
@@ -10,26 +10,29 @@ class ManageListingEmptyPhotos extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppDesign.surface(context),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.border),
       ),
-      child: const Center(
+      child: Center(
         child: Column(
           children: [
-            Icon(Icons.photo_library_outlined, size: 48, color: AppTheme.gray),
-            SizedBox(height: 12),
+            Icon(
+              Icons.photo_library_outlined,
+              size: 48,
+              color: AppDesign.lightMuted,
+            ),
+            const SizedBox(height: 12),
             Text(
               'No photos yet',
               style: TextStyle(
-                color: AppTheme.gray,
+                color: AppDesign.muted(context),
                 fontWeight: FontWeight.w500,
               ),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               'Tap Add Photos to upload',
-              style: TextStyle(color: AppTheme.gray, fontSize: 12),
+              style: TextStyle(color: AppDesign.muted(context), fontSize: 12),
             ),
           ],
         ),

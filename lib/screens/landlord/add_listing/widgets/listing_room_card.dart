@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/theme.dart';
+import '../../../../utils/app_design.dart';
+import '../../../../widgets/app_surface_card.dart';
 import 'listing_counter.dart';
 
 class ListingRoomCard extends StatelessWidget {
@@ -29,14 +30,10 @@ class ListingRoomCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AppSurfaceCard(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.border),
-      ),
+      radius: 22,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -45,16 +42,20 @@ class ListingRoomCard extends StatelessWidget {
             children: [
               Text(
                 'Room Type ${index + 1}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
                   fontSize: 14,
-                  color: AppTheme.dark,
+                  color: AppDesign.text(context),
                 ),
               ),
               if (canRemove)
                 GestureDetector(
                   onTap: onRemove,
-                  child: const Icon(Icons.close, size: 18, color: AppTheme.gray),
+                  child: Icon(
+                    Icons.close,
+                    size: 18,
+                    color: AppDesign.muted(context),
+                  ),
                 ),
             ],
           ),
@@ -129,7 +130,10 @@ class _CounterField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12, color: AppTheme.gray)),
+        Text(
+          label,
+          style: TextStyle(fontSize: 12, color: AppDesign.muted(context)),
+        ),
         const SizedBox(height: 6),
         child,
       ],

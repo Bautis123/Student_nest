@@ -3,24 +3,30 @@ import '../../../../utils/theme.dart';
 
 class PlanFeatureTile extends StatelessWidget {
   final String text;
-  final bool premium;
 
-  const PlanFeatureTile({super.key, required this.text, required this.premium});
+  const PlanFeatureTile({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: premium ? const Color(0xFFFFFBEB) : AppTheme.lightGray,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.border),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 13, color: AppTheme.dark),
-      ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(top: 2),
+          child: Icon(Icons.check_circle, size: 18, color: AppTheme.primary),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppTheme.dark,
+              height: 1.35,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

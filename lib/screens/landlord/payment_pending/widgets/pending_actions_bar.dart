@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../utils/app_design.dart';
 
 class PendingActionsBar extends StatelessWidget {
   final VoidCallback onCheckStatus;
@@ -26,6 +27,10 @@ class PendingActionsBar extends StatelessWidget {
           width: double.infinity,
           child: OutlinedButton(
             onPressed: onCancel,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppDesign.muted(context),
+              side: BorderSide(color: AppDesign.border(context)),
+            ),
             child: const Text('Cancel'),
           ),
         ),

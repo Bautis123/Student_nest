@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/app_design.dart';
+
 class SettingsSection extends StatelessWidget {
   final String title;
   final List<Widget> tiles;
@@ -8,29 +10,23 @@ class SettingsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 18, 16, 8),
+          padding: const EdgeInsets.fromLTRB(16, 18, 16, 9),
           child: Text(
             title,
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w700,
-              color: theme.textTheme.titleLarge?.color,
+              color: AppDesign.text(context),
             ),
           ),
         ),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: theme.cardColor,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: theme.dividerColor),
-          ),
+          decoration: AppDesign.surfaceDecoration(context),
           child: Column(children: tiles),
         ),
       ],

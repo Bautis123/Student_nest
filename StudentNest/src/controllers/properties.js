@@ -299,7 +299,13 @@ const getMyProperties = async (req, res) => {
           WHEN lp.amount >= 750 THEN true
           ELSE false
         END AS is_premium,
-        COUNT(r.id) AS room_types_count
+        COUNT(r.id) AS room_types_count,
+        COALESCE(SUM(r.total_rooms), 0)::int AS total_rooms_count,
+        COALESCE(SUM(r.available_rooms), 0)::int AS available_rooms_count,
+        GREATEST(
+          COALESCE(SUM(r.total_rooms), 0) - COALESCE(SUM(r.available_rooms), 0),
+          0
+        )::int AS occupied_rooms_count
        FROM properties p
        LEFT JOIN schools s ON p.nearest_school_id = s.id
        LEFT JOIN LATERAL (

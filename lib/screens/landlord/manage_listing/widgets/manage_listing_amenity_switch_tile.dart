@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/theme.dart';
+import '../../../../utils/app_design.dart';
 
 class ManageListingAmenitySwitchTile extends StatelessWidget {
   final String label;
@@ -24,22 +24,29 @@ class ManageListingAmenitySwitchTile extends StatelessWidget {
       decoration: BoxDecoration(
         border: isLast
             ? null
-            : const Border(bottom: BorderSide(color: AppTheme.border)),
+            : Border(bottom: BorderSide(color: AppDesign.border(context))),
       ),
       child: SwitchListTile(
         value: value,
         onChanged: onChanged,
-        activeColor: AppTheme.primary,
+        activeColor: AppDesign.accent,
+        activeTrackColor: AppDesign.accent.withValues(alpha: 0.26),
+        inactiveThumbColor: AppDesign.surface(context),
+        inactiveTrackColor: AppDesign.border(context),
         title: Row(
           children: [
-            Icon(icon, size: 18, color: value ? AppTheme.primary : AppTheme.gray),
+            Icon(
+              icon,
+              size: 18,
+              color: value ? AppDesign.accent : AppDesign.muted(context),
+            ),
             const SizedBox(width: 10),
             Text(
               label,
               style: TextStyle(
                 fontSize: 14,
-                color: value ? AppTheme.dark : AppTheme.gray,
-                fontWeight: value ? FontWeight.w500 : FontWeight.normal,
+                color: value ? AppDesign.text(context) : AppDesign.muted(context),
+                fontWeight: value ? FontWeight.w700 : FontWeight.w500,
               ),
             ),
           ],

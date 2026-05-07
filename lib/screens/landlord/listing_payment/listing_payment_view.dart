@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../utils/theme.dart';
-import '../../../widgets/app_header_background.dart';
+import '../../../utils/app_design.dart';
 import '../../../widgets/app_surface_card.dart';
 import '../payment_details/payment_details_screen.dart';
 import 'listing_payment_state.dart';
@@ -29,12 +28,13 @@ class ListingPaymentView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.lightGray,
+      backgroundColor: AppDesign.page(context),
       appBar: AppBar(
         title: const Text('Listing Payment'),
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppDesign.surface(context),
+        foregroundColor: AppDesign.text(context),
         surfaceTintColor: Colors.transparent,
-        flexibleSpace: const AppHeaderBackground(),
+        scrolledUnderElevation: 0,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

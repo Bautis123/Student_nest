@@ -71,6 +71,7 @@ flutter:
     - assets/icons/student_nest/
     - assets/map_markers/boarding_house.png
     - assets/map_markers/school.png
+    - StudentNest/public/admin/assets/studentnest-square.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

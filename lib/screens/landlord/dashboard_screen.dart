@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import '../../models/property.dart';
 import '../../services/api_service.dart';
-import '../../utils/theme.dart';
-import 'add_listing_screen.dart';
+import '../../utils/app_design.dart';
 import 'manage_listing_screen.dart';
 import 'dashboard/dashboard_body.dart';
 import 'dashboard/dashboard_header.dart';
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+  const DashboardScreen({
+    super.key,
+    this.listingsOnly = false,
+    this.onAddListing,
+  });
+
+  final bool listingsOnly;
+  final VoidCallback? onAddListing;
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -49,14 +55,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       _properties.where((p) => p.isApproved && p.isActive).length;
   int get _pendingListings => _properties.where((p) => !p.isApproved).length;
 
-  Future<void> _openAddListing() async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const AddListingScreen()),
-    );
-    _loadData();
-  }
-
   Future<void> _openManageListing(Property property) async {
     await Navigator.push(
       context,
@@ -81,8 +79,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         totalClicks: _totalClicks,
         activeListings: _activeListings,
         pendingListings: _pendingListings,
-        onAddNew: _openAddListing,
         onOpenListing: _openManageListing,
+        listingsOnly: widget.listingsOnly,
+        onAddListing: widget.onAddListing,
       ),
     );
   }
@@ -90,14 +89,56 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.lightGray,
+      backgroundColor: AppDesign.page(context),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: DashboardHeader(landlordName: _landlordName ?? 'Landlord'),
+            child:
+                widget.listingsOnly
+                    ? const _ListingsHeader()
+                    : DashboardHeader(
+                      landlordName: _landlordName ?? 'Landlord',
+                    ),
           ),
           _buildContent(),
         ],
+      ),
+    );
+  }
+}
+
+class _ListingsHeader extends StatelessWidget {
+  const _ListingsHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      bottom: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 18, 16, 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Listings',
+              style: TextStyle(
+                color: AppDesign.text(context),
+                fontSize: 30,
+                fontWeight: FontWeight.w800,
+                height: 1.08,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Review status, interest, and listing details.',
+              style: TextStyle(
+                color: AppDesign.muted(context),
+                fontSize: 13,
+                height: 1.35,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

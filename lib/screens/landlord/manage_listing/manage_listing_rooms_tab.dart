@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../models/property.dart';
 import '../../../services/api_service.dart';
+import '../../../utils/app_design.dart';
 import 'widgets/add_room_dialog.dart';
 import 'widgets/manage_listing_empty_rooms.dart';
 import 'widgets/manage_listing_room_card.dart';
@@ -53,6 +54,14 @@ class _ManageListingRoomsTabState extends State<ManageListingRoomsTab> {
             onPressed: _openAddRoomDialog,
             icon: const Icon(Icons.add),
             label: const Text('Add Room Type'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppDesign.accent,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
           ),
           const SizedBox(height: 16),
           if (rooms.isEmpty)

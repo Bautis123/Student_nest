@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../utils/app_design.dart';
 import '../../../utils/student_nest_icons.dart';
-import '../../../utils/theme.dart';
 import '../../../widgets/app_surface_card.dart';
 
 class EmptyListingsCard extends StatelessWidget {
@@ -10,26 +10,28 @@ class EmptyListingsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppSurfaceCard(
       padding: const EdgeInsets.all(32),
-      child: const Center(
+      radius: 22,
+      child: Center(
         child: Column(
           children: [
-            StudentNestIcon(
+            const StudentNestIcon(
               StudentNestIcons.building,
               size: 48,
-              color: AppTheme.gray,
+              color: AppDesign.accent,
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
-              'No listings yet',
+              'No listings here yet',
               style: TextStyle(
-                color: AppTheme.gray,
-                fontWeight: FontWeight.w500,
+                color: AppDesign.text(context),
+                fontWeight: FontWeight.w800,
               ),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
-              'Tap Add New to create your first listing',
-              style: TextStyle(color: AppTheme.gray, fontSize: 12),
+              'Use Add Listing to create or adjust your filter.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppDesign.muted(context), fontSize: 12),
             ),
           ],
         ),

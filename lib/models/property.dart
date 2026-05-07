@@ -30,6 +30,9 @@ class Property {
   final double? maxPrice;
   final String? listingPlan;
   final bool? isPremiumFlag;
+  final int? totalRoomsCount;
+  final int? availableRoomsCount;
+  final int? occupiedRoomsCount;
 
   Property({
     required this.id,
@@ -59,6 +62,9 @@ class Property {
     this.maxPrice,
     this.listingPlan,
     this.isPremiumFlag,
+    this.totalRoomsCount,
+    this.availableRoomsCount,
+    this.occupiedRoomsCount,
   });
 
   factory Property.fromJson(Map<String, dynamic> json) {
@@ -117,7 +123,16 @@ class Property {
           json['is_premium'] is bool
               ? json['is_premium'] as bool
               : (json['premium'] is bool ? json['premium'] as bool : null),
+      totalRoomsCount: _optionalInt(json['total_rooms_count']),
+      availableRoomsCount: _optionalInt(json['available_rooms_count']),
+      occupiedRoomsCount: _optionalInt(json['occupied_rooms_count']),
     );
+  }
+
+  static int? _optionalInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    return int.tryParse(value.toString());
   }
 
   bool get isPremium {

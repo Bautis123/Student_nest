@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/theme.dart';
+import '../../../../utils/app_design.dart';
 
 class ManageListingFieldLabel extends StatelessWidget {
   final String label;
@@ -11,10 +11,10 @@ class ManageListingFieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       label,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 13,
-        fontWeight: FontWeight.w500,
-        color: AppTheme.dark,
+        fontWeight: FontWeight.w700,
+        color: AppDesign.text(context),
       ),
     );
   }

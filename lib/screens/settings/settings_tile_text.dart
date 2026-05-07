@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../utils/app_design.dart';
+
 class SettingsTileText extends StatelessWidget {
   final String title;
   final String? subtitle;
@@ -13,8 +16,6 @@ class SettingsTileText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -22,14 +23,19 @@ class SettingsTileText extends StatelessWidget {
           title,
           style: TextStyle(
             fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: titleColor ?? theme.textTheme.bodyLarge?.color,
+            fontWeight: FontWeight.w600,
+            color: titleColor ?? AppDesign.text(context),
           ),
         ),
         if (subtitle != null)
           Text(
             subtitle!,
-            style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
+            style: TextStyle(
+              color: AppDesign.muted(context),
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              height: 1.25,
+            ),
           ),
       ],
     );

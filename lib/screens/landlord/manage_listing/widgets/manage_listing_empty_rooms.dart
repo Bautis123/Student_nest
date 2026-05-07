@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../utils/app_design.dart';
 import '../../../../utils/student_nest_icons.dart';
-import '../../../../utils/theme.dart';
 
 class ManageListingEmptyRooms extends StatelessWidget {
   const ManageListingEmptyRooms({super.key});
@@ -11,23 +11,23 @@ class ManageListingEmptyRooms extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppDesign.surface(context),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.border),
+        border: Border.all(color: AppDesign.border(context)),
       ),
-      child: const Center(
+      child: Center(
         child: Column(
           children: [
-            StudentNestIcon(
+            const StudentNestIcon(
               StudentNestIcons.bed,
               size: 48,
-              color: AppTheme.gray,
+              color: AppDesign.accent,
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
               'No room types yet',
               style: TextStyle(
-                color: AppTheme.gray,
+                color: AppDesign.muted(context),
                 fontWeight: FontWeight.w500,
               ),
             ),

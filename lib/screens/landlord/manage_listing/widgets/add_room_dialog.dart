@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/theme.dart';
+import '../../../../utils/app_design.dart';
 
 class AddRoomDialog extends StatefulWidget {
   const AddRoomDialog({super.key});
@@ -43,8 +43,13 @@ class _AddRoomDialogState extends State<AddRoomDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      backgroundColor: AppDesign.surface(context),
+      surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: const Text('Add Room Type'),
+      title: Text(
+        'Add Room Type',
+        style: TextStyle(color: AppDesign.text(context)),
+      ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -110,7 +115,15 @@ class _AddRoomDialogState extends State<AddRoomDialog> {
           onPressed: () => Navigator.pop(context),
           child: const Text('Cancel'),
         ),
-        ElevatedButton(onPressed: _submit, child: const Text('Add')),
+        ElevatedButton(
+          onPressed: _submit,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppDesign.accent,
+            foregroundColor: Colors.white,
+            elevation: 0,
+          ),
+          child: const Text('Add'),
+        ),
       ],
     );
   }
@@ -134,12 +147,26 @@ class _CounterField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12, color: AppTheme.gray)),
+        Text(
+          label,
+          style: TextStyle(fontSize: 12, color: AppDesign.muted(context)),
+        ),
         Row(
           children: [
-            IconButton(onPressed: onDecrement, icon: const Icon(Icons.remove)),
-            Text('$value'),
-            IconButton(onPressed: onIncrement, icon: const Icon(Icons.add)),
+            IconButton(
+              onPressed: onDecrement,
+              color: AppDesign.accent,
+              icon: const Icon(Icons.remove),
+            ),
+            Text(
+              '$value',
+              style: TextStyle(color: AppDesign.text(context)),
+            ),
+            IconButton(
+              onPressed: onIncrement,
+              color: AppDesign.accent,
+              icon: const Icon(Icons.add),
+            ),
           ],
         ),
       ],

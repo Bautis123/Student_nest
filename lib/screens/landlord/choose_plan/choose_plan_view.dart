@@ -1,7 +1,7 @@
 import '../listing_payment/listing_payment_screen.dart';
 import 'package:flutter/material.dart';
+import '../../../utils/app_design.dart';
 import '../../../utils/theme.dart';
-import '../../../widgets/app_header_background.dart';
 import 'choose_plan_state.dart';
 import 'widgets/plan_card.dart';
 import 'widgets/plan_info_banner.dart';
@@ -24,12 +24,13 @@ class ChoosePlanView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.lightGray,
+      backgroundColor: AppDesign.page(context),
       appBar: AppBar(
         title: const Text('Choose Plan'),
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppDesign.surface(context),
+        foregroundColor: AppDesign.text(context),
         surfaceTintColor: Colors.transparent,
-        flexibleSpace: const AppHeaderBackground(),
+        scrolledUnderElevation: 0,
       ),
       body: SafeArea(
         child: Column(

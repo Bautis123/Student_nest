@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/app_design.dart';
 import '../../utils/student_nest_icons.dart';
 
 class SettingsTileIcon extends StatelessWidget {
@@ -17,11 +18,11 @@ class SettingsTileIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 36,
-      height: 36,
+      width: 38,
+      height: 38,
       decoration: BoxDecoration(
-        color: iconColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(10),
+        color: iconColor.withValues(alpha: AppDesign.isDark(context) ? 0.18 : 0.11),
+        borderRadius: BorderRadius.circular(12),
       ),
       child:
           assetIcon != null

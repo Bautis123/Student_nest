@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../utils/app_design.dart';
 import '../../../../utils/theme.dart';
 
 class PaymentMethodCard extends StatelessWidget {
@@ -22,7 +23,7 @@ class PaymentMethodCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: selected ? AppTheme.primaryLight : Colors.white,
+          color: selected ? AppTheme.primaryLight : AppDesign.surface(context),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: selected ? AppTheme.primary : AppTheme.border,
@@ -31,6 +32,32 @@ class PaymentMethodCard extends StatelessWidget {
         ),
         child: Row(
           children: [
+            Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: selected ? AppTheme.primary : AppTheme.border,
+                  width: 1.5,
+                ),
+                color: Colors.white,
+              ),
+              child:
+                  selected
+                      ? Center(
+                        child: Container(
+                          width: 10,
+                          height: 10,
+                          decoration: const BoxDecoration(
+                            color: AppTheme.primary,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      )
+                      : null,
+            ),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../utils/theme.dart';
+import '../../../utils/app_design.dart';
 import '../../../widgets/app_surface_card.dart';
 
 class DashboardStatCard extends StatelessWidget {
@@ -19,11 +19,11 @@ class DashboardStatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppSurfaceCard(
-      padding: const EdgeInsets.all(14),
-      radius: 14,
+      padding: const EdgeInsets.all(12),
+      radius: 22,
       showShadow: true,
-      color: color.withValues(alpha: 0.08),
-      borderColor: color.withValues(alpha: 0.28),
+      color: AppDesign.surface(context),
+      borderColor: AppDesign.border(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -36,11 +36,11 @@ class DashboardStatCard extends StatelessWidget {
             ),
             child: Icon(icon, color: color, size: 16),
           ),
-          const Spacer(),
+          const SizedBox(height: 10),
           Text(
             value,
             style: TextStyle(
-              fontSize: 22,
+              fontSize: 21,
               fontWeight: FontWeight.bold,
               color: color,
             ),
@@ -48,8 +48,8 @@ class DashboardStatCard extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              fontSize: 11,
-              color: AppTheme.dark.withValues(alpha: 0.75),
+              fontSize: 12,
+              color: AppDesign.muted(context),
               fontWeight: FontWeight.w600,
             ),
           ),

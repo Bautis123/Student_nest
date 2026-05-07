@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../models/property.dart';
+import '../../../../utils/app_design.dart';
 import '../../../../utils/theme.dart';
 import '../../../../widgets/app_status_badge.dart';
 import '../../../../widgets/app_surface_card.dart';
@@ -12,13 +13,19 @@ class ManageListingStatusBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = property.isApproved ? AppTheme.success : AppTheme.warning;
+    final statusColor = property.isApproved ? AppDesign.accent : AppTheme.warning;
     final statusText =
         property.isApproved ? 'Live - visible to students' : 'Pending admin approval';
     final theme = Theme.of(context);
 
     return AppSurfaceCard(
       padding: const EdgeInsets.all(14),
+      color: property.isApproved
+          ? const Color(0xFFE8F7F2)
+          : AppTheme.warning.withValues(alpha: 0.08),
+      borderColor: property.isApproved
+          ? AppDesign.accent.withValues(alpha: 0.16)
+          : AppTheme.warning.withValues(alpha: 0.16),
       child: Row(
         children: [
           AppStatusBadge(
@@ -33,7 +40,7 @@ class ManageListingStatusBanner extends StatelessWidget {
             '${property.viewCount} views',
             style: theme.textTheme.bodySmall?.copyWith(
               fontSize: 12,
-              color: AppTheme.gray,
+              color: AppDesign.muted(context),
             ),
           ),
         ],

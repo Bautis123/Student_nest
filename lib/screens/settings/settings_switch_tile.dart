@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../utils/app_design.dart';
 import 'settings_tile_icon.dart';
 import 'settings_tile_text.dart';
 
@@ -25,7 +26,7 @@ class SettingsSwitchTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
           SettingsTileIcon(
@@ -35,7 +36,15 @@ class SettingsSwitchTile extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Expanded(child: SettingsTileText(title: title, subtitle: subtitle)),
-          Switch(value: value, onChanged: onChanged),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeColor: Colors.white,
+            activeTrackColor: AppDesign.accent,
+            inactiveThumbColor: Colors.white,
+            inactiveTrackColor: AppDesign.border(context),
+            trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+          ),
         ],
       ),
     );

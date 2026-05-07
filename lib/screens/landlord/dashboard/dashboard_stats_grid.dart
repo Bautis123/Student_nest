@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../utils/theme.dart';
+import '../../../utils/app_design.dart';
 import 'dashboard_stat_card.dart';
 
 class DashboardStatsGrid extends StatelessWidget {
@@ -24,31 +24,31 @@ class DashboardStatsGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       crossAxisSpacing: 12,
       mainAxisSpacing: 12,
-      childAspectRatio: 1.5,
+      childAspectRatio: 1.3,
       children: [
         DashboardStatCard(
           label: 'Total Views',
           value: totalViews.toString(),
           icon: Icons.visibility_outlined,
-          color: AppTheme.primary,
+          color: AppDesign.accent,
         ),
         DashboardStatCard(
           label: 'Contact Clicks',
           value: totalClicks.toString(),
           icon: Icons.phone_outlined,
-          color: AppTheme.success,
+          color: AppDesign.accent,
         ),
         DashboardStatCard(
           label: 'Active Listings',
           value: activeListings.toString(),
           icon: Icons.check_circle_outline,
-          color: const Color(0xFF8B5CF6),
+          color: AppDesign.accent,
         ),
         DashboardStatCard(
           label: 'Pending',
           value: pendingListings.toString(),
           icon: Icons.hourglass_empty_outlined,
-          color: AppTheme.warning,
+          color: const Color(0xFFF59E0B),
         ),
       ],
     );

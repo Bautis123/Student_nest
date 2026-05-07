@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../models/property.dart';
+import '../../../../utils/app_design.dart';
 import '../../../../utils/theme.dart';
 
 class ManageListingCoverPhotoCard extends StatelessWidget {
@@ -24,22 +25,22 @@ class ManageListingCoverPhotoCard extends StatelessWidget {
           width: double.infinity,
           height: 160,
           decoration: BoxDecoration(
-            color: AppTheme.primaryLight,
+            color: const Color(0xFFE8F7F2),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppTheme.primary.withValues(alpha: 0.3)),
+            border: Border.all(color: AppDesign.accent.withValues(alpha: 0.34)),
           ),
           child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 Icons.add_photo_alternate_outlined,
-                color: AppTheme.primary,
+                color: AppDesign.accent,
                 size: 40,
               ),
               SizedBox(height: 8),
               Text(
                 'Tap to add cover photo',
-                style: TextStyle(color: AppTheme.primary, fontSize: 13),
+                style: TextStyle(color: AppDesign.accent, fontSize: 13),
               ),
             ],
           ),
@@ -64,7 +65,7 @@ class ManageListingCoverPhotoCard extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: AppTheme.primary,
+              color: AppDesign.accent,
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Row(

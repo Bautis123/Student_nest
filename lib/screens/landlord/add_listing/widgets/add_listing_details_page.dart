@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../../utils/theme.dart';
+import '../../../../utils/app_design.dart';
+import '../../../../widgets/app_surface_card.dart';
 
 import 'listing_amenity_switch_tile.dart';
 
 import 'listing_field_label.dart';
 
-// This widget represents the details page for adding a new listing. It includes fields for title, address, nearest school, description, and amenities.
 class AddListingDetailsPage extends StatelessWidget {
   const AddListingDetailsPage({
     super.key,
@@ -25,7 +25,6 @@ class AddListingDetailsPage extends StatelessWidget {
     required this.onSecurityChanged,
   });
 
-  // Controllers for text fields
   final TextEditingController titleController;
   final TextEditingController addressController;
   final TextEditingController descriptionController;
@@ -41,15 +40,31 @@ class AddListingDetailsPage extends StatelessWidget {
   final ValueChanged<bool> onElectricityChanged;
   final ValueChanged<bool> onSecurityChanged;
 
-  // Build method to render the UI
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 110),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 8),
+          Text(
+            'Property details',
+            style: TextStyle(
+              color: AppDesign.text(context),
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Tell students the basics about your boarding house.',
+            style: TextStyle(
+              color: AppDesign.muted(context),
+              fontSize: 13,
+              height: 1.35,
+            ),
+          ),
+          const SizedBox(height: 20),
           const ListingFieldLabel('Property Title *'),
           const SizedBox(height: 6),
           TextField(
@@ -104,12 +119,9 @@ class AddListingDetailsPage extends StatelessWidget {
           const SizedBox(height: 20),
           const ListingFieldLabel('Amenities'),
           const SizedBox(height: 10),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppTheme.border),
-            ),
+          AppSurfaceCard(
+            padding: EdgeInsets.zero,
+            radius: 22,
             child: Column(
               children: [
                 ListingAmenitySwitchTile(

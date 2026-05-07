@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../utils/app_design.dart';
 
 class BankDetailsForm extends StatelessWidget {
   final TextEditingController accountNameController;
@@ -21,21 +22,28 @@ class BankDetailsForm extends StatelessWidget {
         TextField(
           controller: accountNameController,
           onChanged: (_) => onChanged(),
-          decoration: const InputDecoration(labelText: 'Account holder name'),
+          decoration: InputDecoration(
+            labelText: 'Account holder name',
+            prefixIcon: Icon(Icons.person_outline, color: AppDesign.muted(context)),
+          ),
         ),
         const SizedBox(height: 14),
         TextField(
           controller: bankNameController,
           onChanged: (_) => onChanged(),
-          decoration: const InputDecoration(labelText: 'Bank name'),
+          decoration: InputDecoration(
+            labelText: 'Bank name',
+            prefixIcon: Icon(Icons.account_balance_outlined, color: AppDesign.muted(context)),
+          ),
         ),
         const SizedBox(height: 14),
         TextField(
           controller: accountNumberController,
           keyboardType: TextInputType.number,
           onChanged: (_) => onChanged(),
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'Account or card number',
+            prefixIcon: Icon(Icons.credit_card_outlined, color: AppDesign.muted(context)),
           ),
         ),
       ],

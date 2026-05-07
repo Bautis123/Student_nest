@@ -3,9 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import '../core/services/storage_service.dart';
 
 class AppTheme {
-  static const Color primary = Color(0xFF1B82F1);
-  static const Color primaryDark = Color(0xFF0E6DD3);
-  static const Color primaryLight = Color(0xFFE8F3FF);
+  static const Color primary = Color(0xFF1B9E6E);
+  static const Color primaryDark = Color(0xFF137D57);
+  static const Color primaryLight = Color(0xFFE8F7F2);
 
   static const Color accent = Color(0xFF8EC3FF);
   static const Color accentSoft = Color(0xFFF3F8FF);
@@ -202,13 +202,13 @@ class AppTheme {
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return primary;
+            return const Color(0xFF1B9E6E);
           }
           return white;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return primary.withValues(alpha: 0.35);
+            return const Color(0xFF1B9E6E).withValues(alpha: 0.35);
           }
           return gray.withValues(alpha: 0.35);
         }),
@@ -221,9 +221,9 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.dark,
       colorScheme: const ColorScheme.dark(
-        primary: Color(0xFF54A8FF),
+        primary: primary,
         onPrimary: white,
-        secondary: Color(0xFF9CC9FF),
+        secondary: primaryLight,
         surface: darkCard,
       ),
     );
@@ -285,7 +285,7 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF54A8FF),
+          backgroundColor: primary,
           foregroundColor: white,
           minimumSize: const Size(double.infinity, 56),
           elevation: 0,
@@ -339,7 +339,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: Color(0xFF54A8FF), width: 1.4),
+          borderSide: const BorderSide(color: primary, width: 1.4),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
@@ -372,7 +372,7 @@ class AppTheme {
       dividerColor: darkBorder,
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF7BBCFF),
+        selectedItemColor: primary,
         unselectedItemColor: darkMuted,
         backgroundColor: darkCard,
         selectedLabelStyle: GoogleFonts.poppins(
@@ -388,13 +388,13 @@ class AppTheme {
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const Color(0xFF7BBCFF);
+            return const Color(0xFF1B9E6E);
           }
           return const Color(0xFFE2E8F0);
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const Color(0xFF7BBCFF).withValues(alpha: 0.4);
+            return const Color(0xFF1B9E6E).withValues(alpha: 0.4);
           }
           return darkMuted.withValues(alpha: 0.4);
         }),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../../widgets/app_header_background.dart';
 import 'full_screen_photo.dart';
 
 class PhotoGalleryScreen extends StatelessWidget {
@@ -18,13 +17,12 @@ class PhotoGalleryScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black87,
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
-        flexibleSpace: const AppHeaderBackground(),
         title: Text(
           title,
-          style: const TextStyle(color: Colors.black87, fontSize: 16),
+          style: const TextStyle(color: Colors.white, fontSize: 16),
         ),
         elevation: 0,
       ),

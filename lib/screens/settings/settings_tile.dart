@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../utils/app_design.dart';
 import 'settings_tile_icon.dart';
 import 'settings_tile_text.dart';
 
@@ -24,13 +25,11 @@ class SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(22),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
         child: Row(
           children: [
             SettingsTileIcon(
@@ -47,9 +46,9 @@ class SettingsTile extends StatelessWidget {
               ),
             ),
             Icon(
-              Icons.chevron_right,
-              color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
-              size: 20,
+              Icons.chevron_right_rounded,
+              color: AppDesign.subtle(context),
+              size: 22,
             ),
           ],
         ),

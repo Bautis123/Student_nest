@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../utils/app_design.dart';
+import '../../../../utils/theme.dart';
 import '../../../../widgets/app_bottom_action_bar.dart';
 
 class PaymentActionsBar extends StatelessWidget {
@@ -25,6 +27,11 @@ class PaymentActionsBar extends StatelessWidget {
             width: double.infinity,
             child: OutlinedButton(
               onPressed: onViewListings,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppTheme.primary,
+                side: const BorderSide(color: AppTheme.primary, width: 1.4),
+                backgroundColor: AppDesign.surface(context),
+              ),
               child: const Text('View Listings'),
             ),
           ),

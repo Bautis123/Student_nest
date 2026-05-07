@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../utils/theme.dart';
+import '../../../utils/app_design.dart';
 
 class AddListingSuccessDialog {
   static Future<void> show(BuildContext context) {
@@ -18,7 +18,9 @@ class _AddListingSuccessDialogBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      backgroundColor: AppDesign.surface(context),
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -26,29 +28,33 @@ class _AddListingSuccessDialogBody extends StatelessWidget {
             width: 64,
             height: 64,
             decoration: BoxDecoration(
-              color: AppTheme.success.withValues(alpha: 0.1),
+              color: AppDesign.accentTint(context),
               borderRadius: BorderRadius.circular(32),
             ),
             child: const Icon(
               Icons.check_circle_outline,
-              color: AppTheme.success,
+              color: AppDesign.accent,
               size: 36,
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'Listing Submitted!',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppTheme.dark,
+              color: AppDesign.text(context),
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Your listing has been submitted for admin review. It will go live once approved.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 13, color: AppTheme.gray, height: 1.4),
+            style: TextStyle(
+              fontSize: 13,
+              color: AppDesign.muted(context),
+              height: 1.4,
+            ),
           ),
         ],
       ),
@@ -59,7 +65,13 @@ class _AddListingSuccessDialogBody extends StatelessWidget {
             Navigator.pop(context);
           },
           style: ElevatedButton.styleFrom(
+            backgroundColor: AppDesign.accent,
+            foregroundColor: Colors.white,
+            elevation: 0,
             minimumSize: const Size(double.infinity, 44),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
           ),
           child: const Text('Back to Dashboard'),
         ),

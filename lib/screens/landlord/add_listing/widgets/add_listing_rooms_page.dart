@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/theme.dart';
+import '../../../../utils/app_design.dart';
 import 'listing_room_card.dart';
 
 class AddListingRoomsPage extends StatelessWidget {
@@ -28,26 +28,46 @@ class AddListingRoomsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 110),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 8),
+          Text(
+            'Rooms',
+            style: TextStyle(
+              color: AppDesign.text(context),
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Add the room types available at this property.',
+            style: TextStyle(
+              color: AppDesign.muted(context),
+              fontSize: 13,
+              height: 1.35,
+            ),
+          ),
+          const SizedBox(height: 18),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Room Types',
+              Text(
+                'Room types',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.dark,
+                  fontWeight: FontWeight.w800,
+                  color: AppDesign.text(context),
                 ),
               ),
-              TextButton.icon(
+              TextButton(
                 onPressed: onAddRoom,
-                icon: const Icon(Icons.add, size: 16),
-                label: const Text('Add Type'),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppDesign.accent,
+                  textStyle: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+                child: const Text('+ Add room type'),
               ),
             ],
           ),

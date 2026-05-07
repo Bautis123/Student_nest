@@ -84,13 +84,12 @@ flutter run
 
 Important: update `lib/utils/constants.dart` so `AppConstants.baseUrl` points to the backend reachable from the device. For an Android emulator this is usually `http://10.0.2.2:5000/api`; for a physical phone, use the computer's LAN IP, such as `http://192.168.x.x:5000/api`.
 
-## Database Your Friend Needs
+## Database You Will need Needs
 
 The app expects PostgreSQL. The bootstrap schema is in:
 
-```text
+
 StudentNest/database/schema.sql
-```
 
 Main tables:
 
@@ -104,11 +103,11 @@ Main tables:
 
 Visibility rule for student browsing:
 
-```text
+
 properties.is_approved = true
 properties.is_active = true
 properties.listing_expires_at is null or in the future
-```
+
 
 Payments affect visibility. When an admin records a confirmed payment, the backend activates the property and sets `listing_expires_at`.
 

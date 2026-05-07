@@ -49,7 +49,7 @@ class ListingPaymentHeaderCard extends StatelessWidget {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: AppTheme.accentSoft,
+                  color: const Color(0xFFFFFBEB),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: const Color(0xFFFDE68A)),
                 ),

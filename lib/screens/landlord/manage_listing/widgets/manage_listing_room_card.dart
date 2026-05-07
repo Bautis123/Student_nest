@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../models/property.dart';
+import '../../../../utils/app_design.dart';
 import '../../../../utils/theme.dart';
 
 class ManageListingRoomCard extends StatelessWidget {
-  final Room room;
-  final VoidCallback? onDecrease;
-  final VoidCallback? onIncrease;
-
   const ManageListingRoomCard({
     super.key,
     required this.room,
@@ -15,28 +12,34 @@ class ManageListingRoomCard extends StatelessWidget {
     this.onIncrease,
   });
 
+  final Room room;
+  final VoidCallback? onDecrease;
+  final VoidCallback? onIncrease;
+
   @override
   Widget build(BuildContext context) {
-    final occupancyText = room.availableRooms == 0
-        ? 'Full — no rooms available'
-        : room.availableRooms == room.totalRooms
-            ? 'All rooms available'
-            : '${room.totalRooms - room.availableRooms} '
-                'room${room.totalRooms - room.availableRooms > 1 ? 's' : ''} occupied';
+    final occupiedRooms = room.totalRooms - room.availableRooms;
+    final occupancyText =
+        room.availableRooms == 0
+            ? 'Full - no rooms available'
+            : room.availableRooms == room.totalRooms
+                ? 'All rooms available'
+                : '$occupiedRooms room${occupiedRooms > 1 ? 's' : ''} occupied';
 
-    final occupancyColor = room.availableRooms == 0
-        ? AppTheme.error
-        : room.availableRooms == room.totalRooms
-            ? AppTheme.success
-            : AppTheme.warning;
+    final occupancyColor =
+        room.availableRooms == 0
+            ? AppTheme.error
+            : room.availableRooms == room.totalRooms
+                ? AppDesign.accent
+                : AppTheme.warning;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppDesign.surface(context),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.border),
+        border: Border.all(color: AppDesign.border(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,12 +50,12 @@ class ManageListingRoomCard extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryLight,
+                  color: const Color(0xFFE8F7F2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.bed_outlined,
-                  color: AppTheme.primary,
+                  color: AppDesign.accent,
                   size: 20,
                 ),
               ),
@@ -63,16 +66,20 @@ class ManageListingRoomCard extends StatelessWidget {
                   children: [
                     Text(
                       room.roomType[0].toUpperCase() + room.roomType.substring(1),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
                         fontSize: 14,
+                        color: AppDesign.text(context),
                       ),
                     ),
                     Text(
                       '${room.studentsPerRoom} '
                       'student${room.studentsPerRoom > 1 ? 's' : ''}/room '
-                      '· K${room.pricePerMonth.toStringAsFixed(0)}/mo',
-                      style: const TextStyle(fontSize: 12, color: AppTheme.gray),
+                      '- K${room.pricePerMonth.toStringAsFixed(0)}/mo',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppDesign.muted(context),
+                      ),
                     ),
                   ],
                 ),
@@ -80,14 +87,14 @@ class ManageListingRoomCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          const Divider(height: 1, color: AppTheme.border),
+          Divider(height: 1, color: AppDesign.border(context)),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Available rooms',
-                style: TextStyle(fontSize: 13, color: AppTheme.gray),
+                style: TextStyle(fontSize: 13, color: AppDesign.muted(context)),
               ),
               Row(
                 children: [
@@ -95,10 +102,10 @@ class ManageListingRoomCard extends StatelessWidget {
                   const SizedBox(width: 12),
                   Text(
                     '${room.availableRooms}/${room.totalRooms}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.dark,
+                      fontWeight: FontWeight.w700,
+                      color: AppDesign.text(context),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -112,7 +119,7 @@ class ManageListingRoomCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: room.totalRooms > 0 ? room.availableRooms / room.totalRooms : 0,
-              backgroundColor: AppTheme.border,
+              backgroundColor: AppDesign.border(context),
               valueColor: AlwaysStoppedAnimation<Color>(occupancyColor),
               minHeight: 6,
             ),
@@ -129,25 +136,32 @@ class ManageListingRoomCard extends StatelessWidget {
 }
 
 class _StepButton extends StatelessWidget {
+  const _StepButton({required this.icon, required this.onTap});
+
   final IconData icon;
   final VoidCallback? onTap;
 
-  const _StepButton({required this.icon, required this.onTap});
-
   @override
   Widget build(BuildContext context) {
+    final enabled = onTap != null;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 30,
         height: 30,
         decoration: BoxDecoration(
-          color: AppTheme.primaryLight,
+          color: enabled
+              ? AppDesign.accentTint(context)
+              : AppDesign.border(context).withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(icon, size: 16, color: AppTheme.primary),
+        child: Icon(
+          icon,
+          size: 16,
+          color: enabled ? AppDesign.accent : AppDesign.subtle(context),
+        ),
       ),
     );
   }
 }
-

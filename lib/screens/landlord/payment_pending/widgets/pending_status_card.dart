@@ -30,7 +30,7 @@ class PendingStatusCard extends StatelessWidget {
       radius: 18,
       child: Column(
         children: [
-          const CircularProgressIndicator(),
+          const CircularProgressIndicator(color: AppTheme.primary),
           const SizedBox(height: 16),
           Text(
             title,

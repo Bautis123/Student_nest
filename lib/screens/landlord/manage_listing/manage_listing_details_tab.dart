@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../models/property.dart';
 import '../../../services/api_service.dart';
-import '../../../utils/theme.dart';
+import '../../../utils/app_design.dart';
 import 'widgets/manage_listing_amenity_switch_tile.dart';
 import 'widgets/manage_listing_field_label.dart';
 import 'widgets/manage_listing_status_banner.dart';
@@ -100,8 +100,11 @@ class _ManageListingDetailsTabState extends State<ManageListingDetailsTab> {
           TextField(
             controller: _titleController,
             onChanged: (_) => _markChanged(),
-            decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.home_work_outlined),
+            decoration: InputDecoration(
+              prefixIcon: Icon(
+                Icons.home_work_outlined,
+                color: AppDesign.subtle(context),
+              ),
             ),
           ),
           const SizedBox(height: 16),
@@ -110,8 +113,11 @@ class _ManageListingDetailsTabState extends State<ManageListingDetailsTab> {
           TextField(
             controller: _addressController,
             onChanged: (_) => _markChanged(),
-            decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.location_on_outlined),
+            decoration: InputDecoration(
+              prefixIcon: Icon(
+                Icons.location_on_outlined,
+                color: AppDesign.subtle(context),
+              ),
             ),
           ),
           const SizedBox(height: 16),
@@ -131,9 +137,9 @@ class _ManageListingDetailsTabState extends State<ManageListingDetailsTab> {
           const SizedBox(height: 10),
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppDesign.surface(context),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppTheme.border),
+              border: Border.all(color: AppDesign.border(context)),
             ),
             child: Column(
               children: [
@@ -189,6 +195,11 @@ class _ManageListingDetailsTabState extends State<ManageListingDetailsTab> {
           if (_hasChanges)
             ElevatedButton(
               onPressed: _isLoading ? null : _saveChanges,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppDesign.accent,
+                foregroundColor: Colors.white,
+                elevation: 0,
+              ),
               child: _isLoading
                   ? const SizedBox(
                       height: 20,
