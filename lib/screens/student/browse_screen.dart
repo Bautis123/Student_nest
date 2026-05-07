@@ -417,15 +417,6 @@ class _BrowseScreenState extends State<BrowseScreen> {
                   size: 18,
                   color: AppDesign.subtle(context),
                 ),
-                const Spacer(),
-                IconButton(
-                  onPressed: () {},
-                  icon: StudentNestIcon(
-                    StudentNestIcons.notifications,
-                    size: 21,
-                    color: AppDesign.text(context),
-                  ),
-                ),
               ],
             ),
             bottom: PreferredSize(
