@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:student_nest/core/theme/app_colors.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
 import 'package:student_nest/core/constants/app_assets.dart';
 import 'package:student_nest/core/constants/app_strings.dart';
 import 'package:student_nest/core/widgets/sn_button.dart';
@@ -61,15 +60,15 @@ class LoginScreenContent extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppTheme.error.withValues(alpha: 0.1),
+                  color: AppColors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: AppTheme.error.withValues(alpha: 0.28),
+                    color: AppColors.error.withValues(alpha: 0.28),
                   ),
                 ),
                 child: Text(
                   error!,
-                  style: const TextStyle(color: AppTheme.error, fontSize: 13),
+                  style: const TextStyle(color: AppColors.error, fontSize: 13),
                 ),
               ),
               const SizedBox(height: 16),

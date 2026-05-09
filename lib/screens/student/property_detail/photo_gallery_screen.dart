@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'full_screen_photo.dart';
 
 class PhotoGalleryScreen extends StatelessWidget {
@@ -15,14 +16,14 @@ class PhotoGalleryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.navy,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.navy,
+        foregroundColor: AppColors.white,
         surfaceTintColor: Colors.transparent,
         title: Text(
           title,
-          style: const TextStyle(color: Colors.white, fontSize: 16),
+          style: const TextStyle(color: AppColors.white, fontSize: 16),
         ),
         elevation: 0,
       ),
@@ -46,10 +47,10 @@ class PhotoGalleryScreen extends StatelessWidget {
                 );
               },
               child: CachedNetworkImage(
-                imageUrl: photos[i].url,
+                imageUrl: photos[i].cacheAwareUrl,
                 fit: BoxFit.cover,
-                placeholder: (_, __) => Container(color: Colors.grey[900]),
-                errorWidget: (_, __, ___) => Container(color: Colors.grey[900]),
+                placeholder: (_, __) => Container(color: AppColors.navy),
+                errorWidget: (_, __, ___) => Container(color: AppColors.navy),
               ),
             ),
       ),

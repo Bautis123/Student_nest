@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:student_nest/core/constants/app_strings.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'package:student_nest/core/widgets/sn_button.dart';
 
 class RegisterScreenContent extends StatelessWidget {
@@ -55,32 +55,32 @@ class RegisterScreenContent extends StatelessWidget {
                 width: 190,
                 height: 160,
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryLight,
+                  color: AppDesign.accentTint(context),
                   borderRadius: BorderRadius.circular(26),
                 ),
                 alignment: Alignment.center,
                 child: const Icon(
                   Icons.person_add_alt_1_rounded,
-                  color: AppTheme.primary,
+                  color: AppDesign.accent,
                   size: 84,
                 ),
               ),
             ),
             const SizedBox(height: 18),
-            const Center(
+            Center(
               child: Text(
                 'Create Account',
                 style: TextStyle(
                   fontSize: 37,
                   fontWeight: FontWeight.w700,
-                  color: AppTheme.dark,
+                  color: AppDesign.text(context),
                 ),
               ),
             ),
             const SizedBox(height: 18),
             if (success != null) ...[
               _InfoBanner(
-                color: AppTheme.success,
+                color: AppColors.success,
                 icon: Icons.check_circle_outline,
                 message: success!,
               ),
@@ -88,7 +88,7 @@ class RegisterScreenContent extends StatelessWidget {
             ],
             if (error != null) ...[
               _InfoBanner(
-                color: AppTheme.error,
+                color: AppColors.error,
                 icon: Icons.error_outline,
                 message: error!,
               ),
@@ -163,14 +163,14 @@ class RegisterScreenContent extends StatelessWidget {
                     value: termsAccepted,
                     onChanged: (v) => onTermsChanged(v ?? false),
                   ),
-                  const Expanded(
+                  Expanded(
                     child: Padding(
-                      padding: EdgeInsets.only(top: 10),
+                      padding: const EdgeInsets.only(top: 10),
                       child: Text(
                         'By registering, you are agreeing with our Terms of Use and Privacy Policy',
                         style: TextStyle(
                           fontSize: 14,
-                          color: AppTheme.dark,
+                          color: AppDesign.text(context),
                           fontWeight: FontWeight.w500,
                           height: 1.35,
                         ),
@@ -190,10 +190,10 @@ class RegisterScreenContent extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: GestureDetector(
                   onTap: onGoBack,
-                  child: const Text(
+                  child: Text(
                     'Already have an account?',
                     style: TextStyle(
-                      color: AppTheme.gray,
+                      color: AppDesign.muted(context),
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),

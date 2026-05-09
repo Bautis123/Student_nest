@@ -23,10 +23,10 @@ class AppTheme {
   static const Color white = AppColors.white;
   static const Color border = AppColors.border;
   static const Color surface = AppColors.white;
-  static const Color darkSurface = Color(0xFF11161C);
-  static const Color darkCard = Color(0xFF171E26);
-  static const Color darkBorder = Color(0xFF2A3440);
-  static const Color darkMuted = Color(0xFFA0ADBA);
+  static const Color darkSurface = AppDesign.darkPage;
+  static const Color darkCard = AppDesign.darkSurface;
+  static const Color darkBorder = AppDesign.darkBorder;
+  static const Color darkMuted = AppDesign.darkMuted;
 
   static ThemeData get lightTheme => _buildTheme(Brightness.light);
   static ThemeData get darkTheme => _buildTheme(Brightness.dark);

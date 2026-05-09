@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../models/property.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 
 class ManageListingPhotoGridItem extends StatelessWidget {
   final Photo photo;
@@ -24,7 +24,7 @@ class ManageListingPhotoGridItem extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Image.network(
-              photo.url,
+              photo.cacheAwareUrl,
               width: double.infinity,
               height: double.infinity,
               fit: BoxFit.cover,
@@ -36,12 +36,12 @@ class ManageListingPhotoGridItem extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.5),
+                color: AppColors.navy.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Text(
                 'Set as cover',
-                style: TextStyle(color: Colors.white, fontSize: 10),
+                style: TextStyle(color: AppColors.white, fontSize: 10),
               ),
             ),
           ),
@@ -54,10 +54,10 @@ class ManageListingPhotoGridItem extends StatelessWidget {
                 width: 28,
                 height: 28,
                 decoration: BoxDecoration(
-                  color: AppTheme.error,
+                  color: AppColors.error,
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Icons.close, color: Colors.white, size: 14),
+                child: const Icon(Icons.close, color: AppColors.white, size: 14),
               ),
             ),
           ),

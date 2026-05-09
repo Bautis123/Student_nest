@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 
 class FullScreenPhoto extends StatefulWidget {
   final List<dynamic> photos;
@@ -35,14 +36,14 @@ class _FullScreenPhotoState extends State<FullScreenPhoto> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.navy,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.navy,
+        foregroundColor: AppColors.white,
         surfaceTintColor: Colors.transparent,
         title: Text(
           '${_currentIndex + 1} / ${widget.photos.length}',
-          style: const TextStyle(color: Colors.white, fontSize: 16),
+          style: const TextStyle(color: AppColors.white, fontSize: 16),
         ),
         elevation: 0,
       ),
@@ -56,16 +57,16 @@ class _FullScreenPhotoState extends State<FullScreenPhoto> {
               maxScale: 4.0,
               child: Center(
                 child: CachedNetworkImage(
-                  imageUrl: widget.photos[i].url,
+                  imageUrl: widget.photos[i].cacheAwareUrl,
                   fit: BoxFit.contain,
                   placeholder:
                       (_, __) => const Center(
-                        child: CircularProgressIndicator(color: Colors.white),
+                        child: CircularProgressIndicator(color: AppColors.white),
                       ),
                   errorWidget:
                       (_, __, ___) => const Icon(
                         Icons.broken_image_outlined,
-                        color: Colors.white,
+                        color: AppColors.white,
                         size: 48,
                       ),
                 ),

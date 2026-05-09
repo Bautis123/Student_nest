@@ -115,7 +115,7 @@ class BrowseSearchAppBar extends StatelessWidget {
                           child: Icon(
                             Icons.tune_rounded,
                             size: 22,
-                            color: Colors.white,
+                            color: AppColors.white,
                           ),
                         ),
                       ),

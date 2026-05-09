@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:student_nest/core/theme/app_colors.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
 import 'package:student_nest/core/widgets/app_surface_card.dart';
 
 class PaymentStatusCard extends StatelessWidget {
@@ -30,7 +29,7 @@ class PaymentStatusCard extends StatelessWidget {
             ),
             child: const Icon(
               Icons.check_circle,
-              color: AppTheme.success,
+              color: AppColors.success,
               size: 40,
             ),
           ),
@@ -40,7 +39,7 @@ class PaymentStatusCard extends StatelessWidget {
             style: theme.textTheme.titleLarge?.copyWith(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: AppTheme.dark,
+              color: AppDesign.text(context),
             ),
           ),
           const SizedBox(height: 6),
@@ -49,7 +48,7 @@ class PaymentStatusCard extends StatelessWidget {
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 13,
-              color: AppTheme.gray,
+              color: AppDesign.muted(context),
               height: 1.5,
             ),
           ),
@@ -59,7 +58,7 @@ class PaymentStatusCard extends StatelessWidget {
             style: theme.textTheme.headlineMedium?.copyWith(
               fontSize: 28,
               fontWeight: FontWeight.bold,
-              color: AppTheme.success,
+              color: AppColors.success,
             ),
           ),
         ],

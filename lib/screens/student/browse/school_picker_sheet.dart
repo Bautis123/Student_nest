@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/utils/formatters.dart';
 
 import '../../../utils/student_nest_icons.dart';
 
@@ -26,7 +27,9 @@ class SchoolSelectorButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 13),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: AppDesign.border(context)),
+            border: Border.all(
+              color: AppDesign.border(context).withValues(alpha: 0.55),
+            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -116,7 +119,9 @@ class SchoolPickerSheet extends StatelessWidget {
             ),
             for (final school in schools)
               _SchoolOption(
-                title: school['name']?.toString() ?? 'School',
+                title: Formatters.schoolName(
+                  school['name']?.toString() ?? 'School',
+                ),
                 subtitle: school['area']?.toString() ?? 'Nearby listings',
                 isSelected: selectedSchoolId == school['id']?.toString(),
                 onTap: () => Navigator.pop(context, school['id']?.toString()),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 
 class AddListingErrorBanner extends StatelessWidget {
   const AddListingErrorBanner({super.key, required this.message});
@@ -13,15 +13,15 @@ class AddListingErrorBanner extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: AppTheme.error.withValues(alpha: 0.1),
+      color: AppColors.error.withValues(alpha: 0.1),
       child: Row(
         children: [
-          const Icon(Icons.error_outline, color: AppTheme.error, size: 16),
+          const Icon(Icons.error_outline, color: AppColors.error, size: 16),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               message!,
-              style: const TextStyle(color: AppTheme.error, fontSize: 12),
+              style: const TextStyle(color: AppColors.error, fontSize: 12),
             ),
           ),
         ],

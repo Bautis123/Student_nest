@@ -25,10 +25,12 @@ class RouteService {
   factory RouteService() => _instance;
 
   final Map<String, double?> _walkingDistanceCache = {};
+  final Map<String, RoutePathResult?> _walkingSummaryCache = {};
   final Map<String, int?> _cyclingDurationCache = {};
   final Map<String, RoutePathResult?> _walkingRouteCache = {};
 
   final Map<String, Future<double?>> _walkingDistanceInFlight = {};
+  final Map<String, Future<RoutePathResult?>> _walkingSummaryInFlight = {};
   final Map<String, Future<int?>> _cyclingDurationInFlight = {};
   final Map<String, Future<RoutePathResult?>> _walkingRouteInFlight = {};
 
@@ -83,6 +85,79 @@ class RouteService {
         distanceMeters != null ? distanceMeters.toDouble() / 1000 : null;
     _walkingDistanceCache[_key(fromLat, fromLng, toLat, toLng)] = value;
     return value;
+  }
+
+  Future<RoutePathResult?> getWalkingSummary({
+    required double fromLat,
+    required double fromLng,
+    required double toLat,
+    required double toLng,
+  }) {
+    final key = _key(fromLat, fromLng, toLat, toLng);
+    if (_walkingSummaryCache.containsKey(key)) {
+      return Future.value(_walkingSummaryCache[key]);
+    }
+    if (_walkingSummaryInFlight.containsKey(key)) {
+      return _walkingSummaryInFlight[key]!;
+    }
+
+    final task = _fetchWalkingSummary(
+      fromLat: fromLat,
+      fromLng: fromLng,
+      toLat: toLat,
+      toLng: toLng,
+    );
+    _walkingSummaryInFlight[key] = task;
+    task.whenComplete(() => _walkingSummaryInFlight.remove(key));
+    return task;
+  }
+
+  Future<RoutePathResult?> _fetchWalkingSummary({
+    required double fromLat,
+    required double fromLng,
+    required double toLat,
+    required double toLng,
+  }) async {
+    final key = _key(fromLat, fromLng, toLat, toLng);
+    try {
+      final response = await _requestRoute(
+        profile: 'walking',
+        fromLat: fromLat,
+        fromLng: fromLng,
+        toLat: toLat,
+        toLng: toLng,
+        fullOverview: false,
+      );
+      if (response == null) {
+        _walkingSummaryCache[key] = null;
+        return null;
+      }
+
+      final distanceMeters = response['distance'] as num?;
+      final durationSeconds = response['duration'] as num?;
+      final result = RoutePathResult(
+        points: const [],
+        distanceKm:
+            distanceMeters != null ? distanceMeters.toDouble() / 1000 : null,
+        durationMin:
+            durationSeconds != null
+                ? (durationSeconds.toDouble() / 60).ceil()
+                : null,
+        status: 'OK',
+      );
+      _walkingSummaryCache[key] = result;
+      return result;
+    } catch (e) {
+      final failure = RoutePathResult(
+        points: const [],
+        distanceKm: null,
+        durationMin: null,
+        status: 'EXCEPTION',
+        error: e.toString(),
+      );
+      _walkingSummaryCache[key] = failure;
+      return failure;
+    }
   }
 
   Future<int?> getCyclingDurationMin({

@@ -54,7 +54,7 @@ class _LandlordMainScreenState extends State<LandlordMainScreen> {
             borderRadius: BorderRadius.circular(22),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
+                color: AppDesign.shadow(context),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -142,7 +142,7 @@ class _FloatingNavItem extends StatelessWidget {
               child: StudentNestIcon(
                 asset,
                 size: selected ? 17 : 20,
-                color: selected ? Colors.white : color,
+                color: selected ? AppColors.white : color,
               ),
             ),
           ),

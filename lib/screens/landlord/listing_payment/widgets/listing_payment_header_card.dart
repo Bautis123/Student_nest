@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:student_nest/core/theme/app_colors.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
 import 'package:student_nest/core/widgets/app_status_badge.dart';
 import 'package:student_nest/core/widgets/app_surface_card.dart';
 
@@ -70,7 +69,7 @@ class ListingPaymentHeaderCard extends StatelessWidget {
             subtitle,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 13,
-              color: AppTheme.gray,
+              color: AppDesign.muted(context),
             ),
           ),
           const SizedBox(height: 14),
@@ -90,7 +89,7 @@ class ListingPaymentHeaderCard extends StatelessWidget {
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.success,
+                    color: AppColors.success,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -99,7 +98,7 @@ class ListingPaymentHeaderCard extends StatelessWidget {
                   style: theme.textTheme.headlineMedium?.copyWith(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.success,
+                    color: AppColors.success,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -107,7 +106,7 @@ class ListingPaymentHeaderCard extends StatelessWidget {
                   benefit,
                   style: theme.textTheme.bodySmall?.copyWith(
                     fontSize: 11,
-                    color: AppTheme.gray,
+                    color: AppDesign.muted(context),
                   ),
                 ),
               ],

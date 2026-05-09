@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
 import '../theme/app_radius.dart';
-import '../theme/app_shadows.dart';
 
 class SNCard extends StatelessWidget {
   const SNCard({
@@ -34,8 +33,8 @@ class SNCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: color ?? Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(radius),
-        border: Border.all(color: borderColor ?? AppColors.border),
-        boxShadow: hasShadow ? AppShadows.card : null,
+        border: Border.all(color: borderColor ?? AppDesign.border(context)),
+        boxShadow: hasShadow ? AppDesign.softShadow(context) : null,
       ),
       child: child,
     );

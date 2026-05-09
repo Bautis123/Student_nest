@@ -67,7 +67,7 @@ class AppDesign {
       isDark(context) ? darkAccentTint : AppColors.primaryTint;
 
   static Color shadow(BuildContext context) =>
-      Colors.black.withValues(alpha: isDark(context) ? 0.18 : 0.06);
+      AppColors.navy.withValues(alpha: isDark(context) ? 0.18 : 0.06);
 
   static List<BoxShadow> softShadow(BuildContext context) => [
     BoxShadow(

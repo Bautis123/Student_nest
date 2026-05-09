@@ -1,7 +1,6 @@
 import '../listing_payment/listing_payment_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:student_nest/core/theme/app_colors.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
 import 'package:student_nest/features/landlord/widgets/plan_card.dart';
 import 'choose_plan_state.dart';
 import 'widgets/plan_info_banner.dart';
@@ -41,20 +40,20 @@ class ChoosePlanView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Choose your listing plan',
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: AppTheme.dark,
+                        color: AppDesign.text(context),
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'Pick the plan that fits how visible you want your property to be.',
                       style: TextStyle(
                         fontSize: 13,
-                        color: AppTheme.gray,
+                        color: AppDesign.muted(context),
                         height: 1.5,
                       ),
                     ),

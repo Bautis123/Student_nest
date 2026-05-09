@@ -4,7 +4,6 @@ import '../../models/property.dart';
 import '../../services/api_service.dart';
 import 'package:student_nest/core/constants/app_strings.dart';
 import 'package:student_nest/core/theme/app_colors.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
 import 'package:student_nest/core/widgets/sn_loading_indicator.dart';
 import 'package:student_nest/core/widgets/sn_button.dart';
 import 'manage_listing/manage_listing_details_tab.dart';
@@ -157,12 +156,12 @@ class _ManageListingScreenState extends State<ManageListingScreen>
                         Icon(
                           Icons.delete_outline,
                           size: 18,
-                          color: AppTheme.error,
+                          color: AppColors.error,
                         ),
                         SizedBox(width: 10),
                         Text(
                           'Delete Listing',
-                          style: TextStyle(color: AppTheme.error),
+                          style: TextStyle(color: AppColors.error),
                         ),
                       ],
                     ),

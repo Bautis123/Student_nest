@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../utils/student_nest_icons.dart';
 import 'package:student_nest/core/theme/app_colors.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
 
 class PropertyAmenityTile extends StatelessWidget {
   final String label;
@@ -22,13 +21,14 @@ class PropertyAmenityTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
       decoration: BoxDecoration(
-        color: available ? AppTheme.primaryLight : AppColors.surface,
+        color:
+            available ? AppDesign.accentTint(context) : AppDesign.page(context),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color:
               available
-                  ? AppTheme.primary.withValues(alpha: 0.16)
-                  : AppTheme.border,
+                  ? AppDesign.accent.withValues(alpha: 0.16)
+                  : AppDesign.border(context),
         ),
       ),
       child: Row(
@@ -38,19 +38,20 @@ class PropertyAmenityTile extends StatelessWidget {
               ? StudentNestIcon(
                 assetIcon!,
                 size: 16,
-                color: available ? AppTheme.primary : AppTheme.gray,
+                color: available ? AppDesign.accent : AppDesign.muted(context),
               )
               : Icon(
                 icon,
                 size: 16,
-                color: available ? AppTheme.primary : AppTheme.gray,
+                color: available ? AppDesign.accent : AppDesign.muted(context),
               ),
           const SizedBox(width: 8),
           Text(
             label,
             style: TextStyle(
               fontSize: 12,
-              color: available ? AppColors.textSecondary : AppTheme.gray,
+              color:
+                  available ? AppDesign.text(context) : AppDesign.muted(context),
               fontWeight: FontWeight.w500,
             ),
           ),

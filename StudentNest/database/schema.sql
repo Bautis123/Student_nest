@@ -114,7 +114,7 @@ CREATE INDEX IF NOT EXISTS idx_admin_logs_created_at ON admin_logs(created_at);
 
 INSERT INTO schools (name, area, latitude, longitude)
 VALUES
-  ('University of Zambia', 'Great East Road, Lusaka', -15.3947220, 28.3322220),
+  ('UNZA', 'Great East Road, Lusaka', -15.3947220, 28.3322220),
   ('Copperbelt University', 'Riverside, Kitwe', -12.8058000, 28.2406000),
   ('Mulungushi University', 'Kabwe', -14.4458000, 28.4469000),
   ('Levy Mwanawasa Medical University', 'Chainama, Lusaka', -15.3906000, 28.3807000)

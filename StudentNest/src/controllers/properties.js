@@ -80,10 +80,12 @@ const getProperties = async (req, res) => {
           WHEN lp.amount >= 750 THEN true
           ELSE false
         END AS is_premium,
-        COALESCE(
-          json_agg(ph.*) FILTER (WHERE ph.id IS NOT NULL AND ph.is_cover = true),
-          '[]'
-        ) AS cover_photo,
+        COALESCE(cover.cover_photo, '[]'::jsonb) AS cover_photo,
+        (
+          SELECT COALESCE(SUM(rooms.available_rooms * rooms.students_per_room), 0)::int
+          FROM rooms
+          WHERE rooms.property_id = p.id
+        ) AS available_spaces_count,
         MIN(r.price_per_month) AS min_price,
         MAX(r.price_per_month) AS max_price
       FROM properties p
@@ -97,7 +99,16 @@ const getProperties = async (req, res) => {
         ORDER BY pm.paid_at DESC NULLS LAST
         LIMIT 1
       ) lp ON true
-      LEFT JOIN photos ph ON p.id = ph.property_id
+      LEFT JOIN LATERAL (
+        SELECT COALESCE(jsonb_agg(to_jsonb(photo_row)), '[]'::jsonb) AS cover_photo
+        FROM (
+          SELECT *
+          FROM photos
+          WHERE property_id = p.id
+          ORDER BY is_cover DESC, id ASC
+          LIMIT 1
+        ) photo_row
+      ) cover ON true
       LEFT JOIN rooms r ON p.id = r.property_id
       WHERE p.is_approved = true
         AND p.is_active = true
@@ -125,7 +136,7 @@ const getProperties = async (req, res) => {
       paramCount++;
     }
 
-    query += ` GROUP BY p.id, s.name, s.latitude, s.longitude, u.full_name, u.phone, lp.amount`;
+    query += ` GROUP BY p.id, s.name, s.latitude, s.longitude, u.full_name, u.phone, lp.amount, cover.cover_photo`;
     query += ` ORDER BY p.created_at DESC`;
 
     const result = await pool.query(query, params);

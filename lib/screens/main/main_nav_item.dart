@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 
 import '../../utils/student_nest_icons.dart';
 
@@ -42,7 +43,7 @@ class MainNavItem extends StatelessWidget {
               child: StudentNestIcon(
                 asset,
                 size: selected ? 17 : 20,
-                color: selected ? Colors.white : color,
+                color: selected ? AppColors.white : color,
               ),
             ),
           ),

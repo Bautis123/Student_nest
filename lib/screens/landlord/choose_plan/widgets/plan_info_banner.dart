@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 
 class PlanInfoBanner extends StatelessWidget {
   final bool isPremium;
@@ -16,21 +16,21 @@ class PlanInfoBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppTheme.primaryLight,
+        color: AppDesign.accentTint(context),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.border),
+        border: Border.all(color: AppDesign.border(context)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.info_outline, color: AppTheme.primary, size: 20),
+          const Icon(Icons.info_outline, color: AppDesign.accent, size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: AppTheme.dark,
+                color: AppDesign.text(context),
                 height: 1.5,
               ),
             ),

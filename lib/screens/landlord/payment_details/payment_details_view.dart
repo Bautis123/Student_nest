@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:student_nest/core/theme/app_colors.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
 import 'package:student_nest/core/widgets/app_surface_card.dart';
 import '../payment_pending/payment_pending_screen.dart';
 import 'payment_details_state.dart';
@@ -84,7 +83,7 @@ class PaymentDetailsView extends StatelessWidget {
             'Make sure the details match the account that will be billed.',
             style: theme.textTheme.bodySmall?.copyWith(
               fontSize: 12,
-              color: AppTheme.gray,
+              color: AppDesign.muted(context),
             ),
           ),
           const SizedBox(height: 16),

@@ -4,7 +4,6 @@ import 'package:student_nest/core/constants/app_strings.dart';
 import 'package:student_nest/core/theme/app_colors.dart';
 import 'package:student_nest/core/utils/formatters.dart';
 import '../../../utils/student_nest_icons.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
 
 class PropertyIntroSection extends StatelessWidget {
   final Property property;
@@ -31,11 +30,11 @@ class PropertyIntroSection extends StatelessWidget {
                 property.title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   height: 1.2,
                   fontWeight: FontWeight.w800,
-                  color: AppTheme.dark,
+                  color: AppDesign.text(context),
                 ),
               ),
             ),
@@ -43,14 +42,14 @@ class PropertyIntroSection extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
               decoration: BoxDecoration(
-                color: AppTheme.success.withValues(alpha: 0.1),
+                color: AppColors.success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Text(
                 'Available',
                 style: TextStyle(
                   fontSize: 11,
-                  color: AppTheme.success,
+                  color: AppColors.success,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -58,7 +57,7 @@ class PropertyIntroSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 14),
-        if (distanceKm != null) _distanceBadge(distanceKm),
+        if (distanceKm != null) _distanceBadge(context, distanceKm),
         if (distanceKm != null) const SizedBox(height: 16),
         Row(
           children: [
@@ -83,20 +82,20 @@ class PropertyIntroSection extends StatelessWidget {
         if (property.description != null &&
             property.description!.isNotEmpty) ...[
           const SizedBox(height: 22),
-          const Text(
+          Text(
             'About',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: AppTheme.dark,
+              color: AppDesign.text(context),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             property.description!,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
-              color: AppColors.textSecondary,
+              color: AppDesign.muted(context),
               height: 1.6,
             ),
           ),
@@ -105,12 +104,12 @@ class PropertyIntroSection extends StatelessWidget {
     );
   }
 
-  Widget _distanceBadge(double distanceKm) {
+  Widget _distanceBadge(BuildContext context, double distanceKm) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: AppTheme.primaryLight,
+        color: AppDesign.accentTint(context),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -118,7 +117,7 @@ class PropertyIntroSection extends StatelessWidget {
           const StudentNestIcon(
             StudentNestIcons.university,
             size: 16,
-            color: AppTheme.primary,
+            color: AppDesign.accent,
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -132,7 +131,7 @@ class PropertyIntroSection extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 fontSize: 13,
-                color: AppTheme.primary,
+                color: AppDesign.accent,
                 fontWeight: FontWeight.w700,
               ),
             ),

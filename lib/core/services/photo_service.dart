@@ -4,12 +4,9 @@ import '../network/api_client.dart';
 class PhotoService {
   final ApiClient _client = ApiClient();
 
-  Future<Map<String, dynamic>> uploadPhotos(
-    String propertyId,
-    List<File> files,
-  ) async {
+  Future<Map<String, dynamic>> uploadPhotos(String propertyId, List<File> files, {bool isCover = false}) async {
     return await _client.uploadFiles('/photos/$propertyId', files, {
-      'is_cover': 'false',
+      'is_cover': isCover ? 'true' : 'false',
     }, auth: true);
   }
 

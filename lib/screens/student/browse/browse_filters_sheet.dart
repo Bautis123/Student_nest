@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:student_nest/core/constants/app_strings.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'package:student_nest/core/widgets/sn_button.dart';
 import 'browse_filters.dart';
 
@@ -49,16 +49,16 @@ class BrowseFiltersSheet {
                                 }
                               });
                             },
-                            selectedColor: AppTheme.primary.withValues(
+                            selectedColor: AppDesign.accent.withValues(
                               alpha: 0.18,
                             ),
                             side: BorderSide(
                               color:
                                   selected
-                                      ? AppTheme.primary.withValues(alpha: 0.45)
-                                      : AppTheme.border,
+                                      ? AppDesign.accent.withValues(alpha: 0.45)
+                                      : AppDesign.border(context),
                             ),
-                            checkmarkColor: AppTheme.primary,
+                            checkmarkColor: AppDesign.accent,
                           );
                         })
                         .toList(growable: false),

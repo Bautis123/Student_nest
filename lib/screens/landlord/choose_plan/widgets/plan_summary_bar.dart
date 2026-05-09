@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:student_nest/core/theme/app_colors.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
 import 'package:student_nest/core/widgets/app_bottom_action_bar.dart';
 import 'package:student_nest/core/widgets/sn_button.dart';
 
@@ -28,7 +27,7 @@ class PlanSummaryBar extends StatelessWidget {
           _summaryRow(
             label: 'Price',
             value: price,
-            valueColor: isPremium ? AppTheme.primary : null,
+            valueColor: isPremium ? AppDesign.accent : null,
             valueWeight: FontWeight.w700,
           ),
           const SizedBox(height: 14),

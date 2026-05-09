@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'package:student_nest/core/widgets/app_surface_card.dart';
 
 class PaymentDetailsHeader extends StatelessWidget {
@@ -33,7 +33,7 @@ class PaymentDetailsHeader extends StatelessWidget {
             paymentLabel,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 13,
-              color: AppTheme.gray,
+              color: AppDesign.muted(context),
             ),
           ),
           const SizedBox(height: 14),
@@ -42,7 +42,7 @@ class PaymentDetailsHeader extends StatelessWidget {
             style: theme.textTheme.headlineMedium?.copyWith(
               fontSize: 28,
               fontWeight: FontWeight.bold,
-              color: AppTheme.success,
+              color: AppColors.success,
             ),
           ),
         ],

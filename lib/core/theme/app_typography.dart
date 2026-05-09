@@ -10,9 +10,7 @@ class AppTypography {
     final textColor =
         brightness == Brightness.dark ? AppColors.white : AppColors.textPrimary;
     final secondaryColor =
-        brightness == Brightness.dark
-            ? const Color(0xFFA0ADBA)
-            : AppColors.textSecondary;
+        brightness == Brightness.dark ? AppDesign.darkMuted : AppColors.textSecondary;
 
     return GoogleFonts.poppinsTextTheme().copyWith(
       headlineLarge: GoogleFonts.poppins(

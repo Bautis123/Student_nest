@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../models/property.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 
 class PropertyPhotosSection extends StatelessWidget {
   final List<Photo> photos;
@@ -23,12 +23,12 @@ class PropertyPhotosSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               'Photos',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.dark,
+                color: AppDesign.text(context),
               ),
             ),
             GestureDetector(
@@ -37,7 +37,7 @@ class PropertyPhotosSection extends StatelessWidget {
                 'View all ${photos.length} photos',
                 style: const TextStyle(
                   fontSize: 13,
-                  color: AppTheme.primary,
+                  color: AppDesign.accent,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -62,7 +62,7 @@ class PropertyPhotosSection extends StatelessWidget {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: CachedNetworkImage(
-                          imageUrl: photos[i].url,
+                          imageUrl: photos[i].cacheAwareUrl,
                           width: 100,
                           height: 100,
                           fit: BoxFit.cover,
@@ -72,12 +72,12 @@ class PropertyPhotosSection extends StatelessWidget {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: Container(
-                            color: Colors.black.withValues(alpha: 0.5),
+                            color: AppColors.navy.withValues(alpha: 0.5),
                             child: Center(
                               child: Text(
                                 '+${photos.length - 3}',
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: AppColors.white,
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),

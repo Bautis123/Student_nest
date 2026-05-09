@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'package:student_nest/core/widgets/app_bottom_action_bar.dart';
 import 'package:student_nest/core/widgets/sn_button.dart';
 
@@ -26,7 +26,7 @@ class PropertyActionBar extends StatelessWidget {
         16,
         14 + MediaQuery.paddingOf(context).bottom,
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: AppDesign.surface(context),
       withTopBorder: false,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -79,7 +79,7 @@ class _RouteButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: AppDesign.surface(context),
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         onTap: onTap,
@@ -89,20 +89,20 @@ class _RouteButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppTheme.border),
+            border: Border.all(color: AppDesign.border(context)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: AppTheme.dark, size: 21),
+              Icon(icon, color: AppDesign.text(context), size: 21),
               const SizedBox(width: 10),
               Flexible(
                 child: Text(
                   label,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppTheme.dark,
+                  style: TextStyle(
+                    color: AppDesign.text(context),
                     fontSize: 12,
                     height: 1.22,
                     fontWeight: FontWeight.w700,

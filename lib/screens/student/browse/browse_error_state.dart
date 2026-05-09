@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'package:student_nest/core/widgets/sn_button.dart';
 
 class BrowseErrorState extends StatelessWidget {
@@ -18,9 +18,9 @@ class BrowseErrorState extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.wifi_off, size: 48, color: AppTheme.gray),
+          Icon(Icons.wifi_off, size: 48, color: AppDesign.muted(context)),
           const SizedBox(height: 12),
-          Text(message, style: const TextStyle(color: AppTheme.gray)),
+          Text(message, style: TextStyle(color: AppDesign.muted(context))),
           const SizedBox(height: 16),
           SNButton(
             label: 'Retry',

@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../../utils/student_nest_icons.dart';
 import 'package:student_nest/core/theme/app_colors.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
 
 class BrowseFilterButton extends StatelessWidget {
   const BrowseFilterButton({
     super.key,
     required this.onTap,
-    this.foregroundColor = AppTheme.primary,
+    this.foregroundColor = AppDesign.accent,
   });
 
   final VoidCallback onTap;
@@ -17,7 +16,7 @@ class BrowseFilterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: AppDesign.surface(context),
       borderRadius: BorderRadius.circular(999),
       elevation: 0,
       child: InkWell(
@@ -27,12 +26,12 @@ class BrowseFilterButton extends StatelessWidget {
           height: 40,
           padding: const EdgeInsets.symmetric(horizontal: 18),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppDesign.surface(context),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: AppDesign.border(context)),
             boxShadow: [
               BoxShadow(
-                color: AppColors.textSecondary.withValues(alpha: 0.12),
+                color: AppDesign.shadow(context),
                 blurRadius: 14,
                 offset: const Offset(0, 7),
               ),
@@ -74,12 +73,12 @@ class BrowseCountPill extends StatelessWidget {
       height: 40,
       padding: const EdgeInsets.fromLTRB(5, 5, 14, 5),
       decoration: BoxDecoration(
-        color: AppTheme.white,
+        color: AppDesign.surface(context),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: AppDesign.border(context)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textSecondary.withValues(alpha: 0.08),
+            color: AppDesign.shadow(context),
             blurRadius: 14,
             offset: const Offset(0, 7),
           ),
@@ -91,11 +90,11 @@ class BrowseCountPill extends StatelessWidget {
             width: 30,
             height: 30,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppDesign.page(context),
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.textSecondary.withValues(alpha: 0.10),
+                  color: AppDesign.shadow(context),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -105,7 +104,7 @@ class BrowseCountPill extends StatelessWidget {
               child: StudentNestIcon(
                 StudentNestIcons.home,
                 size: 17,
-                color: AppColors.textPrimary,
+                color: AppDesign.accent,
               ),
             ),
           ),
@@ -114,10 +113,10 @@ class BrowseCountPill extends StatelessWidget {
             child: Text(
               label,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
+                color: AppDesign.text(context),
               ),
             ),
           ),

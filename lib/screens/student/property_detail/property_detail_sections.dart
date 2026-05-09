@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../models/property.dart';
 import '../../../utils/student_nest_icons.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'property_amenity_tile.dart';
 import 'property_room_row.dart';
 
@@ -16,12 +16,12 @@ class PropertyAmenitiesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Amenities',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w700,
-            color: AppTheme.dark,
+            color: AppDesign.text(context),
           ),
         ),
         const SizedBox(height: 14),
@@ -68,12 +68,12 @@ class PropertyRoomsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Room Types',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w700,
-            color: AppTheme.dark,
+            color: AppDesign.text(context),
           ),
         ),
         const SizedBox(height: 14),

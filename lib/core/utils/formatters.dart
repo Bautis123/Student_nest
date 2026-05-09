@@ -17,6 +17,17 @@ class Formatters {
   static String compactDistance(double value) =>
       '${value.toStringAsFixed(2)} km';
 
+  static String schoolName(String value) {
+    final trimmed = value.trim();
+    final normalized = trimmed.toLowerCase();
+    if (normalized == 'unza' ||
+        (normalized.contains('university') &&
+            normalized.contains('zambia'))) {
+      return 'UNZA';
+    }
+    return trimmed;
+  }
+
   static String monthPrice(num value) => '${currency(value)}/mo';
 
   static String coordinate(double value) => value.toStringAsFixed(6);

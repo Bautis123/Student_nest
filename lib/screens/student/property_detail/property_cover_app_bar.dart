@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../models/property.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 
 class PropertyCoverAppBar extends StatelessWidget {
   final Photo? coverPhoto;
@@ -13,29 +13,31 @@ class PropertyCoverAppBar extends StatelessWidget {
     return SliverAppBar(
       expandedHeight: 280,
       pinned: true,
-      backgroundColor: AppTheme.primary,
+      backgroundColor: AppDesign.accent,
       flexibleSpace: FlexibleSpaceBar(
         background:
             coverPhoto != null
                 ? CachedNetworkImage(
-                  imageUrl: coverPhoto!.url,
+                  imageUrl: coverPhoto!.cacheAwareUrl,
                   fit: BoxFit.cover,
                   placeholder:
-                      (_, __) => Container(color: AppTheme.primaryLight),
-                  errorWidget: (_, __, ___) => _fallback(),
+                      (_, __) => Container(
+                        color: AppDesign.accentTint(context),
+                      ),
+                  errorWidget: (_, __, ___) => _fallback(context),
                 )
-                : _fallback(),
+                : _fallback(context),
       ),
     );
   }
 
-  Widget _fallback() {
+  Widget _fallback(BuildContext context) {
     return Container(
-      color: AppTheme.primaryLight,
+      color: AppDesign.accentTint(context),
       child: const Icon(
         Icons.home_work_outlined,
         size: 64,
-        color: AppTheme.primary,
+        color: AppDesign.accent,
       ),
     );
   }

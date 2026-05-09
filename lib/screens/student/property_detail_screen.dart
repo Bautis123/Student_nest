@@ -5,7 +5,6 @@ import '../../models/property.dart';
 import '../../services/api_service.dart';
 import '../../services/route_service.dart';
 import 'package:student_nest/core/theme/app_colors.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
 import 'package:student_nest/core/widgets/sn_loading_indicator.dart';
 import 'property_detail/photo_gallery_screen.dart';
 import 'property_detail/property_action_bar.dart';
@@ -126,7 +125,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
     final photoCount = p.photos.length;
 
     return Scaffold(
-      backgroundColor: AppTheme.lightGray,
+      backgroundColor: AppDesign.page(context),
       body: Stack(
         children: [
           const _SoftBackground(),
@@ -134,7 +133,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
             child: SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(
                 16,
-                MediaQuery.paddingOf(context).top + 52,
+                MediaQuery.paddingOf(context).top + 20,
                 16,
                 190,
               ),
@@ -190,8 +189,8 @@ class _SoftBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ColoredBox(
-      color: AppTheme.lightGray,
+    return ColoredBox(
+      color: AppDesign.page(context),
       child: SizedBox.expand(),
     );
   }
@@ -224,7 +223,7 @@ class _RoundIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: AppDesign.surface(context),
       borderRadius: BorderRadius.circular(16),
       elevation: 0,
       child: InkWell(
@@ -233,7 +232,7 @@ class _RoundIconButton extends StatelessWidget {
         child: SizedBox(
           width: 48,
           height: 48,
-          child: Icon(icon, color: AppTheme.dark, size: 22),
+          child: Icon(icon, color: AppDesign.text(context), size: 22),
         ),
       ),
     );
@@ -258,7 +257,7 @@ class _PropertyPhotoHero extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: Material(
-          color: AppTheme.primaryLight,
+          color: AppDesign.accentTint(context),
           child: InkWell(
             onTap: onTap,
             child: Stack(
@@ -266,10 +265,12 @@ class _PropertyPhotoHero extends StatelessWidget {
               children: [
                 if (coverPhoto != null)
                   CachedNetworkImage(
-                    imageUrl: coverPhoto!.url,
+                    imageUrl: coverPhoto!.cacheAwareUrl,
                     fit: BoxFit.cover,
                     placeholder:
-                        (_, __) => Container(color: AppTheme.primaryLight),
+                        (_, __) => Container(
+                          color: AppDesign.accentTint(context),
+                        ),
                     errorWidget: (_, __, ___) => const _PhotoFallback(),
                   )
                 else
@@ -283,10 +284,10 @@ class _PropertyPhotoHero extends StatelessWidget {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.68),
+                      color: AppColors.navy.withValues(alpha: 0.68),
                       borderRadius: BorderRadius.circular(18),
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.65),
+                        color: AppColors.white.withValues(alpha: 0.65),
                       ),
                     ),
                     child: Row(
@@ -294,14 +295,14 @@ class _PropertyPhotoHero extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.image_outlined,
-                          color: Colors.white,
+                          color: AppColors.white,
                           size: 17,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           '$photoCount photo${photoCount == 1 ? '' : 's'}',
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: AppColors.white,
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
                           ),
@@ -325,7 +326,7 @@ class _PhotoFallback extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Icon(Icons.home_work_outlined, size: 64, color: AppTheme.primary),
+      child: Icon(Icons.home_work_outlined, size: 64, color: AppDesign.accent),
     );
   }
 }
@@ -341,9 +342,9 @@ class _DetailCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 18, 16, 18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppDesign.surface(context),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppTheme.border),
+        border: Border.all(color: AppDesign.border(context)),
       ),
       child: child,
     );

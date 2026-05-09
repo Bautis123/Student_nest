@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../models/property.dart';
 import 'package:student_nest/core/theme/app_colors.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
 
 class ManageListingCoverPhotoCard extends StatelessWidget {
   final Photo? coverPhoto;
@@ -53,7 +52,7 @@ class ManageListingCoverPhotoCard extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(14),
           child: Image.network(
-            coverPhoto!.url,
+            coverPhoto!.cacheAwareUrl,
             width: double.infinity,
             height: 200,
             fit: BoxFit.cover,
@@ -71,12 +70,12 @@ class ManageListingCoverPhotoCard extends StatelessWidget {
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.star_rounded, color: Colors.white, size: 14),
+                Icon(Icons.star_rounded, color: AppColors.white, size: 14),
                 SizedBox(width: 4),
                 Text(
                   'Cover',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.white,
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
                   ),
@@ -94,12 +93,12 @@ class ManageListingCoverPhotoCard extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: AppTheme.error,
+                color: AppColors.error,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: const Icon(
                 Icons.delete_outline,
-                color: Colors.white,
+                color: AppColors.white,
                 size: 16,
               ),
             ),

@@ -15,6 +15,8 @@ class BrowseResultsSliver extends StatelessWidget {
     required this.properties,
     required this.savedPropertyIds,
     required this.walkingDistanceByPropertyId,
+    required this.walkingMinutesByPropertyId,
+    required this.walkingSchoolByPropertyId,
     required this.onRetry,
     required this.onSavedToggle,
   });
@@ -24,6 +26,8 @@ class BrowseResultsSliver extends StatelessWidget {
   final List<Property> properties;
   final Set<String> savedPropertyIds;
   final Map<String, double> walkingDistanceByPropertyId;
+  final Map<String, int> walkingMinutesByPropertyId;
+  final Map<String, String> walkingSchoolByPropertyId;
   final VoidCallback onRetry;
   final void Function(Property property, bool isSaved)? onSavedToggle;
 
@@ -58,6 +62,8 @@ class BrowseResultsSliver extends StatelessWidget {
               isSaved,
             ),
             displayDistanceKm: walkingDistanceByPropertyId[property.id],
+            displayWalkingMinutes: walkingMinutesByPropertyId[property.id],
+            displayWalkingDestination: walkingSchoolByPropertyId[property.id],
             preferWalkingDistance: true,
             onTap: () {
               Navigator.push(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../models/property.dart';
 import 'package:student_nest/core/theme/app_colors.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
 import 'package:student_nest/core/widgets/app_status_badge.dart';
 import 'package:student_nest/core/widgets/app_surface_card.dart';
 
@@ -14,7 +13,7 @@ class ManageListingStatusBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final statusColor =
-        property.isApproved ? AppDesign.accent : AppTheme.warning;
+        property.isApproved ? AppDesign.accent : AppColors.warning;
     final statusText =
         property.isApproved
             ? 'Live - visible to students'
@@ -26,11 +25,11 @@ class ManageListingStatusBanner extends StatelessWidget {
       color:
           property.isApproved
               ? AppColors.primaryTint
-              : AppTheme.warning.withValues(alpha: 0.08),
+              : AppColors.warning.withValues(alpha: 0.08),
       borderColor:
           property.isApproved
               ? AppDesign.accent.withValues(alpha: 0.16)
-              : AppTheme.warning.withValues(alpha: 0.16),
+              : AppColors.warning.withValues(alpha: 0.16),
       child: Row(
         children: [
           AppStatusBadge(

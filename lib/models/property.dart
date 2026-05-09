@@ -33,6 +33,7 @@ class Property {
   final int? totalRoomsCount;
   final int? availableRoomsCount;
   final int? occupiedRoomsCount;
+  final int? availableSpacesCount;
 
   Property({
     required this.id,
@@ -65,6 +66,7 @@ class Property {
     this.totalRoomsCount,
     this.availableRoomsCount,
     this.occupiedRoomsCount,
+    this.availableSpacesCount,
   });
 
   factory Property.fromJson(Map<String, dynamic> json) {
@@ -126,6 +128,7 @@ class Property {
       totalRoomsCount: _optionalInt(json['total_rooms_count']),
       availableRoomsCount: _optionalInt(json['available_rooms_count']),
       occupiedRoomsCount: _optionalInt(json['occupied_rooms_count']),
+      availableSpacesCount: _optionalInt(json['available_spaces_count']),
     );
   }
 
@@ -141,10 +144,22 @@ class Property {
     return plan == 'premium';
   }
 
+  int? get resolvedAvailableSpaces {
+    if (availableSpacesCount != null) return availableSpacesCount;
+    if (rooms.isNotEmpty) {
+      return rooms.fold<int>(
+        0,
+        (total, room) => total + (room.availableRooms * room.studentsPerRoom),
+      );
+    }
+    return availableRoomsCount;
+  }
+
   bool get isUnzaSchool {
     final normalizedSchool = schoolName?.toLowerCase() ?? '';
     return normalizedSchool.contains('unza') ||
-        normalizedSchool.contains('university of zambia');
+        (normalizedSchool.contains('university') &&
+            normalizedSchool.contains('zambia'));
   }
 
   double? get resolvedSchoolLat {
@@ -239,5 +254,10 @@ class Photo {
       url: json['url'],
       isCover: json['is_cover'] ?? false,
     );
+  }
+
+  String get cacheAwareUrl {
+    final separator = url.contains('?') ? '&' : '?';
+    return '$url${separator}sn_photo=$id&cover=${isCover ? 1 : 0}';
   }
 }

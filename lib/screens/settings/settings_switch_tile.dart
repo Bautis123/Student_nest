@@ -39,9 +39,9 @@ class SettingsSwitchTile extends StatelessWidget {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.white,
+            activeColor: AppColors.white,
             activeTrackColor: AppDesign.accent,
-            inactiveThumbColor: Colors.white,
+            inactiveThumbColor: AppColors.white,
             inactiveTrackColor: AppDesign.border(context),
             trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
           ),

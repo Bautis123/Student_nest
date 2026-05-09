@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../models/property.dart';
 import 'package:student_nest/core/theme/app_colors.dart';
 import 'package:student_nest/core/utils/formatters.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
 import 'package:student_nest/core/widgets/app_status_badge.dart';
 
 class PropertyRoomRow extends StatelessWidget {
@@ -16,12 +15,12 @@ class PropertyRoomRow extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 13),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppTheme.border)),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: AppDesign.border(context))),
       ),
       child: Row(
         children: [
-          Expanded(child: _details(isFull)),
+          Expanded(child: _details(context, isFull)),
           const SizedBox(width: 8),
           Flexible(
             flex: 0,
@@ -33,7 +32,7 @@ class PropertyRoomRow extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: isFull ? AppTheme.gray : AppTheme.primary,
+                  color: isFull ? AppDesign.muted(context) : AppDesign.accent,
                 ),
               ),
             ),
@@ -41,7 +40,7 @@ class PropertyRoomRow extends StatelessWidget {
           const SizedBox(width: 4),
           Icon(
             Icons.chevron_right_rounded,
-            color: isFull ? AppTheme.gray : AppTheme.primary,
+            color: isFull ? AppDesign.muted(context) : AppDesign.accent,
             size: 24,
           ),
         ],
@@ -49,7 +48,7 @@ class PropertyRoomRow extends StatelessWidget {
     );
   }
 
-  Widget _details(bool isFull) {
+  Widget _details(BuildContext context, bool isFull) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -60,8 +59,8 @@ class PropertyRoomRow extends StatelessWidget {
                 Formatters.titleCaseWord(room.roomType),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: AppTheme.dark,
+                style: TextStyle(
+                  color: AppDesign.text(context),
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
                 ),
@@ -70,7 +69,7 @@ class PropertyRoomRow extends StatelessWidget {
             const SizedBox(width: 8),
             AppStatusBadge(
               label: isFull ? 'Full' : '${room.availableRooms} available',
-              color: isFull ? AppTheme.error : AppTheme.success,
+              color: isFull ? AppColors.error : AppColors.success,
               fontSize: 10,
               horizontalPadding: 7,
               verticalPadding: 3,
@@ -82,7 +81,7 @@ class PropertyRoomRow extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           '${room.studentsPerRoom} student${room.studentsPerRoom > 1 ? 's' : ''} per room',
-          style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+          style: TextStyle(fontSize: 13, color: AppDesign.muted(context)),
         ),
       ],
     );

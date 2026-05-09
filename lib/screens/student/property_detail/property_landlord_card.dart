@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../models/property.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'package:student_nest/core/widgets/app_surface_card.dart';
 
 class PropertyLandlordCard extends StatelessWidget {
@@ -20,10 +20,10 @@ class PropertyLandlordCard extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: AppTheme.primaryLight,
+              color: AppDesign.accentTint(context),
               borderRadius: BorderRadius.circular(22),
             ),
-            child: const Icon(Icons.person_outline, color: AppTheme.primary),
+            child: const Icon(Icons.person_outline, color: AppDesign.accent),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -40,7 +40,7 @@ class PropertyLandlordCard extends StatelessWidget {
                 Text(
                   property.landlordPhone ?? '',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppTheme.gray,
+                    color: AppDesign.muted(context),
                     fontSize: 12,
                   ),
                 ),

@@ -92,7 +92,7 @@ class _AddListingActionCard extends StatelessWidget {
                 ),
                 child: const Icon(
                   Icons.add_home_work_outlined,
-                  color: Colors.white,
+                  color: AppColors.white,
                   size: 22,
                 ),
               ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'package:student_nest/core/widgets/app_info_row.dart';
 import 'package:student_nest/core/widgets/app_surface_card.dart';
 import 'package:student_nest/core/widgets/sn_button.dart';
@@ -44,7 +44,7 @@ class PaymentSummaryCard extends StatelessWidget {
           AppInfoRow(
             label: 'Total',
             value: amount,
-            valueColor: AppTheme.success,
+            valueColor: AppColors.success,
             valueWeight: FontWeight.bold,
           ),
           const SizedBox(height: 16),

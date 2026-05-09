@@ -44,7 +44,7 @@ class DashboardListingCard extends StatelessWidget {
                 child:
                     coverPhoto != null
                         ? CachedNetworkImage(
-                          imageUrl: coverPhoto.url,
+                          imageUrl: coverPhoto.cacheAwareUrl,
                           fit: BoxFit.cover,
                           placeholder:
                               (_, __) => const _ListingThumbnailPlaceholder(),

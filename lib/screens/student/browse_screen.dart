@@ -8,6 +8,7 @@ import '../../models/property.dart';
 import '../../services/api_service.dart';
 import '../../services/route_service.dart';
 import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/utils/formatters.dart';
 import 'browse/browse_filters.dart';
 import 'browse/browse_filters_sheet.dart';
 import 'browse/browse_results_sliver.dart';
@@ -47,8 +48,11 @@ class _BrowseScreenState extends State<BrowseScreen> {
   Timer? _searchDebounce;
   Set<BrowseFilter> _selectedFilters = {BrowseFilter.suggested};
   final Map<String, double> _walkingDistanceByPropertyId = {};
+  final Map<String, int> _walkingMinutesByPropertyId = {};
+  final Map<String, String> _walkingSchoolByPropertyId = {};
   bool _loadingWalkingDistances = false;
   int _distanceLoadCursor = 0;
+  int _routeLoadVersion = 0;
   static const int _distanceBatchSize = 8;
   String _locationLabel = 'Locating...';
 
@@ -86,12 +90,16 @@ class _BrowseScreenState extends State<BrowseScreen> {
       setState(() {
         _properties = properties;
         _walkingDistanceByPropertyId.clear();
+        _walkingMinutesByPropertyId.clear();
+        _walkingSchoolByPropertyId.clear();
         _distanceLoadCursor = 0;
         _propertiesVersion++;
         _isLoading = false;
       });
       widget.onPropertiesLoaded?.call(properties);
-      unawaited(_loadNextDistanceBatch(properties));
+      if (_selectedSchoolLocation != null) {
+        unawaited(_loadNextDistanceBatch(properties));
+      }
     } catch (e) {
       setState(() {
         _error = 'Failed to load listings. Check your connection.';
@@ -104,22 +112,46 @@ class _BrowseScreenState extends State<BrowseScreen> {
     final prefs = await SharedPreferences.getInstance();
     final schoolId = prefs.getString(_preferredSchoolIdKey);
     if (!mounted || schoolId == null || schoolId.isEmpty) return;
-    setState(() => _selectedSchoolId = schoolId);
+    setState(() {
+      _selectedSchoolId = schoolId;
+      _resetWalkingRoutes();
+    });
+    if (_properties.isNotEmpty) {
+      unawaited(_loadWalkingDistances(_properties));
+    }
   }
 
   Future<void> _loadSchools() async {
     try {
       final schools = await _api.getSchools();
       if (!mounted) return;
-      setState(() => _schools = schools);
+      setState(() {
+        _schools = schools;
+        _resetWalkingRoutes();
+      });
+      if (_properties.isNotEmpty && _selectedSchoolLocation != null) {
+        unawaited(_loadWalkingDistances(_properties));
+      }
     } catch (_) {
       if (!mounted) return;
       setState(() => _schools = _schoolsFromProperties(_properties));
     }
   }
 
+  void _resetWalkingRoutes() {
+    _walkingDistanceByPropertyId.clear();
+    _walkingMinutesByPropertyId.clear();
+    _walkingSchoolByPropertyId.clear();
+    _distanceLoadCursor = 0;
+    _routeLoadVersion++;
+    _propertiesVersion++;
+  }
+
   Future<void> _loadWalkingDistances(List<Property> properties) async {
+    final selectedSchool = _selectedSchoolLocation;
+    if (selectedSchool == null) return;
     if (_distanceLoadCursor >= properties.length) return;
+    final routeLoadVersion = _routeLoadVersion;
     final batch = properties
         .skip(_distanceLoadCursor)
         .take(_distanceBatchSize)
@@ -132,24 +164,26 @@ class _BrowseScreenState extends State<BrowseScreen> {
     try {
       final requests = batch
           .map((property) async {
-            final schoolLat = property.resolvedSchoolLat;
-            final schoolLng = property.resolvedSchoolLng;
-            if (schoolLat == null || schoolLng == null) return;
-
-            final distance = await _routeService.getWalkingDistanceKm(
-              fromLat: property.latitude,
-              fromLng: property.longitude,
-              toLat: schoolLat,
-              toLng: schoolLng,
+            final closestRoute = await _closestWalkingRoute(
+              property,
+              selectedSchool,
             );
-            if (distance == null) return;
-            _walkingDistanceByPropertyId[property.id] = distance;
+            if (closestRoute == null || routeLoadVersion != _routeLoadVersion) {
+              return;
+            }
+
+            _walkingDistanceByPropertyId[property.id] =
+                closestRoute.distanceKm;
+            _walkingMinutesByPropertyId[property.id] =
+                closestRoute.durationMin;
+            _walkingSchoolByPropertyId[property.id] = closestRoute.schoolName;
           })
           .toList(growable: false);
 
       await Future.wait(requests);
 
       if (!mounted) return;
+      if (routeLoadVersion != _routeLoadVersion) return;
       setState(() {
         _distanceLoadCursor += batch.length;
         _propertiesVersion++;
@@ -161,6 +195,53 @@ class _BrowseScreenState extends State<BrowseScreen> {
 
   Future<void> _loadNextDistanceBatch(List<Property> properties) async {
     await _loadWalkingDistances(properties);
+  }
+
+  Future<_ClosestSchoolRoute?> _closestWalkingRoute(
+    Property property,
+    _SchoolLocation selectedSchool,
+  ) async {
+    final route = await _routeService.getWalkingSummary(
+      fromLat: property.latitude,
+      fromLng: property.longitude,
+      toLat: selectedSchool.latitude,
+      toLng: selectedSchool.longitude,
+    );
+    final distance = route?.distanceKm;
+    final duration = route?.durationMin;
+    if (distance == null || duration == null) return null;
+
+    return _ClosestSchoolRoute(
+      schoolName: Formatters.schoolName(selectedSchool.name),
+      distanceKm: distance,
+      durationMin: duration,
+    );
+  }
+
+  _SchoolLocation? _schoolLocationFromMap(Map<String, dynamic> school) {
+    final name = school['name']?.toString().trim();
+    final lat = _optionalDouble(school['latitude'] ?? school['lat']);
+    final lng = _optionalDouble(school['longitude'] ?? school['lng']);
+    if (name == null || name.isEmpty || lat == null || lng == null) {
+      return null;
+    }
+    return _SchoolLocation(
+      name: Formatters.schoolName(name),
+      latitude: lat,
+      longitude: lng,
+    );
+  }
+
+  _SchoolLocation? get _selectedSchoolLocation {
+    final school = _selectedSchool;
+    if (school == null) return null;
+    return _schoolLocationFromMap(school);
+  }
+
+  double? _optionalDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.toDouble();
+    return double.tryParse(value.toString());
   }
 
   Future<void> _loadCurrentLocationLabel() async {
@@ -299,7 +380,8 @@ class _BrowseScreenState extends State<BrowseScreen> {
   String get _selectedSchoolLabel {
     final school = _selectedSchool;
     if (school == null) return 'All schools';
-    return school['name']?.toString() ?? 'Selected school';
+    final name = school['name']?.toString();
+    return name == null ? 'Selected school' : Formatters.schoolName(name);
   }
 
   bool _isNearSelectedSchool(
@@ -331,7 +413,12 @@ class _BrowseScreenState extends State<BrowseScreen> {
         continue;
       }
       final key = id ?? name!;
-      byKey[key] = {'id': id ?? name, 'name': name ?? 'School'};
+      byKey[key] = {
+        'id': id ?? name,
+        'name': name == null ? 'School' : Formatters.schoolName(name),
+        'latitude': property.resolvedSchoolLat,
+        'longitude': property.resolvedSchoolLng,
+      };
     }
     return byKey.values.toList(growable: false)
       ..sort((a, b) => a['name'].toString().compareTo(b['name'].toString()));
@@ -367,7 +454,13 @@ class _BrowseScreenState extends State<BrowseScreen> {
     if (!mounted || picked == null) return;
     final nextSchoolId = picked == _allSchoolsValue ? null : picked;
     if (nextSchoolId == _selectedSchoolId) return;
-    setState(() => _selectedSchoolId = nextSchoolId);
+    setState(() {
+      _selectedSchoolId = nextSchoolId;
+      _resetWalkingRoutes();
+    });
+    if (nextSchoolId != null) {
+      unawaited(_loadWalkingDistances(_properties));
+    }
   }
 
   @override
@@ -395,6 +488,8 @@ class _BrowseScreenState extends State<BrowseScreen> {
             properties: filteredProperties,
             savedPropertyIds: widget.savedPropertyIds,
             walkingDistanceByPropertyId: _walkingDistanceByPropertyId,
+            walkingMinutesByPropertyId: _walkingMinutesByPropertyId,
+            walkingSchoolByPropertyId: _walkingSchoolByPropertyId,
             onRetry: _loadProperties,
             onSavedToggle: widget.onSavedToggle,
           ),
@@ -413,4 +508,28 @@ class _BrowseScreenState extends State<BrowseScreen> {
       unawaited(_loadWalkingDistances(_properties));
     }
   }
+}
+
+class _SchoolLocation {
+  const _SchoolLocation({
+    required this.name,
+    required this.latitude,
+    required this.longitude,
+  });
+
+  final String name;
+  final double latitude;
+  final double longitude;
+}
+
+class _ClosestSchoolRoute {
+  const _ClosestSchoolRoute({
+    required this.schoolName,
+    required this.distanceKm,
+    required this.durationMin,
+  });
+
+  final String schoolName;
+  final double distanceKm;
+  final int durationMin;
 }

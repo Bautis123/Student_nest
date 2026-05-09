@@ -17,7 +17,42 @@ class BrowseSchoolSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
+    return SliverPersistentHeader(
+      pinned: true,
+      delegate: _BrowseSchoolSummaryDelegate(
+        selectedSchoolLabel: selectedSchoolLabel,
+        listingCount: listingCount,
+        onSchoolTap: onSchoolTap,
+      ),
+    );
+  }
+}
+
+class _BrowseSchoolSummaryDelegate extends SliverPersistentHeaderDelegate {
+  const _BrowseSchoolSummaryDelegate({
+    required this.selectedSchoolLabel,
+    required this.listingCount,
+    required this.onSchoolTap,
+  });
+
+  final String selectedSchoolLabel;
+  final int listingCount;
+  final VoidCallback onSchoolTap;
+
+  @override
+  double get minExtent => 68;
+
+  @override
+  double get maxExtent => 68;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return ColoredBox(
+      color: AppDesign.page(context),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
         child: Row(
@@ -46,5 +81,10 @@ class BrowseSchoolSummary extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  bool shouldRebuild(covariant _BrowseSchoolSummaryDelegate oldDelegate) {
+    return true;
   }
 }

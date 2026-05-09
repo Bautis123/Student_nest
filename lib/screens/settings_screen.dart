@@ -37,7 +37,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final ApiService _api = ApiService();
   User? _user;
   List<Map<String, dynamic>> _schools = [];
-  String _preferredSchoolLabel = 'University of Zambia';
+  String _preferredSchoolLabel = 'UNZA';
   bool _notifications = true;
 
   @override
@@ -60,7 +60,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (!mounted) return;
     setState(() {
       _preferredSchoolLabel =
-          prefs.getString(_preferredSchoolNameKey) ?? 'University of Zambia';
+          prefs.getString(_preferredSchoolNameKey) ?? 'UNZA';
     });
   }
 
@@ -90,7 +90,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _schools = const [
           {
             'id': 'unza',
-            'name': 'University of Zambia',
+            'name': 'UNZA',
             'area': 'Great East Road',
           },
         ];

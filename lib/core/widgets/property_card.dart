@@ -17,6 +17,8 @@ class PropertyCard extends StatelessWidget {
     this.isSaved = false,
     this.onSavedChanged,
     this.displayDistanceKm,
+    this.displayWalkingMinutes,
+    this.displayWalkingDestination,
     this.preferWalkingDistance = false,
   });
 
@@ -25,6 +27,8 @@ class PropertyCard extends StatelessWidget {
   final bool isSaved;
   final ValueChanged<bool>? onSavedChanged;
   final double? displayDistanceKm;
+  final int? displayWalkingMinutes;
+  final String? displayWalkingDestination;
   final bool preferWalkingDistance;
 
   @override
@@ -71,6 +75,8 @@ class PropertyCard extends StatelessWidget {
                         child: _PropertyPrice(
                           property: property,
                           distanceKm: distanceKm,
+                          walkingMinutes: displayWalkingMinutes,
+                          walkingDestination: displayWalkingDestination,
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -131,7 +137,7 @@ class _PropertyImageHeader extends StatelessWidget {
             child:
                 coverPhoto != null
                     ? CachedNetworkImage(
-                      imageUrl: coverPhoto!.url,
+                      imageUrl: coverPhoto!.cacheAwareUrl,
                       fit: BoxFit.cover,
                       memCacheWidth: 1200,
                       memCacheHeight: 900,
@@ -198,10 +204,17 @@ class _SaveButton extends StatelessWidget {
 }
 
 class _PropertyPrice extends StatelessWidget {
-  const _PropertyPrice({required this.property, required this.distanceKm});
+  const _PropertyPrice({
+    required this.property,
+    required this.distanceKm,
+    required this.walkingMinutes,
+    required this.walkingDestination,
+  });
 
   final Property property;
   final double? distanceKm;
+  final int? walkingMinutes;
+  final String? walkingDestination;
 
   @override
   Widget build(BuildContext context) {
@@ -235,7 +248,13 @@ class _PropertyPrice extends StatelessWidget {
             ],
           ),
         ),
-        if (distanceKm != null) ...[
+        if (walkingMinutes != null) ...[
+          const SizedBox(height: 6),
+          _WalkingTimeRow(
+            minutes: walkingMinutes!,
+            destination: walkingDestination ?? property.schoolName ?? 'campus',
+          ),
+        ] else if (distanceKm != null) ...[
           const SizedBox(height: 6),
           Row(
             children: [
@@ -259,6 +278,84 @@ class _PropertyPrice extends StatelessWidget {
             ],
           ),
         ],
+        if (property.resolvedAvailableSpaces != null) ...[
+          const SizedBox(height: 6),
+          _AvailabilityRow(spaces: property.resolvedAvailableSpaces!),
+        ],
+      ],
+    );
+  }
+}
+
+class _WalkingTimeRow extends StatelessWidget {
+  const _WalkingTimeRow({required this.minutes, required this.destination});
+
+  final int minutes;
+  final String destination;
+
+  @override
+  Widget build(BuildContext context) {
+    final normalizedMinutes = minutes < 1 ? 1 : minutes;
+    final minuteLabel =
+        '$normalizedMinutes min${normalizedMinutes == 1 ? '' : 's'} walk';
+    final destinationLabel = Formatters.schoolName(destination);
+
+    return Row(
+      children: [
+        const StudentNestIcon(
+          StudentNestIcons.mapPin,
+          size: 15,
+          color: AppColors.textSecondary,
+        ),
+        const SizedBox(width: 6),
+        Flexible(
+          child: Text(
+            '$minuteLabel to $destinationLabel',
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AvailabilityRow extends StatelessWidget {
+  const _AvailabilityRow({required this.spaces});
+
+  final int spaces;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasSpace = spaces > 0;
+    final label =
+        hasSpace
+            ? '$spaces space${spaces == 1 ? '' : 's'} available'
+            : 'No spaces available';
+
+    return Row(
+      children: [
+        StudentNestIcon(
+          StudentNestIcons.bed,
+          size: 15,
+          color: hasSpace ? AppColors.primary : AppColors.error,
+        ),
+        const SizedBox(width: 6),
+        Flexible(
+          child: Text(
+            label,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 12,
+              color: hasSpace ? AppColors.primary : AppColors.error,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -324,7 +421,7 @@ class _ImageBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.70),
+        color: AppColors.navy.withValues(alpha: 0.70),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(

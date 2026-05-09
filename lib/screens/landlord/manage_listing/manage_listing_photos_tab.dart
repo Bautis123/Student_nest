@@ -31,15 +31,17 @@ class _ManageListingPhotosTabState extends State<ManageListingPhotosTab> {
   final ImagePicker _picker = ImagePicker();
   bool _isUploading = false;
 
-  Future<void> _pickAndUpload() async {
+  Future<void> _pickAndUpload({bool asCover = false}) async {
     final images = await _picker.pickMultiImage(imageQuality: 80);
     if (images.isEmpty) return;
 
     setState(() => _isUploading = true);
     try {
+      final shouldUseAsCover = asCover || widget.property.photos.isEmpty;
       await _api.uploadPhotos(
         widget.property.id,
         images.map((image) => File(image.path)).toList(),
+        isCover: shouldUseAsCover,
       );
       widget.onUpdated();
     } catch (_) {
@@ -127,7 +129,7 @@ class _ManageListingPhotosTabState extends State<ManageListingPhotosTab> {
           const SizedBox(height: 12),
           ManageListingCoverPhotoCard(
             coverPhoto: coverPhoto,
-            onAddTap: _pickAndUpload,
+            onAddTap: () => _pickAndUpload(asCover: true),
             onDeleteTap:
                 coverPhoto == null ? null : () => _deletePhoto(coverPhoto.id),
           ),
@@ -146,7 +148,7 @@ class _ManageListingPhotosTabState extends State<ManageListingPhotosTab> {
               SNButton(
                 label:
                     _isUploading ? AppStrings.uploading : AppStrings.addPhotos,
-                onPressed: _isUploading ? null : _pickAndUpload,
+                onPressed: _isUploading ? null : () => _pickAndUpload(),
                 leadingIcon: _isUploading ? null : Icons.add,
                 isLoading: _isUploading,
                 fullWidth: false,

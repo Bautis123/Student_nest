@@ -181,9 +181,9 @@ class SettingsTileGroups {
     return [
       SettingsTile(
         icon: Icons.logout_outlined,
-        iconColor: AppTheme.error,
+        iconColor: AppColors.error,
         title: 'Log Out',
-        titleColor: AppTheme.error,
+        titleColor: AppColors.error,
         onTap: onShowLogoutDialog,
       ),
     ];

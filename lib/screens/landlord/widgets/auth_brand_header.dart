@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 
 class AuthBrandHeader extends StatelessWidget {
   final String title;
@@ -31,12 +31,12 @@ class AuthBrandHeader extends StatelessWidget {
                   width: 72,
                   height: 72,
                   decoration: BoxDecoration(
-                    color: AppTheme.primary,
+                    color: AppDesign.accent,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Icon(
                     Icons.home_work_rounded,
-                    color: Colors.white,
+                    color: AppColors.white,
                     size: 36,
                   ),
                 ),

@@ -98,11 +98,8 @@ class ApiService {
     return _photos.deletePhoto(photoId);
   }
 
-  Future<Map<String, dynamic>> uploadPhotos(
-    String propertyId,
-    List<File> files,
-  ) {
-    return _photos.uploadPhotos(propertyId, files);
+  Future<Map<String, dynamic>> uploadPhotos(String propertyId, List<File> files, {bool isCover = false}) {
+    return _photos.uploadPhotos(propertyId, files, isCover: isCover);
   }
 
   Future<Map<String, dynamic>> setCoverPhoto(

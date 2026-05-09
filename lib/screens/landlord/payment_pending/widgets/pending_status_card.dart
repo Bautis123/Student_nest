@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'package:student_nest/core/widgets/app_surface_card.dart';
 import 'package:student_nest/core/widgets/sn_loading_indicator.dart';
 
@@ -39,7 +39,7 @@ class PendingStatusCard extends StatelessWidget {
             style: theme.textTheme.titleLarge?.copyWith(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppTheme.dark,
+              color: AppDesign.text(context),
             ),
           ),
           const SizedBox(height: 8),
@@ -48,7 +48,7 @@ class PendingStatusCard extends StatelessWidget {
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 13,
-              color: AppTheme.gray,
+              color: AppDesign.muted(context),
               height: 1.5,
             ),
           ),

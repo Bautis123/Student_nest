@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../services/api_service.dart';
-import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'widgets/register_screen_content.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -87,7 +87,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.lightGray,
+      backgroundColor: AppDesign.page(context),
       body: RegisterScreenContent(
         nameController: _nameController,
         phoneController: _phoneController,

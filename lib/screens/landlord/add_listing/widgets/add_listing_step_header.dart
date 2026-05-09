@@ -76,7 +76,7 @@ class _StepIndicator extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color: isActive ? Colors.white : color,
+                          color: isActive ? AppColors.white : color,
                         ),
                       ),
             ),
