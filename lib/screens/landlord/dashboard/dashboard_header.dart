@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../utils/app_design.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 
 class DashboardHeader extends StatelessWidget {
-  const DashboardHeader({
-    super.key,
-    required this.landlordName,
-  });
+  const DashboardHeader({super.key, required this.landlordName});
 
   final String landlordName;
 

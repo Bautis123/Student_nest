@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'utils/theme.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
 import 'screens/main_screen.dart';
 import 'screens/landlord_main_screen.dart';
 import 'services/api_service.dart';

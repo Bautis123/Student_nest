@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../models/property.dart';
-import '../../../utils/app_design.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'dashboard_listing_card.dart';
 import 'empty_listings_card.dart';
 

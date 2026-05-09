@@ -3,16 +3,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/user.dart';
 import '../services/api_service.dart';
-import '../utils/app_design.dart';
-import '../utils/theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
 import 'landlord/choose_plan/choose_plan_screen.dart';
 import 'landlord/dashboard_screen.dart';
 import 'landlord/login_screen.dart';
 import 'main_screen.dart';
-import 'settings/settings_profile_header.dart';
-import 'settings/settings_section.dart';
+import 'settings/settings_bottom_sheet.dart';
+import 'settings/settings_content.dart';
 import 'settings/settings_logout_dialog.dart';
-import 'settings/settings_tile_groups.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
@@ -89,7 +88,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (!mounted) return;
       setState(() {
         _schools = const [
-          {'id': 'unza', 'name': 'University of Zambia', 'area': 'Great East Road'},
+          {
+            'id': 'unza',
+            'name': 'University of Zambia',
+            'area': 'Great East Road',
+          },
         ];
       });
     }
@@ -120,7 +123,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const DashboardScreen(listingsOnly: true)),
+      MaterialPageRoute(
+        builder: (_) => const DashboardScreen(listingsOnly: true),
+      ),
     );
   }
 
@@ -143,16 +148,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
       title: 'Profile',
       icon: Icons.person_outline_rounded,
       children: [
-        _SettingsDetailRow(label: 'Name', value: _user?.fullName ?? 'Guest'),
-        _SettingsDetailRow(
+        SettingsDetailRow(label: 'Name', value: _user?.fullName ?? 'Guest'),
+        SettingsDetailRow(
           label: 'Status',
           value: _user == null ? 'Not logged in' : 'Logged in',
         ),
         if (_user != null) ...[
-          _SettingsDetailRow(label: 'Phone', value: _user!.phone),
-          _SettingsDetailRow(label: 'Email', value: _user!.email ?? 'Not added'),
-          _SettingsDetailRow(label: 'Role', value: _formatRole(_user!.role)),
-          _SettingsDetailRow(
+          SettingsDetailRow(label: 'Phone', value: _user!.phone),
+          SettingsDetailRow(
+            label: 'Email',
+            value: _user!.email ?? 'Not added',
+          ),
+          SettingsDetailRow(label: 'Role', value: _formatRole(_user!.role)),
+          SettingsDetailRow(
             label: 'Approval',
             value: _user!.isApproved ? 'Approved' : 'Pending',
           ),
@@ -170,7 +178,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         if (_user == null) ...[
           const SizedBox(height: 16),
-          _SheetPrimaryButton(
+          SheetPrimaryButton(
             label: 'Landlord Login',
             onTap: () {
               Navigator.pop(context);
@@ -187,13 +195,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
       title: 'Language',
       icon: Icons.language_outlined,
       children: const [
-        _SettingsChoiceRow(
+        SettingsChoiceRow(
           title: 'English',
           subtitle: 'Current app language',
           selected: true,
         ),
         SizedBox(height: 8),
-        _SettingsChoiceRow(
+        SettingsChoiceRow(
           title: 'More languages',
           subtitle: 'Coming soon',
           selected: false,
@@ -220,7 +228,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         const SizedBox(height: 10),
         for (final school in _schools)
-          _SettingsActionRow(
+          SettingsActionRow(
             title: school['name']?.toString() ?? 'School',
             subtitle: school['area']?.toString() ?? 'Nearby boarding houses',
             trailing:
@@ -274,17 +282,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
       title: 'Help Center',
       icon: Icons.help_outline_rounded,
       children: const [
-        _SettingsFaqItem(
+        SettingsFaqItem(
           question: 'How do I save a boarding house?',
           answer: 'Tap the bookmark icon on any listing card.',
         ),
-        _SettingsFaqItem(
+        SettingsFaqItem(
           question: 'How do I filter by school?',
           answer: 'Use the school selector on the Browse screen.',
         ),
-        _SettingsFaqItem(
+        SettingsFaqItem(
           question: 'How do landlords list properties?',
-          answer: 'Use Landlord Login, then add and manage listings from the dashboard.',
+          answer:
+              'Use Landlord Login, then add and manage listings from the dashboard.',
         ),
       ],
     );
@@ -295,23 +304,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
       title: 'Contact Support',
       icon: Icons.support_agent_rounded,
       children: [
-        _SettingsActionRow(
+        SettingsActionRow(
           title: 'Email support',
           subtitle: 'support@studentnest.app',
           trailing: Icons.open_in_new_rounded,
-          onTap: () => _launchSupportUri(
-            Uri(
-              scheme: 'mailto',
-              path: 'support@studentnest.app',
-              queryParameters: {'subject': 'Student Nest Support'},
-            ),
-          ),
+          onTap:
+              () => _launchSupportUri(
+                Uri(
+                  scheme: 'mailto',
+                  path: 'support@studentnest.app',
+                  queryParameters: {'subject': 'Student Nest Support'},
+                ),
+              ),
         ),
-        _SettingsActionRow(
+        SettingsActionRow(
           title: 'Call support',
           subtitle: '+260 970 000 000',
           trailing: Icons.call_outlined,
-          onTap: () => _launchSupportUri(Uri(scheme: 'tel', path: '+260970000000')),
+          onTap:
+              () =>
+                  _launchSupportUri(Uri(scheme: 'tel', path: '+260970000000')),
         ),
       ],
     );
@@ -377,22 +389,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _showSettingsSheet(
       title: title,
       icon: icon,
-      children:
-          paragraphs
-              .map(
-                (paragraph) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Text(
-                    paragraph,
-                    style: TextStyle(
-                      color: AppDesign.muted(context),
-                      fontSize: 13,
-                      height: 1.45,
-                    ),
-                  ),
+      children: paragraphs
+          .map(
+            (paragraph) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                paragraph,
+                style: TextStyle(
+                  color: AppDesign.muted(context),
+                  fontSize: 13,
+                  height: 1.45,
                 ),
-              )
-              .toList(growable: false),
+              ),
+            ),
+          )
+          .toList(growable: false),
     );
   }
 
@@ -405,11 +416,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => _SettingsBottomSheet(
-        title: title,
-        icon: icon,
-        children: children,
-      ),
+      builder:
+          (_) => SettingsBottomSheet(
+            title: title,
+            icon: icon,
+            children: children,
+          ),
     );
   }
 
@@ -422,7 +434,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final themeController = AppThemeScope.of(context);
     final theme = Theme.of(context);
-    final isDarkMode = themeController.isDarkMode;
 
     return Scaffold(
       backgroundColor: AppDesign.page(context),
@@ -441,369 +452,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
       ),
-      body: ListView(
-        padding: const EdgeInsets.only(bottom: 18),
-        children: [
-          SettingsProfileHeader(user: _user),
-          SettingsSection(
-            title: 'Settings',
-            tiles: SettingsTileGroups.general(
-              themeController: themeController,
-              isDarkMode: isDarkMode,
-              notificationsEnabled: _notifications,
-              onOpenProfile: _openProfileSheet,
-              onOpenLanguage: _openLanguageSheet,
-              onNotificationsChanged: _updateNotifications,
-            ),
-          ),
-          if (_user?.role == 'admin')
-            SettingsSection(
-              title: 'Admin',
-              tiles: SettingsTileGroups.admin(
-                onOpenAdminDashboard: _openAdminDashboard,
-              ),
-            ),
-          if (_user == null || _user?.role == 'student')
-            SettingsSection(
-              title: 'Student Options',
-              tiles: SettingsTileGroups.student(
-                onOpenSaved: _openSaved,
-                onOpenPreferredSchool: _openPreferredSchoolSheet,
-                preferredSchoolLabel: _preferredSchoolLabel,
-              ),
-            ),
-          if (_user?.role == 'landlord')
-            SettingsSection(
-              title: 'Landlord Options',
-              tiles: SettingsTileGroups.landlord(
-                onOpenLandlordListings: _openLandlordListings,
-                onOpenListingStatistics: _openLandlordDashboard,
-                onOpenSubscription: _openSubscription,
-              ),
-            ),
-          SettingsSection(
-            title: 'Support',
-            tiles: SettingsTileGroups.support(
-              onOpenHelpCenter: _openHelpCenter,
-              onContactSupport: _openContactSupport,
-            ),
-          ),
-          SettingsSection(
-            title: 'Legal',
-            tiles: SettingsTileGroups.legal(
-              onOpenPrivacyPolicy: _openPrivacyPolicy,
-              onOpenTerms: _openTerms,
-            ),
-          ),
-          SettingsSection(
-            title: 'Account',
-            tiles: SettingsTileGroups.account(
-              user: _user,
-              onOpenLandlordLogin: _openLandlordLogin,
-              onShowLogoutDialog: _showLogoutDialog,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Center(
-            child: Text(
-              'Student Nest v1.0.0\nBautis Digital Innovations Ltd',
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodySmall?.copyWith(fontSize: 11),
-            ),
-          ),
-          const SizedBox(height: 30),
-        ],
-      ),
-    );
-  }
-}
-
-class _SettingsBottomSheet extends StatelessWidget {
-  const _SettingsBottomSheet({
-    required this.title,
-    required this.icon,
-    required this.children,
-  });
-
-  final String title;
-  final IconData icon;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.58,
-      minChildSize: 0.32,
-      maxChildSize: 0.88,
-      builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: AppDesign.surface(context),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: ListView(
-            controller: scrollController,
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-            children: [
-              Center(
-                child: Container(
-                  width: 42,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AppDesign.border(context),
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 18),
-              Row(
-                children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: AppDesign.accentTint(context),
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Icon(icon, color: AppDesign.accent, size: 22),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                        color: AppDesign.text(context),
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 18),
-              ...children,
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _SettingsDetailRow extends StatelessWidget {
-  const _SettingsDetailRow({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 92,
-            child: Text(
-              label,
-              style: TextStyle(
-                color: AppDesign.muted(context),
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                color: AppDesign.text(context),
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SettingsActionRow extends StatelessWidget {
-  const _SettingsActionRow({
-    required this.title,
-    required this.subtitle,
-    required this.trailing,
-    required this.onTap,
-  });
-
-  final String title;
-  final String subtitle;
-  final IconData trailing;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppDesign.surface(context),
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 11),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        color: AppDesign.text(context),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        color: AppDesign.muted(context),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(trailing, color: AppDesign.subtle(context), size: 21),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SettingsChoiceRow extends StatelessWidget {
-  const _SettingsChoiceRow({
-    required this.title,
-    required this.subtitle,
-    required this.selected,
-  });
-
-  final String title;
-  final String subtitle;
-  final bool selected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: selected ? AppDesign.accentTint(context) : AppDesign.page(context),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: AppDesign.text(context),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    color: AppDesign.muted(context),
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (selected)
-            const Icon(
-              Icons.check_circle_rounded,
-              color: AppDesign.accent,
-              size: 20,
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SettingsFaqItem extends StatelessWidget {
-  const _SettingsFaqItem({required this.question, required this.answer});
-
-  final String question;
-  final String answer;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            question,
-            style: TextStyle(
-              color: AppDesign.text(context),
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            answer,
-            style: TextStyle(
-              color: AppDesign.muted(context),
-              fontSize: 13,
-              height: 1.4,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SheetPrimaryButton extends StatelessWidget {
-  const _SheetPrimaryButton({required this.label, required this.onTap});
-
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 46,
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppDesign.accent,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-        ),
-        child: Text(
-          label,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
-        ),
+      body: SettingsContent(
+        user: _user,
+        theme: theme,
+        themeController: themeController,
+        notificationsEnabled: _notifications,
+        preferredSchoolLabel: _preferredSchoolLabel,
+        onOpenProfile: _openProfileSheet,
+        onOpenLanguage: _openLanguageSheet,
+        onNotificationsChanged: _updateNotifications,
+        onOpenAdminDashboard: _openAdminDashboard,
+        onOpenSaved: _openSaved,
+        onOpenPreferredSchool: _openPreferredSchoolSheet,
+        onOpenLandlordListings: _openLandlordListings,
+        onOpenListingStatistics: _openLandlordDashboard,
+        onOpenSubscription: _openSubscription,
+        onOpenHelpCenter: _openHelpCenter,
+        onContactSupport: _openContactSupport,
+        onOpenPrivacyPolicy: _openPrivacyPolicy,
+        onOpenTerms: _openTerms,
+        onOpenLandlordLogin: _openLandlordLogin,
+        onShowLogoutDialog: _showLogoutDialog,
       ),
     );
   }

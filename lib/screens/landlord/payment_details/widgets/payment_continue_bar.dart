@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../widgets/app_bottom_action_bar.dart';
+import 'package:student_nest/core/widgets/app_bottom_action_bar.dart';
+import 'package:student_nest/core/widgets/sn_button.dart';
 
 class PaymentContinueBar extends StatelessWidget {
   final bool enabled;
@@ -16,12 +17,11 @@ class PaymentContinueBar extends StatelessWidget {
     return AppBottomActionBar(
       child: SizedBox(
         width: double.infinity,
-        child: ElevatedButton(
+        child: SNButton(
+          label: 'Continue',
           onPressed: enabled ? onContinue : null,
-          child: const Text('Continue'),
         ),
       ),
     );
   }
 }
-

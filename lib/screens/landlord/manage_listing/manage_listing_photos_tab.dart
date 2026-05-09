@@ -5,8 +5,9 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../models/property.dart';
 import '../../../services/api_service.dart';
-import '../../../utils/app_design.dart';
-import '../../../utils/theme.dart';
+import 'package:student_nest/core/constants/app_strings.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/widgets/sn_button.dart';
 import 'widgets/manage_listing_cover_photo_card.dart';
 import 'widgets/manage_listing_empty_photos.dart';
 import 'widgets/manage_listing_photo_grid_item.dart';
@@ -56,25 +57,27 @@ class _ManageListingPhotosTabState extends State<ManageListingPhotosTab> {
   Future<void> _deletePhoto(String photoId) async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Delete Photo'),
-        content: const Text('Are you sure you want to delete this photo?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.error,
-              minimumSize: const Size(80, 36),
+      builder:
+          (dialogContext) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: const Text('Delete'),
+            title: const Text('Delete Photo'),
+            content: const Text('Are you sure you want to delete this photo?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: const Text(AppStrings.cancel),
+              ),
+              SNButton(
+                label: AppStrings.delete,
+                onPressed: () => Navigator.pop(dialogContext, true),
+                variant: SNButtonVariant.danger,
+                fullWidth: false,
+                height: 36,
+              ),
+            ],
           ),
-        ],
-      ),
     );
 
     if (confirm != true) return;
@@ -90,9 +93,9 @@ class _ManageListingPhotosTabState extends State<ManageListingPhotosTab> {
       await _api.setCoverPhoto(widget.property.id, photoId);
       widget.onUpdated();
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cover photo updated')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Cover photo updated')));
     } catch (_) {}
   }
 
@@ -100,7 +103,8 @@ class _ManageListingPhotosTabState extends State<ManageListingPhotosTab> {
   Widget build(BuildContext context) {
     final photos = widget.property.photos;
     final coverPhoto = _resolveCoverPhoto(photos);
-    final otherPhotos = photos.where((photo) => photo.id != coverPhoto?.id).toList();
+    final otherPhotos =
+        photos.where((photo) => photo.id != coverPhoto?.id).toList();
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -124,7 +128,8 @@ class _ManageListingPhotosTabState extends State<ManageListingPhotosTab> {
           ManageListingCoverPhotoCard(
             coverPhoto: coverPhoto,
             onAddTap: _pickAndUpload,
-            onDeleteTap: coverPhoto == null ? null : () => _deletePhoto(coverPhoto.id),
+            onDeleteTap:
+                coverPhoto == null ? null : () => _deletePhoto(coverPhoto.id),
           ),
           const SizedBox(height: 20),
           Row(
@@ -138,32 +143,14 @@ class _ManageListingPhotosTabState extends State<ManageListingPhotosTab> {
                   color: AppDesign.text(context),
                 ),
               ),
-              ElevatedButton.icon(
+              SNButton(
+                label:
+                    _isUploading ? AppStrings.uploading : AppStrings.addPhotos,
                 onPressed: _isUploading ? null : _pickAndUpload,
-                icon: _isUploading
-                    ? const SizedBox(
-                        width: 14,
-                        height: 14,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : const Icon(Icons.add, size: 16),
-                label: Text(
-                  _isUploading ? 'Uploading...' : 'Add Photos',
-                  style: const TextStyle(fontSize: 12),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppDesign.accent,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  minimumSize: const Size(0, 36),
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
+                leadingIcon: _isUploading ? null : Icons.add,
+                isLoading: _isUploading,
+                fullWidth: false,
+                height: 36,
               ),
             ],
           ),

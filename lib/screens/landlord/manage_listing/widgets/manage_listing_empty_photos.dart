@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/app_design.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/widgets/sn_empty_state.dart';
 
 class ManageListingEmptyPhotos extends StatelessWidget {
   const ManageListingEmptyPhotos({super.key});
@@ -8,36 +9,16 @@ class ManageListingEmptyPhotos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: EdgeInsets.zero,
       decoration: BoxDecoration(
         color: AppDesign.surface(context),
         borderRadius: BorderRadius.circular(14),
       ),
-      child: Center(
-        child: Column(
-          children: [
-            Icon(
-              Icons.photo_library_outlined,
-              size: 48,
-              color: AppDesign.lightMuted,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'No photos yet',
-              style: TextStyle(
-                color: AppDesign.muted(context),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Tap Add Photos to upload',
-              style: TextStyle(color: AppDesign.muted(context), fontSize: 12),
-            ),
-          ],
-        ),
+      child: const SNEmptyState(
+        icon: Icons.photo_library_outlined,
+        title: 'No photos yet',
+        subtitle: 'Tap Add Photos to upload.',
       ),
     );
   }
 }
-

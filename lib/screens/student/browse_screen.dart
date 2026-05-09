@@ -7,14 +7,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/property.dart';
 import '../../services/api_service.dart';
 import '../../services/route_service.dart';
-import '../../utils/app_design.dart';
-import '../../utils/student_nest_icons.dart';
-import '../../widgets/property_card.dart';
-import 'browse/browse_empty_state.dart';
-import 'browse/browse_error_state.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'browse/browse_filters.dart';
 import 'browse/browse_filters_sheet.dart';
-import 'property_detail_screen.dart';
+import 'browse/browse_results_sliver.dart';
+import 'browse/browse_school_summary.dart';
+import 'browse/browse_search_app_bar.dart';
+import 'browse/school_picker_sheet.dart';
 
 class BrowseScreen extends StatefulWidget {
   const BrowseScreen({
@@ -263,7 +262,9 @@ class _BrowseScreenState extends State<BrowseScreen> {
         selectedSchool == null
             ? searched
             : searched
-                .where((property) => _isNearSelectedSchool(property, selectedSchool))
+                .where(
+                  (property) => _isNearSelectedSchool(property, selectedSchool),
+                )
                 .toList(growable: false);
 
     final result = BrowseFilterEngine.applyFilters(
@@ -312,7 +313,8 @@ class _BrowseScreenState extends State<BrowseScreen> {
       return true;
     }
 
-    final selectedName = selectedSchool['name']?.toString().toLowerCase().trim();
+    final selectedName =
+        selectedSchool['name']?.toString().toLowerCase().trim();
     final propertySchool = property.schoolName?.toLowerCase().trim();
     return selectedName != null &&
         selectedName.isNotEmpty &&
@@ -329,10 +331,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
         continue;
       }
       final key = id ?? name!;
-      byKey[key] = {
-        'id': id ?? name,
-        'name': name ?? 'School',
-      };
+      byKey[key] = {'id': id ?? name, 'name': name ?? 'School'};
     }
     return byKey.values.toList(growable: false)
       ..sort((a, b) => a['name'].toString().compareTo(b['name'].toString()));
@@ -358,7 +357,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
       context: context,
       backgroundColor: Colors.transparent,
       builder:
-          (_) => _SchoolPickerSheet(
+          (_) => SchoolPickerSheet(
             schools: _availableSchools,
             selectedSchoolId: _selectedSchoolId,
             allSchoolsValue: _allSchoolsValue,
@@ -380,196 +379,25 @@ class _BrowseScreenState extends State<BrowseScreen> {
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
-          SliverAppBar(
-            expandedHeight: 126,
-            floating: false,
-            pinned: true,
-            backgroundColor: AppDesign.surface(context),
-            surfaceTintColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            scrolledUnderElevation: 0,
-            elevation: 0,
-            toolbarHeight: 62,
-            titleSpacing: 16,
-            title: Row(
-              children: [
-                const StudentNestIcon(
-                  StudentNestIcons.mapPin,
-                  size: 15,
-                  color: AppDesign.accent,
-                ),
-                const SizedBox(width: 6),
-                Flexible(
-                  child: Text(
-                    _locationLabel,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: AppDesign.muted(context),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  size: 18,
-                  color: AppDesign.subtle(context),
-                ),
-              ],
-            ),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(64),
-              child: ColoredBox(
-                color: AppDesign.surface(context),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                  child: Container(
-                    height: 52,
-                    decoration: BoxDecoration(
-                      color: AppDesign.surface(context),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppDesign.shadow(context),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      onChanged: _onSearchChanged,
-                      style: TextStyle(
-                        color: AppDesign.text(context),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Search by location or name',
-                        hintStyle: TextStyle(
-                          color: AppDesign.muted(context),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.only(left: 12, right: 8),
-                          child: Icon(
-                            Icons.search_rounded,
-                            size: 32,
-                            color: AppDesign.muted(context),
-                          ),
-                        ),
-                        prefixIconConstraints: const BoxConstraints(
-                          minWidth: 54,
-                          minHeight: 52,
-                        ),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.fromLTRB(4, 6, 8, 6),
-                          child: Material(
-                            color: AppDesign.accent,
-                            shape: const CircleBorder(),
-                            child: InkWell(
-                              onTap: _openFiltersSheet,
-                              customBorder: const CircleBorder(),
-                              child: const SizedBox(
-                                width: 40,
-                                height: 40,
-                                child: Icon(
-                                  Icons.tune_rounded,
-                                  size: 22,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        filled: false,
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 17,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          BrowseSearchAppBar(
+            locationLabel: _locationLabel,
+            onSearchChanged: _onSearchChanged,
+            onOpenFilters: _openFiltersSheet,
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _SchoolSelectorButton(
-                      label: _selectedSchoolLabel,
-                      onTap: _openSchoolSheet,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Flexible(
-                    child: Text(
-                      '${filteredProperties.length} boarding houses',
-                      textAlign: TextAlign.right,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: AppDesign.muted(context),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          BrowseSchoolSummary(
+            selectedSchoolLabel: _selectedSchoolLabel,
+            listingCount: filteredProperties.length,
+            onSchoolTap: _openSchoolSheet,
           ),
-          if (_isLoading)
-            const SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator()),
-            )
-          else if (_error != null)
-            SliverFillRemaining(
-              child: BrowseErrorState(
-                message: _error!,
-                onRetry: _loadProperties,
-              ),
-            )
-          else if (filteredProperties.isEmpty)
-            const SliverFillRemaining(child: BrowseEmptyState())
-          else
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 104),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  final property = filteredProperties[index];
-                  return PropertyCard(
-                    key: ValueKey(property.id),
-                    property: property,
-                    isSaved: widget.savedPropertyIds.contains(property.id),
-                    onSavedChanged:
-                        (isSaved) =>
-                            widget.onSavedToggle?.call(property, isSaved),
-                    displayDistanceKm:
-                        _walkingDistanceByPropertyId[property.id],
-                    preferWalkingDistance: true,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (_) =>
-                                  PropertyDetailScreen(propertyId: property.id),
-                        ),
-                      );
-                    },
-                  );
-                }, childCount: filteredProperties.length),
-              ),
-            ),
+          BrowseResultsSliver(
+            isLoading: _isLoading,
+            error: _error,
+            properties: filteredProperties,
+            savedPropertyIds: widget.savedPropertyIds,
+            walkingDistanceByPropertyId: _walkingDistanceByPropertyId,
+            onRetry: _loadProperties,
+            onSavedToggle: widget.onSavedToggle,
+          ),
         ],
       ),
     );
@@ -584,211 +412,5 @@ class _BrowseScreenState extends State<BrowseScreen> {
     if (_distanceLoadCursor < _properties.length) {
       unawaited(_loadWalkingDistances(_properties));
     }
-  }
-}
-
-class _SchoolSelectorButton extends StatelessWidget {
-  const _SchoolSelectorButton({required this.label, required this.onTap});
-
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppDesign.surface(context),
-      borderRadius: BorderRadius.circular(999),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(999),
-        child: Container(
-          height: 40,
-          padding: const EdgeInsets.symmetric(horizontal: 13),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: AppDesign.border(context)),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const StudentNestIcon(
-                StudentNestIcons.university,
-                size: 16,
-                color: AppDesign.accent,
-              ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: AppDesign.text(context),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 4),
-              Icon(
-                Icons.keyboard_arrow_down_rounded,
-                size: 18,
-                color: AppDesign.subtle(context),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SchoolPickerSheet extends StatelessWidget {
-  const _SchoolPickerSheet({
-    required this.schools,
-    required this.selectedSchoolId,
-    required this.allSchoolsValue,
-  });
-
-  final List<Map<String, dynamic>> schools;
-  final String? selectedSchoolId;
-  final String allSchoolsValue;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppDesign.surface(context),
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: SafeArea(
-        top: false,
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 18),
-          children: [
-            Center(
-              child: Container(
-                width: 42,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppDesign.border(context),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Select school',
-              style: TextStyle(
-                color: AppDesign.text(context),
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            const SizedBox(height: 10),
-            _SchoolOption(
-              title: 'All schools',
-              subtitle: 'Show every boarding house',
-              isSelected: selectedSchoolId == null,
-              onTap: () => Navigator.pop(context, allSchoolsValue),
-            ),
-            for (final school in schools)
-              _SchoolOption(
-                title: school['name']?.toString() ?? 'School',
-                subtitle: school['area']?.toString() ?? 'Nearby listings',
-                isSelected: selectedSchoolId == school['id']?.toString(),
-                onTap: () => Navigator.pop(context, school['id']?.toString()),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SchoolOption extends StatelessWidget {
-  const _SchoolOption({
-    required this.title,
-    required this.subtitle,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  final String title;
-  final String subtitle;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppDesign.surface(context),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Row(
-            children: [
-              Container(
-                width: 34,
-                height: 34,
-                decoration: BoxDecoration(
-                  color:
-                      isSelected
-                          ? AppDesign.accentTint(context)
-                          : AppDesign.page(context),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: StudentNestIcon(
-                  StudentNestIcons.university,
-                  size: 17,
-                  color:
-                      isSelected
-                          ? AppDesign.accent
-                          : AppDesign.muted(context),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: AppDesign.text(context),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: AppDesign.muted(context),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (isSelected)
-                const Icon(
-                  Icons.check_circle_rounded,
-                  color: AppDesign.accent,
-                  size: 20,
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

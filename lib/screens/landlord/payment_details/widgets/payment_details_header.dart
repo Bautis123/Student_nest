@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../utils/theme.dart';
-import '../../../../widgets/app_surface_card.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/widgets/app_surface_card.dart';
 
 class PaymentDetailsHeader extends StatelessWidget {
   final String amount;
@@ -50,4 +50,3 @@ class PaymentDetailsHeader extends StatelessWidget {
     );
   }
 }
-

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../utils/app_design.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'dashboard_stat_card.dart';
 
 class DashboardStatsGrid extends StatelessWidget {
@@ -48,7 +48,7 @@ class DashboardStatsGrid extends StatelessWidget {
           label: 'Pending',
           value: pendingListings.toString(),
           icon: Icons.hourglass_empty_outlined,
-          color: const Color(0xFFF59E0B),
+          color: AppColors.warning,
         ),
       ],
     );

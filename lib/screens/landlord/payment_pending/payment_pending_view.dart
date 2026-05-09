@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../utils/app_design.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import '../payment_success/payment_success_screen.dart';
 import 'payment_pending_state.dart';
 import 'widgets/pending_actions_bar.dart';
@@ -58,4 +58,3 @@ class PaymentPendingView extends StatelessWidget {
     );
   }
 }
-

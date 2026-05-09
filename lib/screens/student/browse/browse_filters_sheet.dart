@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../utils/theme.dart';
+import 'package:student_nest/core/constants/app_strings.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/widgets/sn_button.dart';
 import 'browse_filters.dart';
 
 class BrowseFiltersSheet {
@@ -32,8 +34,8 @@ class BrowseFiltersSheet {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children:
-                        BrowseFilter.values.map((filter) {
+                    children: BrowseFilter.values
+                        .map((filter) {
                           final selected = tempSelected.contains(filter);
                           return FilterChip(
                             label: Text(filter.label),
@@ -47,7 +49,9 @@ class BrowseFiltersSheet {
                                 }
                               });
                             },
-                            selectedColor: AppTheme.primary.withValues(alpha: 0.18),
+                            selectedColor: AppTheme.primary.withValues(
+                              alpha: 0.18,
+                            ),
                             side: BorderSide(
                               color:
                                   selected
@@ -56,7 +60,8 @@ class BrowseFiltersSheet {
                             ),
                             checkmarkColor: AppTheme.primary,
                           );
-                        }).toList(growable: false),
+                        })
+                        .toList(growable: false),
                   ),
                   const SizedBox(height: 14),
                   Row(
@@ -70,7 +75,8 @@ class BrowseFiltersSheet {
                         child: const Text('Reset'),
                       ),
                       const Spacer(),
-                      ElevatedButton(
+                      SNButton(
+                        label: AppStrings.apply,
                         onPressed: () {
                           Navigator.pop(
                             context,
@@ -79,10 +85,8 @@ class BrowseFiltersSheet {
                             ),
                           );
                         },
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(120, 44),
-                        ),
-                        child: const Text('Apply'),
+                        fullWidth: false,
+                        height: 44,
                       ),
                     ],
                   ),

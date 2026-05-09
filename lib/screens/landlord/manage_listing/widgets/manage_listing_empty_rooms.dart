@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/app_design.dart';
-import '../../../../utils/student_nest_icons.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/widgets/sn_empty_state.dart';
 
 class ManageListingEmptyRooms extends StatelessWidget {
   const ManageListingEmptyRooms({super.key});
@@ -9,30 +9,16 @@ class ManageListingEmptyRooms extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: EdgeInsets.zero,
       decoration: BoxDecoration(
         color: AppDesign.surface(context),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppDesign.border(context)),
       ),
-      child: Center(
-        child: Column(
-          children: [
-            const StudentNestIcon(
-              StudentNestIcons.bed,
-              size: 48,
-              color: AppDesign.accent,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'No room types yet',
-              style: TextStyle(
-                color: AppDesign.muted(context),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
+      child: const SNEmptyState(
+        icon: Icons.bed_outlined,
+        title: 'No room types yet',
+        subtitle: 'Add room types so students can see availability.',
       ),
     );
   }

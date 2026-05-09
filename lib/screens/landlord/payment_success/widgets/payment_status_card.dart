@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../utils/theme.dart';
-import '../../../../widgets/app_surface_card.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/widgets/app_surface_card.dart';
 
 class PaymentStatusCard extends StatelessWidget {
   final String planTitle;
@@ -24,7 +25,7 @@ class PaymentStatusCard extends StatelessWidget {
             width: 68,
             height: 68,
             decoration: const BoxDecoration(
-              color: Color(0xFFECFDF5),
+              color: AppColors.primaryTint,
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -66,4 +67,3 @@ class PaymentStatusCard extends StatelessWidget {
     );
   }
 }
-

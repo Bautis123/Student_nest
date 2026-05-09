@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../models/property.dart';
-import '../../../utils/theme.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
 
 class PropertyCoverAppBar extends StatelessWidget {
   final Photo? coverPhoto;

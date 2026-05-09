@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../utils/app_design.dart';
+import 'package:student_nest/core/constants/app_strings.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/widgets/sn_button.dart';
 
 class AddListingSuccessDialog {
   static Future<void> show(BuildContext context) {
@@ -59,21 +61,13 @@ class _AddListingSuccessDialogBody extends StatelessWidget {
         ],
       ),
       actions: [
-        ElevatedButton(
+        SNButton(
+          label: AppStrings.backToDashboard,
           onPressed: () {
             Navigator.pop(context);
             Navigator.pop(context);
           },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppDesign.accent,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            minimumSize: const Size(double.infinity, 44),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-          ),
-          child: const Text('Back to Dashboard'),
+          height: 44,
         ),
       ],
     );

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../models/property.dart';
 import '../../services/api_service.dart';
-import '../../utils/app_design.dart';
-import '../../utils/theme.dart';
+import 'package:student_nest/core/constants/app_strings.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/widgets/sn_loading_indicator.dart';
+import 'package:student_nest/core/widgets/sn_button.dart';
 import 'manage_listing/manage_listing_details_tab.dart';
 import 'manage_listing/manage_listing_photos_tab.dart';
 import 'manage_listing/manage_listing_rooms_tab.dart';
@@ -65,27 +68,29 @@ class _ManageListingScreenState extends State<ManageListingScreen>
   Future<void> _deleteListing() async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Delete Listing'),
-        content: const Text(
-          'Are you sure you want to delete this listing? This cannot be undone.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.error,
-              minimumSize: const Size(80, 36),
+      builder:
+          (dialogContext) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: const Text('Delete'),
+            title: const Text('Delete Listing'),
+            content: const Text(
+              'Are you sure you want to delete this listing? This cannot be undone.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: const Text(AppStrings.cancel),
+              ),
+              SNButton(
+                label: AppStrings.delete,
+                onPressed: () => Navigator.pop(dialogContext, true),
+                variant: SNButtonVariant.danger,
+                fullWidth: false,
+                height: 36,
+              ),
+            ],
           ),
-        ],
-      ),
     );
 
     if (confirm != true) return;
@@ -128,36 +133,41 @@ class _ManageListingScreenState extends State<ManageListingScreen>
           PopupMenuButton<Object?>(
             icon: Icon(Icons.more_vert, color: AppDesign.text(context)),
             onSelected: _handleMenuAction,
-            itemBuilder: (_) => [
-              PopupMenuItem(
-                value: 'toggle',
-                child: Row(
-                  children: [
-                    Icon(
-                      _property.isActive
-                          ? Icons.visibility_off_outlined
-                          : Icons.visibility_outlined,
-                      size: 18,
+            itemBuilder:
+                (_) => [
+                  PopupMenuItem(
+                    value: 'toggle',
+                    child: Row(
+                      children: [
+                        Icon(
+                          _property.isActive
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(_property.isActive ? 'Deactivate' : 'Activate'),
+                      ],
                     ),
-                    const SizedBox(width: 10),
-                    Text(_property.isActive ? 'Deactivate' : 'Activate'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: 'delete',
-                child: Row(
-                  children: [
-                    Icon(Icons.delete_outline, size: 18, color: AppTheme.error),
-                    SizedBox(width: 10),
-                    Text(
-                      'Delete Listing',
-                      style: TextStyle(color: AppTheme.error),
+                  ),
+                  const PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.delete_outline,
+                          size: 18,
+                          color: AppTheme.error,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          'Delete Listing',
+                          style: TextStyle(color: AppTheme.error),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            ],
+                  ),
+                ],
           ),
         ],
         bottom: TabBar(
@@ -172,41 +182,42 @@ class _ManageListingScreenState extends State<ManageListingScreen>
           ],
         ),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Theme(
-              data: Theme.of(context).copyWith(
-                inputDecorationTheme:
-                    Theme.of(context).inputDecorationTheme.copyWith(
-                  prefixIconColor: AppDesign.subtle(context),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(18),
-                    borderSide: const BorderSide(
-                      color: AppDesign.accent,
-                      width: 1.4,
+      body:
+          _isLoading
+              ? const SNLoadingIndicator()
+              : Theme(
+                data: Theme.of(context).copyWith(
+                  inputDecorationTheme: Theme.of(
+                    context,
+                  ).inputDecorationTheme.copyWith(
+                    prefixIconColor: AppDesign.subtle(context),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      borderSide: const BorderSide(
+                        color: AppDesign.accent,
+                        width: 1.4,
+                      ),
                     ),
                   ),
                 ),
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    ManageListingDetailsTab(
+                      property: _property,
+                      onUpdated: _loadFullProperty,
+                    ),
+                    ManageListingPhotosTab(
+                      property: _property,
+                      onUpdated: _loadFullProperty,
+                    ),
+                    ManageListingRoomsTab(
+                      property: _property,
+                      onUpdated: _loadFullProperty,
+                    ),
+                  ],
+                ),
               ),
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  ManageListingDetailsTab(
-                    property: _property,
-                    onUpdated: _loadFullProperty,
-                  ),
-                  ManageListingPhotosTab(
-                    property: _property,
-                    onUpdated: _loadFullProperty,
-                  ),
-                  ManageListingRoomsTab(
-                    property: _property,
-                    onUpdated: _loadFullProperty,
-                  ),
-                ],
-              ),
-            ),
     );
   }
 }
-

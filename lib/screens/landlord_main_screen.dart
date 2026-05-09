@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utils/app_design.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import '../utils/student_nest_icons.dart';
 import 'landlord/add_listing_screen.dart';
 import 'landlord/dashboard_screen.dart';

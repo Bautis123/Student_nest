@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/app_design.dart';
-import '../../../../widgets/app_surface_card.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/widgets/app_surface_card.dart';
 import 'listing_counter.dart';
 
 class ListingRoomCard extends StatelessWidget {
@@ -66,14 +66,15 @@ class ListingRoomCard extends StatelessWidget {
               labelText: 'Type',
               prefixIcon: Icon(Icons.bed_outlined),
             ),
-            items: roomTypes
-                .map(
-                  (type) => DropdownMenuItem<String>(
-                    value: type,
-                    child: Text(type[0].toUpperCase() + type.substring(1)),
-                  ),
-                )
-                .toList(),
+            items:
+                roomTypes
+                    .map(
+                      (type) => DropdownMenuItem<String>(
+                        value: type,
+                        child: Text(type[0].toUpperCase() + type.substring(1)),
+                      ),
+                    )
+                    .toList(),
             onChanged: onRoomTypeChanged,
           ),
           const SizedBox(height: 12),
@@ -140,4 +141,3 @@ class _CounterField extends StatelessWidget {
     );
   }
 }
-

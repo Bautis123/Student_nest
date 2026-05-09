@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../models/property.dart';
 import '../../../utils/student_nest_icons.dart';
-import '../../../utils/theme.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
 import 'property_amenity_tile.dart';
 import 'property_room_row.dart';
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../utils/theme.dart';
+import 'package:student_nest/core/constants/app_strings.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/widgets/sn_button.dart';
 
 class RegisterScreenContent extends StatelessWidget {
   const RegisterScreenContent({
@@ -178,19 +180,10 @@ class RegisterScreenContent extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 14),
-              ElevatedButton(
+              SNButton(
+                label: AppStrings.register,
                 onPressed: isLoading ? null : onRegister,
-                child:
-                    isLoading
-                        ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                        : const Text('Register'),
+                isLoading: isLoading,
               ),
               const SizedBox(height: 12),
               Align(

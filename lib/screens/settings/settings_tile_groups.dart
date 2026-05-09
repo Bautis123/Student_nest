@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../models/user.dart';
-import '../../utils/app_design.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import '../../utils/student_nest_icons.dart';
-import '../../utils/theme.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
 import 'settings_switch_tile.dart';
 import 'settings_tile.dart';
 
@@ -111,7 +111,7 @@ class SettingsTileGroups {
     return [
       SettingsTile(
         assetIcon: StudentNestIcons.safety,
-        iconColor: const Color(0xFF7C3AED),
+        iconColor: AppColors.primaryDark,
         title: 'Admin Dashboard',
         subtitle: 'Manage the platform',
         onTap: onOpenAdminDashboard,
@@ -126,14 +126,14 @@ class SettingsTileGroups {
     return [
       SettingsTile(
         assetIcon: StudentNestIcons.support,
-        iconColor: const Color(0xFF0284C7),
+        iconColor: AppColors.primaryDark,
         title: 'Help Center',
         subtitle: 'FAQs and guides',
         onTap: onOpenHelpCenter,
       ),
       SettingsTile(
         assetIcon: StudentNestIcons.chat,
-        iconColor: const Color(0xFF10B981),
+        iconColor: AppColors.primary,
         title: 'Contact Support',
         subtitle: 'Get help from our team',
         onTap: onContactSupport,
@@ -148,13 +148,13 @@ class SettingsTileGroups {
     return [
       SettingsTile(
         assetIcon: StudentNestIcons.safety,
-        iconColor: const Color(0xFF64748B),
+        iconColor: AppColors.textSecondary,
         title: 'Privacy Policy',
         onTap: onOpenPrivacyPolicy,
       ),
       SettingsTile(
         assetIcon: StudentNestIcons.lease,
-        iconColor: const Color(0xFF64748B),
+        iconColor: AppColors.textSecondary,
         title: 'Terms of Service',
         onTap: onOpenTerms,
       ),
@@ -168,9 +168,9 @@ class SettingsTileGroups {
   }) {
     if (user == null) {
       return [
-      SettingsTile(
-        icon: Icons.login_outlined,
-        iconColor: AppDesign.accent,
+        SettingsTile(
+          icon: Icons.login_outlined,
+          iconColor: AppDesign.accent,
           title: 'Landlord Login',
           subtitle: 'List your property',
           onTap: onOpenLandlordLogin,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:student_nest/core/constants/app_strings.dart';
+import 'package:student_nest/core/widgets/sn_button.dart';
 import 'register_screen.dart';
 import 'widgets/auth_brand_header.dart';
 import 'widgets/auth_field_label.dart';
@@ -83,18 +85,10 @@ class LoginScreenView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              ElevatedButton(
+              SNButton(
+                label: AppStrings.signIn,
                 onPressed: isLoading ? null : onLoginPressed,
-                child: isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : const Text('Sign In'),
+                isLoading: isLoading,
               ),
               const SizedBox(height: 16),
               Center(

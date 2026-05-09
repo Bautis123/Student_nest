@@ -4,8 +4,9 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../models/property.dart';
 import '../../services/api_service.dart';
 import '../../services/route_service.dart';
-import '../../utils/app_design.dart';
-import '../../utils/theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/widgets/sn_loading_indicator.dart';
 import 'property_detail/photo_gallery_screen.dart';
 import 'property_detail/property_action_bar.dart';
 import 'property_detail/property_detail_sections.dart';
@@ -75,18 +76,12 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
   Future<void> _openInMaps() async {
     if (_property == null) return;
-    await _routeActions.openInMaps(
-      context: context,
-      property: _property!,
-    );
+    await _routeActions.openInMaps(context: context, property: _property!);
   }
 
   Future<void> _openInYango() async {
     if (_property == null) return;
-    await _routeActions.openInYango(
-      context: context,
-      property: _property!,
-    );
+    await _routeActions.openInYango(context: context, property: _property!);
   }
 
   void _viewAllPhotos() {
@@ -104,7 +99,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: SNLoadingIndicator());
     }
 
     if (_property == null) {

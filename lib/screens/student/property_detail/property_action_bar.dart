@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../utils/theme.dart';
-import '../../../widgets/app_bottom_action_bar.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/widgets/app_bottom_action_bar.dart';
+import 'package:student_nest/core/widgets/sn_button.dart';
 
 class PropertyActionBar extends StatelessWidget {
   final VoidCallback onOpenMaps;
@@ -52,25 +53,10 @@ class PropertyActionBar extends StatelessWidget {
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
+            child: SNButton(
+              label: 'Call $landlordName',
               onPressed: onCall,
-              icon: const Icon(Icons.phone_outlined),
-              label: Text(
-                'Call $landlordName',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 56),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                textStyle: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+              leadingIcon: Icons.phone_outlined,
             ),
           ),
         ],

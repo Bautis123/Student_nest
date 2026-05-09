@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../utils/theme.dart';
-import '../../../../widgets/app_surface_card.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/widgets/app_surface_card.dart';
+import 'package:student_nest/core/widgets/sn_loading_indicator.dart';
 
 class PendingStatusCard extends StatelessWidget {
   final bool isMobileMoney;
@@ -30,7 +31,7 @@ class PendingStatusCard extends StatelessWidget {
       radius: 18,
       child: Column(
         children: [
-          const CircularProgressIndicator(color: AppTheme.primary),
+          const SNLoadingIndicator(centered: false),
           const SizedBox(height: 16),
           Text(
             title,
@@ -56,4 +57,3 @@ class PendingStatusCard extends StatelessWidget {
     );
   }
 }
-

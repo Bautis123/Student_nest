@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../utils/theme.dart';
-import '../../../../widgets/app_status_badge.dart';
-import '../../../../widgets/app_surface_card.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/widgets/app_status_badge.dart';
+import 'package:student_nest/core/widgets/app_surface_card.dart';
 
 class ListingPaymentHeaderCard extends StatelessWidget {
   final bool isPremium;
@@ -49,13 +50,13 @@ class ListingPaymentHeaderCard extends StatelessWidget {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFFBEB),
+                  color: AppColors.warningTint,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: const Color(0xFFFDE68A)),
+                  border: Border.all(color: AppColors.warning),
                 ),
                 child: const AppStatusBadge(
                   label: 'Expires in 5 days',
-                  color: Color(0xFFB45309),
+                  color: AppColors.warning,
                   fontSize: 11,
                   horizontalPadding: 10,
                   verticalPadding: 6,
@@ -77,9 +78,9 @@ class ListingPaymentHeaderCard extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: const Color(0xFFECFDF5),
+              color: AppColors.primaryTint,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFA7F3D0)),
+              border: Border.all(color: AppColors.primaryLight),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,4 +118,3 @@ class ListingPaymentHeaderCard extends StatelessWidget {
     );
   }
 }
-

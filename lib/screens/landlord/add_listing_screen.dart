@@ -3,8 +3,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../services/api_service.dart';
-import '../../utils/constants.dart';
-import '../../utils/app_design.dart';
+import 'package:student_nest/core/constants/app_constants.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'add_listing/add_listing_success_dialog.dart';
 import 'add_listing/widgets/add_listing_action_bar.dart';
 import 'add_listing/widgets/add_listing_error_banner.dart';
@@ -42,9 +42,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
   );
   GoogleMapController? _mapController;
 
-  final List<Map<String, dynamic>> _rooms = [
-    _createDefaultRoom(),
-  ];
+  final List<Map<String, dynamic>> _rooms = [_createDefaultRoom()];
 
   static const List<String> _roomTypes = [
     'single',
@@ -104,7 +102,9 @@ class _AddListingScreenState extends State<AddListingScreen> {
 
       setState(() => _isLoading = true);
       final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
 
       final newLocation = LatLng(position.latitude, position.longitude);
@@ -115,7 +115,9 @@ class _AddListingScreenState extends State<AddListingScreen> {
         _isLoading = false;
       });
 
-      _mapController?.animateCamera(CameraUpdate.newLatLngZoom(newLocation, 17));
+      _mapController?.animateCamera(
+        CameraUpdate.newLatLngZoom(newLocation, 17),
+      );
     } catch (_) {
       _setError('Could not get location. Try tapping the map instead.');
       if (mounted) setState(() => _isLoading = false);
@@ -150,7 +152,9 @@ class _AddListingScreenState extends State<AddListingScreen> {
 
   bool _validateDetailsPage() {
     if (_titleController.text.isEmpty) return _fail('Please enter a title');
-    if (_addressController.text.isEmpty) return _fail('Please enter an address');
+    if (_addressController.text.isEmpty) {
+      return _fail('Please enter an address');
+    }
     if (_selectedSchoolId == null) {
       return _fail('Please select the nearest school');
     }
@@ -206,17 +210,20 @@ class _AddListingScreenState extends State<AddListingScreen> {
       }
 
       final propertyId = propertyResult['property']['id'];
-      final roomsData = _rooms
-          .map(
-            (room) => {
-              'room_type': room['room_type'],
-              'price_per_month': double.parse(room['price_per_month'].toString()),
-              'students_per_room': room['students_per_room'],
-              'total_rooms': room['total_rooms'],
-              'available_rooms': room['available_rooms'],
-            },
-          )
-          .toList();
+      final roomsData =
+          _rooms
+              .map(
+                (room) => {
+                  'room_type': room['room_type'],
+                  'price_per_month': double.parse(
+                    room['price_per_month'].toString(),
+                  ),
+                  'students_per_room': room['students_per_room'],
+                  'total_rooms': room['total_rooms'],
+                  'available_rooms': room['available_rooms'],
+                },
+              )
+              .toList();
 
       await _api.addRooms(propertyId, roomsData);
       if (!mounted) return;
@@ -323,7 +330,9 @@ class _AddListingScreenState extends State<AddListingScreen> {
                       _rooms[index]['price_per_month'] = value;
                     },
                     onStudentsChanged: (index, value) {
-                      setState(() => _rooms[index]['students_per_room'] = value);
+                      setState(
+                        () => _rooms[index]['students_per_room'] = value,
+                      );
                     },
                     onTotalRoomsChanged: (index, value) {
                       setState(() {
@@ -349,4 +358,3 @@ class _AddListingScreenState extends State<AddListingScreen> {
     );
   }
 }
-

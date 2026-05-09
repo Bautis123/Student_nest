@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../models/property.dart';
-import '../../../utils/app_design.dart';
-import '../../../widgets/app_status_badge.dart';
-import '../../../widgets/app_surface_card.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/widgets/app_status_badge.dart';
+import 'package:student_nest/core/widgets/app_surface_card.dart';
 
 class DashboardListingCard extends StatelessWidget {
   final Property property;
@@ -77,10 +77,7 @@ class DashboardListingCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      AppStatusBadge(
-                        label: status.label,
-                        color: status.color,
-                      ),
+                      AppStatusBadge(label: status.label, color: status.color),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -132,10 +129,10 @@ class DashboardListingCard extends StatelessWidget {
         (parsed != null && parsed.isBefore(DateTime.now()));
 
     if (!property.isApproved) {
-      return const _ListingStatus('Pending', Color(0xFFF59E0B));
+      return const _ListingStatus('Pending', AppColors.warning);
     }
     if (isExpired) {
-      return const _ListingStatus('Expired', Color(0xFF64748B));
+      return const _ListingStatus('Expired', AppColors.textSecondary);
     }
     return const _ListingStatus('Active', AppDesign.accent);
   }
@@ -164,13 +161,7 @@ class _MetricText extends StatelessWidget {
       children: [
         Icon(icon, size: 12, color: color),
         const SizedBox(width: 3),
-        Text(
-          '$value $label',
-          style: TextStyle(
-            fontSize: 11,
-            color: color,
-          ),
-        ),
+        Text('$value $label', style: TextStyle(fontSize: 11, color: color)),
       ],
     );
   }

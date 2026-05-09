@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 class AppBottomActionBar extends StatelessWidget {
   const AppBottomActionBar({
     super.key,
@@ -20,17 +22,11 @@ class AppBottomActionBar extends StatelessWidget {
       padding: padding,
       decoration: BoxDecoration(
         color: backgroundColor,
-        border:
-            withTopBorder
-                ? const Border(
-                  top: BorderSide(color: Colors.transparent, width: 0),
-                )
-                : null,
         boxShadow:
             withTopBorder
                 ? [
                   BoxShadow(
-                    color: const Color(0xFF667085).withValues(alpha: 0.06),
+                    color: AppColors.textSecondary.withValues(alpha: 0.06),
                     blurRadius: 18,
                     offset: const Offset(0, -6),
                   ),

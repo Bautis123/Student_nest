@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/app_design.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 
 class ListingCounter extends StatelessWidget {
   const ListingCounter({

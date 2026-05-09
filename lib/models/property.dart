@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import '../utils/constants.dart';
+import 'package:student_nest/core/constants/app_constants.dart';
 
 class Property {
   final String id;

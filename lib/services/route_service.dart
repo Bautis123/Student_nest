@@ -79,7 +79,8 @@ class RouteService {
     if (response == null) return null;
 
     final distanceMeters = response['distance'] as num?;
-    final value = distanceMeters != null ? distanceMeters.toDouble() / 1000 : null;
+    final value =
+        distanceMeters != null ? distanceMeters.toDouble() / 1000 : null;
     _walkingDistanceCache[_key(fromLat, fromLng, toLat, toLng)] = value;
     return value;
   }
@@ -126,7 +127,10 @@ class RouteService {
     if (response == null) return null;
 
     final durationSeconds = response['duration'] as num?;
-    final value = durationSeconds != null ? (durationSeconds.toDouble() / 60).ceil() : null;
+    final value =
+        durationSeconds != null
+            ? (durationSeconds.toDouble() / 60).ceil()
+            : null;
     _cyclingDurationCache[_key(fromLat, fromLng, toLat, toLng)] = value;
     return value;
   }
@@ -185,14 +189,18 @@ class RouteService {
       final distanceMeters = response['distance'] as num?;
       final durationSeconds = response['duration'] as num?;
       final geometry = response['geometry'] as Map<String, dynamic>?;
-      final coordinates = geometry?['coordinates'] as List<dynamic>? ?? const [];
+      final coordinates =
+          geometry?['coordinates'] as List<dynamic>? ?? const [];
       final points = _decodeGeoJsonCoordinates(coordinates);
 
       final result = RoutePathResult(
         points: points,
-        distanceKm: distanceMeters != null ? distanceMeters.toDouble() / 1000 : null,
+        distanceKm:
+            distanceMeters != null ? distanceMeters.toDouble() / 1000 : null,
         durationMin:
-            durationSeconds != null ? (durationSeconds.toDouble() / 60).ceil() : null,
+            durationSeconds != null
+                ? (durationSeconds.toDouble() / 60).ceil()
+                : null,
         status: 'OK',
       );
       _walkingRouteCache[_key(fromLat, fromLng, toLat, toLng)] = result;

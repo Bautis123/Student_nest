@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/app_design.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 
 class ManageListingAmenitySwitchTile extends StatelessWidget {
   final String label;
@@ -22,9 +22,10 @@ class ManageListingAmenitySwitchTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: isLast
-            ? null
-            : Border(bottom: BorderSide(color: AppDesign.border(context))),
+        border:
+            isLast
+                ? null
+                : Border(bottom: BorderSide(color: AppDesign.border(context))),
       ),
       child: SwitchListTile(
         value: value,
@@ -45,7 +46,8 @@ class ManageListingAmenitySwitchTile extends StatelessWidget {
               label,
               style: TextStyle(
                 fontSize: 14,
-                color: value ? AppDesign.text(context) : AppDesign.muted(context),
+                color:
+                    value ? AppDesign.text(context) : AppDesign.muted(context),
                 fontWeight: value ? FontWeight.w700 : FontWeight.w500,
               ),
             ),
@@ -55,4 +57,3 @@ class ManageListingAmenitySwitchTile extends StatelessWidget {
     );
   }
 }
-

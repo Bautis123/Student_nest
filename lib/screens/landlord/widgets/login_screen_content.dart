@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../../utils/app_design.dart';
-import '../../../utils/theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/constants/app_assets.dart';
+import 'package:student_nest/core/constants/app_strings.dart';
+import 'package:student_nest/core/widgets/sn_button.dart';
 import '../register_screen.dart';
 
 class LoginScreenContent extends StatelessWidget {
@@ -128,34 +131,11 @@ class LoginScreenContent extends StatelessWidget {
             SizedBox(
               height: 54,
               width: double.infinity,
-              child: ElevatedButton(
+              child: SNButton(
+                label: AppStrings.logIn,
                 onPressed: isLoading ? null : onLogin,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppDesign.accent,
-                  foregroundColor: Colors.white,
-                  disabledBackgroundColor: AppDesign.accent.withValues(alpha: 0.55),
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                child:
-                    isLoading
-                        ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                        : const Text(
-                          'Log in',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
+                isLoading: isLoading,
+                height: 54,
               ),
             ),
           ],
@@ -182,7 +162,7 @@ class _LoginBrandHeader extends StatelessWidget {
             ),
             child: Center(
               child: Image.asset(
-                'StudentNest/public/admin/assets/studentnest-square.png',
+                AppAssets.brandSquare,
                 width: 48,
                 height: 48,
                 fit: BoxFit.contain,

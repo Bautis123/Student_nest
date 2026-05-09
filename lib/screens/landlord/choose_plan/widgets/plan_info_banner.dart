@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../utils/theme.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
 
 class PlanInfoBanner extends StatelessWidget {
   final bool isPremium;
@@ -40,4 +40,3 @@ class PlanInfoBanner extends StatelessWidget {
     );
   }
 }
-

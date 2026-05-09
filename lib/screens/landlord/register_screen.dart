@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../services/api_service.dart';
-import '../../utils/theme.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
 import 'widgets/register_screen_content.dart';
 
 class RegisterScreen extends StatefulWidget {

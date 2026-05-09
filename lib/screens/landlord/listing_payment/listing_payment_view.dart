@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../utils/app_design.dart';
-import '../../../widgets/app_surface_card.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/widgets/app_surface_card.dart';
 import '../payment_details/payment_details_screen.dart';
 import 'listing_payment_state.dart';
 import 'widgets/listing_payment_header_card.dart';
@@ -101,15 +101,14 @@ class ListingPaymentView extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFFBEB),
+        color: AppColors.warningTint,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFFDE68A)),
+        border: Border.all(color: AppColors.warning),
       ),
       child: const Text(
         'Premium listings get a premium badge and appear higher in student suggestions.',
-        style: TextStyle(fontSize: 12, color: Color(0xFFB45309), height: 1.4),
+        style: TextStyle(fontSize: 12, color: AppColors.warning, height: 1.4),
       ),
     );
   }
 }
-

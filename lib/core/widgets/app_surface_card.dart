@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../utils/app_design.dart';
+
+import 'sn_card.dart';
 
 class AppSurfaceCard extends StatelessWidget {
   const AppSurfaceCard({
@@ -7,7 +8,7 @@ class AppSurfaceCard extends StatelessWidget {
     required this.child,
     this.padding = const EdgeInsets.all(14),
     this.margin,
-    this.radius = 18,
+    this.radius = 8,
     this.color,
     this.borderColor,
     this.showShadow = true,
@@ -23,15 +24,13 @@ class AppSurfaceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: margin,
+    return SNCard(
       padding: padding,
-      decoration: BoxDecoration(
-        color: color ?? AppDesign.surface(context),
-        borderRadius: BorderRadius.circular(radius),
-        border: Border.all(color: borderColor ?? AppDesign.border(context)),
-        boxShadow: showShadow ? AppDesign.softShadow(context) : null,
-      ),
+      margin: margin,
+      radius: radius,
+      color: color,
+      borderColor: borderColor,
+      hasShadow: showShadow,
       child: child,
     );
   }

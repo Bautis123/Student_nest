@@ -4,12 +4,13 @@ import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../models/property.dart';
-import '../../../utils/constants.dart';
+import 'package:student_nest/core/constants/app_constants.dart';
+import 'package:student_nest/core/utils/formatters.dart';
 
 class PropertyRouteActions {
   const PropertyRouteActions();
 
-  String _formatCoord(double value) => value.toStringAsFixed(6);
+  String _formatCoord(double value) => Formatters.coordinate(value);
 
   Future<void> openInMaps({
     required BuildContext context,
@@ -17,8 +18,10 @@ class PropertyRouteActions {
   }) async {
     final originLat = property.latitude;
     final originLng = property.longitude;
-    final destinationLat = property.resolvedSchoolLat ?? AppConstants.defaultLat;
-    final destinationLng = property.resolvedSchoolLng ?? AppConstants.defaultLng;
+    final destinationLat =
+        property.resolvedSchoolLat ?? AppConstants.defaultLat;
+    final destinationLng =
+        property.resolvedSchoolLng ?? AppConstants.defaultLng;
 
     final isIos = defaultTargetPlatform == TargetPlatform.iOS;
     if (isIos) {
@@ -51,7 +54,10 @@ class PropertyRouteActions {
       final hasLocation = await Geolocator.isLocationServiceEnabled();
       if (!context.mounted) return;
       if (!hasLocation) {
-        _showInfo(context, 'Location services are off. Turn them on and try again.');
+        _showInfo(
+          context,
+          'Location services are off. Turn them on and try again.',
+        );
         return;
       }
 
@@ -65,12 +71,17 @@ class PropertyRouteActions {
         return;
       }
       if (permission == LocationPermission.deniedForever) {
-        _showInfo(context, 'Location permission denied forever. Enable it in settings.');
+        _showInfo(
+          context,
+          'Location permission denied forever. Enable it in settings.',
+        );
         return;
       }
 
       final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
       if (!context.mounted) return;
 
@@ -88,16 +99,17 @@ class PropertyRouteActions {
         'tariffClass=econom',
       );
 
-      final yangoWebUri = Uri.https('3.redirect.appmetrica.yandex.com', '/route', {
-        'start-lat': _formatCoord(startLat),
-        'start-lon': _formatCoord(startLng),
-        'end-lat': _formatCoord(destinationLat),
-        'end-lon': _formatCoord(destinationLng),
-        'tariffClass': 'econom',
-        'ref': 'studentnest',
-        'lang': 'en',
-        'appmetrica_tracking_id': '1178268795219780156',
-      });
+      final yangoWebUri =
+          Uri.https('3.redirect.appmetrica.yandex.com', '/route', {
+            'start-lat': _formatCoord(startLat),
+            'start-lon': _formatCoord(startLng),
+            'end-lat': _formatCoord(destinationLat),
+            'end-lon': _formatCoord(destinationLng),
+            'tariffClass': 'econom',
+            'ref': 'studentnest',
+            'lang': 'en',
+            'appmetrica_tracking_id': '1178268795219780156',
+          });
 
       if (await canLaunchUrl(yangoAppUri)) {
         if (!context.mounted) return;
@@ -116,7 +128,10 @@ class PropertyRouteActions {
     required BuildContext context,
     required Uri uri,
   }) async {
-    final didLaunch = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    final didLaunch = await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    );
     if (!didLaunch && context.mounted) {
       _showInfo(context, 'Could not open the app right now.');
     }
@@ -124,7 +139,9 @@ class PropertyRouteActions {
 
   void _showInfo(BuildContext context, String message) {
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _showIosMapsPicker({
@@ -171,7 +188,10 @@ class PropertyRouteActions {
                     onTap: () async {
                       Navigator.pop(context);
                       if (!context.mounted) return;
-                      await _launchExternalUrl(context: context, uri: googleMapsUri);
+                      await _launchExternalUrl(
+                        context: context,
+                        uri: googleMapsUri,
+                      );
                     },
                   );
                 },

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../utils/app_design.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'payment_success_state.dart';
 import 'widgets/payment_actions_bar.dart';
 import 'widgets/payment_status_card.dart';
@@ -56,4 +56,3 @@ class PaymentSuccessView extends StatelessWidget {
     );
   }
 }
-

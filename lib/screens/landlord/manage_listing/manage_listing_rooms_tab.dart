@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../models/property.dart';
 import '../../../services/api_service.dart';
-import '../../../utils/app_design.dart';
+import 'package:student_nest/core/widgets/sn_button.dart';
 import 'widgets/add_room_dialog.dart';
 import 'widgets/manage_listing_empty_rooms.dart';
 import 'widgets/manage_listing_room_card.dart';
@@ -50,18 +50,11 @@ class _ManageListingRoomsTabState extends State<ManageListingRoomsTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ElevatedButton.icon(
+          SNButton(
+            label: 'Add Room Type',
             onPressed: _openAddRoomDialog,
-            icon: const Icon(Icons.add),
-            label: const Text('Add Room Type'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppDesign.accent,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-              ),
-            ),
+            leadingIcon: Icons.add,
+            fullWidth: false,
           ),
           const SizedBox(height: 16),
           if (rooms.isEmpty)
@@ -70,18 +63,20 @@ class _ManageListingRoomsTabState extends State<ManageListingRoomsTab> {
             ...rooms.map(
               (room) => ManageListingRoomCard(
                 room: room,
-                onDecrease: room.availableRooms > 0
-                    ? () => _updateRoomAvailability(
+                onDecrease:
+                    room.availableRooms > 0
+                        ? () => _updateRoomAvailability(
                           room,
                           room.availableRooms - 1,
                         )
-                    : null,
-                onIncrease: room.availableRooms < room.totalRooms
-                    ? () => _updateRoomAvailability(
+                        : null,
+                onIncrease:
+                    room.availableRooms < room.totalRooms
+                        ? () => _updateRoomAvailability(
                           room,
                           room.availableRooms + 1,
                         )
-                    : null,
+                        : null,
               ),
             ),
         ],

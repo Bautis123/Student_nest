@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../utils/app_design.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'settings_tile_icon.dart';
 import 'settings_tile_text.dart';
 

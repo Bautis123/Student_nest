@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../models/property.dart';
 import '../../services/api_service.dart';
-import '../../utils/app_design.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/widgets/sn_loading_indicator.dart';
 import 'manage_listing_screen.dart';
 import 'dashboard/dashboard_body.dart';
 import 'dashboard/dashboard_header.dart';
@@ -67,9 +68,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildContent() {
     if (_isLoading) {
-      return const SliverFillRemaining(
-        child: Center(child: CircularProgressIndicator()),
-      );
+      return const SliverFillRemaining(child: SNLoadingIndicator());
     }
 
     return SliverToBoxAdapter(

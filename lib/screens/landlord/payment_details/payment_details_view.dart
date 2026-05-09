@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../utils/app_design.dart';
-import '../../../utils/theme.dart';
-import '../../../widgets/app_surface_card.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/widgets/app_surface_card.dart';
 import '../payment_pending/payment_pending_screen.dart';
 import 'payment_details_state.dart';
 import 'widgets/bank_details_form.dart';
@@ -105,4 +105,3 @@ class PaymentDetailsView extends StatelessWidget {
     );
   }
 }
-

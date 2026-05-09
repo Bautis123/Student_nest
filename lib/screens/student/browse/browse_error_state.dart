@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../utils/theme.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/widgets/sn_button.dart';
 
 class BrowseErrorState extends StatelessWidget {
   final String message;
@@ -21,10 +22,11 @@ class BrowseErrorState extends StatelessWidget {
           const SizedBox(height: 12),
           Text(message, style: const TextStyle(color: AppTheme.gray)),
           const SizedBox(height: 16),
-          ElevatedButton(
+          SNButton(
+            label: 'Retry',
             onPressed: onRetry,
-            style: ElevatedButton.styleFrom(minimumSize: const Size(160, 44)),
-            child: const Text('Retry'),
+            fullWidth: false,
+            height: 44,
           ),
         ],
       ),

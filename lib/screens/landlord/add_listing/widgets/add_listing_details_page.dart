@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../utils/app_design.dart';
-import '../../../../widgets/app_surface_card.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/widgets/app_surface_card.dart';
 
 import 'listing_amenity_switch_tile.dart';
 
@@ -157,4 +157,3 @@ class AddListingDetailsPage extends StatelessWidget {
     );
   }
 }
-

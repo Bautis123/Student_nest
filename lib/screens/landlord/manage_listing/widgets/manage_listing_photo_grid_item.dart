@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../models/property.dart';
-import '../../../../utils/theme.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
 
 class ManageListingPhotoGridItem extends StatelessWidget {
   final Photo photo;

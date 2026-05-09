@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../utils/app_design.dart';
-import '../../../../utils/theme.dart';
-import '../../../../widgets/app_bottom_action_bar.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/widgets/app_bottom_action_bar.dart';
+import 'package:student_nest/core/widgets/sn_button.dart';
 
 class PlanSummaryBar extends StatelessWidget {
   final String title;
@@ -33,10 +34,7 @@ class PlanSummaryBar extends StatelessWidget {
           const SizedBox(height: 14),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed: onContinue,
-              child: const Text('Continue'),
-            ),
+            child: SNButton(label: 'Continue', onPressed: onContinue),
           ),
         ],
       ),
@@ -76,4 +74,3 @@ class PlanSummaryBar extends StatelessWidget {
     );
   }
 }
-

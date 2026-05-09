@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/theme.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
 
 class AddListingErrorBanner extends StatelessWidget {
   const AddListingErrorBanner({super.key, required this.message});

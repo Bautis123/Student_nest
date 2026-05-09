@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../models/property.dart';
-import '../../../utils/app_design.dart';
-import '../../../widgets/app_surface_card.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/widgets/app_surface_card.dart';
+import 'package:student_nest/features/landlord/widgets/occupancy_summary_card.dart';
 import 'dashboard_listings_section.dart';
 import 'dashboard_stats_grid.dart';
 
@@ -44,7 +45,11 @@ class DashboardBody extends StatelessWidget {
               pendingListings: pendingListings,
             ),
             const SizedBox(height: 14),
-            _RoomSummaryCard(summary: roomSummary),
+            OccupancySummaryCard(
+              total: roomSummary.total,
+              occupied: roomSummary.occupied,
+              vacant: roomSummary.vacant,
+            ),
             const SizedBox(height: 14),
             _AddListingActionCard(onTap: onAddListing),
           ] else
@@ -162,120 +167,11 @@ class _RoomSummary {
 
     return _RoomSummary(
       total: total,
-      occupied: occupied > 0 ? occupied.clamp(0, total).toInt() : (total - vacant).clamp(0, total).toInt(),
+      occupied:
+          occupied > 0
+              ? occupied.clamp(0, total).toInt()
+              : (total - vacant).clamp(0, total).toInt(),
       vacant: vacant.clamp(0, total).toInt(),
-    );
-  }
-}
-
-class _RoomSummaryCard extends StatelessWidget {
-  const _RoomSummaryCard({required this.summary});
-
-  final _RoomSummary summary;
-
-  @override
-  Widget build(BuildContext context) {
-    return AppSurfaceCard(
-      radius: 22,
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: AppDesign.accentTint(context),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.meeting_room_outlined,
-                  color: AppDesign.accent,
-                  size: 21,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'Room availability',
-                  style: TextStyle(
-                    color: AppDesign.text(context),
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _RoomSummaryMetric(
-                  label: 'Total rooms',
-                  value: summary.total,
-                  color: AppDesign.accent,
-                ),
-              ),
-              Expanded(
-                child: _RoomSummaryMetric(
-                  label: 'Occupied',
-                  value: summary.occupied,
-                  color: const Color(0xFF64748B),
-                ),
-              ),
-              Expanded(
-                child: _RoomSummaryMetric(
-                  label: 'Vacant',
-                  value: summary.vacant,
-                  color: AppDesign.accent,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RoomSummaryMetric extends StatelessWidget {
-  const _RoomSummaryMetric({
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  final String label;
-  final int value;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '$value',
-          style: TextStyle(
-            color: color,
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-            height: 1,
-          ),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          label,
-          style: TextStyle(
-            color: AppDesign.muted(context),
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
     );
   }
 }

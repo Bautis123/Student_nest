@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/user.dart';
-import '../../utils/app_design.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import '../../utils/student_nest_icons.dart';
 
 class SettingsProfileHeader extends StatelessWidget {
@@ -13,8 +13,7 @@ class SettingsProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final displayName = user?.fullName ?? 'Guest';
     final status = user != null ? user!.phone : 'Not logged in';
-    final badgeLabel =
-        user != null ? _formatRole(user!.role) : 'Guest Mode';
+    final badgeLabel = user != null ? _formatRole(user!.role) : 'Guest Mode';
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),

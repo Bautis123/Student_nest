@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/app_design.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 
 class AddListingStepHeader extends StatelessWidget {
   const AddListingStepHeader({super.key, required this.currentPage});
@@ -18,7 +18,11 @@ class AddListingStepHeader extends StatelessWidget {
           children: [
             _StepIndicator(step: 0, label: 'Details', currentPage: currentPage),
             _StepDivider(currentPage: currentPage, beforeStep: 1),
-            _StepIndicator(step: 1, label: 'Location', currentPage: currentPage),
+            _StepIndicator(
+              step: 1,
+              label: 'Location',
+              currentPage: currentPage,
+            ),
             _StepDivider(currentPage: currentPage, beforeStep: 2),
             _StepIndicator(step: 2, label: 'Rooms', currentPage: currentPage),
           ],
@@ -56,9 +60,7 @@ class _StepIndicator extends StatelessWidget {
               color:
                   isComplete
                       ? AppDesign.accentTint(context)
-                      : (isActive
-                          ? AppDesign.accent
-                          : AppDesign.page(context)),
+                      : (isActive ? AppDesign.accent : AppDesign.page(context)),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Center(

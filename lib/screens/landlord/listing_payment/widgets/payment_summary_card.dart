@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../utils/theme.dart';
-import '../../../../widgets/app_info_row.dart';
-import '../../../../widgets/app_surface_card.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/widgets/app_info_row.dart';
+import 'package:student_nest/core/widgets/app_surface_card.dart';
+import 'package:student_nest/core/widgets/sn_button.dart';
 
 class PaymentSummaryCard extends StatelessWidget {
   final String planTitle;
@@ -49,14 +50,10 @@ class PaymentSummaryCard extends StatelessWidget {
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed: onPayNow,
-              child: const Text('Pay now'),
-            ),
+            child: SNButton(label: 'Pay now', onPressed: onPayNow),
           ),
         ],
       ),
     );
   }
 }
-

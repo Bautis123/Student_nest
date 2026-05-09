@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../models/property.dart';
-import '../../../utils/theme.dart';
-import '../../../widgets/app_status_badge.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/utils/formatters.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/widgets/app_status_badge.dart';
 
 class PropertyRoomRow extends StatelessWidget {
   final Room room;
@@ -26,7 +28,7 @@ class PropertyRoomRow extends StatelessWidget {
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                'K${room.pricePerMonth.toStringAsFixed(0)}/mo',
+                Formatters.monthPrice(room.pricePerMonth),
                 maxLines: 1,
                 style: TextStyle(
                   fontSize: 16,
@@ -55,7 +57,7 @@ class PropertyRoomRow extends StatelessWidget {
           children: [
             Flexible(
               child: Text(
-                room.roomType[0].toUpperCase() + room.roomType.substring(1),
+                Formatters.titleCaseWord(room.roomType),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -80,7 +82,7 @@ class PropertyRoomRow extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           '${room.studentsPerRoom} student${room.studentsPerRoom > 1 ? 's' : ''} per room',
-          style: const TextStyle(fontSize: 13, color: Color(0xFF8A94A6)),
+          style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
         ),
       ],
     );

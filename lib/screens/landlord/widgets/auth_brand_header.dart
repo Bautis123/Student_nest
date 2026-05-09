@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../utils/theme.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
 
 class AuthBrandHeader extends StatelessWidget {
   final String title;
@@ -65,7 +65,10 @@ class AuthBrandHeader extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 6),
-        Text(subtitle, style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13)),
+        Text(
+          subtitle,
+          style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13),
+        ),
       ],
     );
   }

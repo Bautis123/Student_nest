@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../utils/constants.dart';
+import 'package:student_nest/core/constants/app_constants.dart';
 
 class ApiClient {
   static final ApiClient _instance = ApiClient._internal();

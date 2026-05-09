@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../models/property.dart';
-import '../../../../utils/app_design.dart';
-import '../../../../utils/theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
 
 class ManageListingCoverPhotoCard extends StatelessWidget {
   final Photo? coverPhoto;
@@ -25,7 +25,7 @@ class ManageListingCoverPhotoCard extends StatelessWidget {
           width: double.infinity,
           height: 160,
           decoration: BoxDecoration(
-            color: const Color(0xFFE8F7F2),
+            color: AppColors.primaryTint,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: AppDesign.accent.withValues(alpha: 0.34)),
           ),

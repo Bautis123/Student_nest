@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../models/property.dart';
-import '../../../utils/theme.dart';
-import '../../../widgets/app_surface_card.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/widgets/app_surface_card.dart';
 
 class PropertyLandlordCard extends StatelessWidget {
   final Property property;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../utils/theme.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
 
 class PlanFeatureTile extends StatelessWidget {
   final String text;
@@ -30,4 +30,3 @@ class PlanFeatureTile extends StatelessWidget {
     );
   }
 }
-

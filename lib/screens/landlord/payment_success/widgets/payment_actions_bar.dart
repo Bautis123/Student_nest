@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../utils/app_design.dart';
-import '../../../../utils/theme.dart';
-import '../../../../widgets/app_bottom_action_bar.dart';
+import 'package:student_nest/core/widgets/app_bottom_action_bar.dart';
+import 'package:student_nest/core/widgets/sn_button.dart';
 
 class PaymentActionsBar extends StatelessWidget {
   final VoidCallback onDone;
@@ -20,19 +19,15 @@ class PaymentActionsBar extends StatelessWidget {
         children: [
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(onPressed: onDone, child: const Text('Done')),
+            child: SNButton(label: 'Done', onPressed: onDone),
           ),
           const SizedBox(height: 10),
           SizedBox(
             width: double.infinity,
-            child: OutlinedButton(
+            child: SNButton(
+              label: 'View Listings',
               onPressed: onViewListings,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppTheme.primary,
-                side: const BorderSide(color: AppTheme.primary, width: 1.4),
-                backgroundColor: AppDesign.surface(context),
-              ),
-              child: const Text('View Listings'),
+              variant: SNButtonVariant.outlined,
             ),
           ),
         ],
@@ -40,4 +35,3 @@ class PaymentActionsBar extends StatelessWidget {
     );
   }
 }
-

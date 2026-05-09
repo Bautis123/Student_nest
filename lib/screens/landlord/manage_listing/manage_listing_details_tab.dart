@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../models/property.dart';
 import '../../../services/api_service.dart';
-import '../../../utils/app_design.dart';
+import 'package:student_nest/core/constants/app_strings.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/widgets/sn_button.dart';
 import 'widgets/manage_listing_amenity_switch_tile.dart';
 import 'widgets/manage_listing_field_label.dart';
 import 'widgets/manage_listing_status_banner.dart';
@@ -18,7 +20,8 @@ class ManageListingDetailsTab extends StatefulWidget {
   });
 
   @override
-  State<ManageListingDetailsTab> createState() => _ManageListingDetailsTabState();
+  State<ManageListingDetailsTab> createState() =>
+      _ManageListingDetailsTabState();
 }
 
 class _ManageListingDetailsTabState extends State<ManageListingDetailsTab> {
@@ -193,23 +196,10 @@ class _ManageListingDetailsTabState extends State<ManageListingDetailsTab> {
           ),
           const SizedBox(height: 24),
           if (_hasChanges)
-            ElevatedButton(
+            SNButton(
+              label: AppStrings.saveChanges,
               onPressed: _isLoading ? null : _saveChanges,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppDesign.accent,
-                foregroundColor: Colors.white,
-                elevation: 0,
-              ),
-              child: _isLoading
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : const Text('Save Changes'),
+              isLoading: _isLoading,
             ),
           const SizedBox(height: 30),
         ],
@@ -217,4 +207,3 @@ class _ManageListingDetailsTabState extends State<ManageListingDetailsTab> {
     );
   }
 }
-

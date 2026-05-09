@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../models/property.dart';
-import '../../../../utils/app_design.dart';
-import '../../../../utils/theme.dart';
-import '../../../../widgets/app_status_badge.dart';
-import '../../../../widgets/app_surface_card.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
+import 'package:student_nest/core/widgets/app_status_badge.dart';
+import 'package:student_nest/core/widgets/app_surface_card.dart';
 
 class ManageListingStatusBanner extends StatelessWidget {
   final Property property;
@@ -13,19 +13,24 @@ class ManageListingStatusBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = property.isApproved ? AppDesign.accent : AppTheme.warning;
+    final statusColor =
+        property.isApproved ? AppDesign.accent : AppTheme.warning;
     final statusText =
-        property.isApproved ? 'Live - visible to students' : 'Pending admin approval';
+        property.isApproved
+            ? 'Live - visible to students'
+            : 'Pending admin approval';
     final theme = Theme.of(context);
 
     return AppSurfaceCard(
       padding: const EdgeInsets.all(14),
-      color: property.isApproved
-          ? const Color(0xFFE8F7F2)
-          : AppTheme.warning.withValues(alpha: 0.08),
-      borderColor: property.isApproved
-          ? AppDesign.accent.withValues(alpha: 0.16)
-          : AppTheme.warning.withValues(alpha: 0.16),
+      color:
+          property.isApproved
+              ? AppColors.primaryTint
+              : AppTheme.warning.withValues(alpha: 0.08),
+      borderColor:
+          property.isApproved
+              ? AppDesign.accent.withValues(alpha: 0.16)
+              : AppTheme.warning.withValues(alpha: 0.16),
       child: Row(
         children: [
           AppStatusBadge(

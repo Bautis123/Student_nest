@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../utils/app_design.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import '../../utils/student_nest_icons.dart';
 
 class SettingsTileIcon extends StatelessWidget {
@@ -21,7 +21,9 @@ class SettingsTileIcon extends StatelessWidget {
       width: 38,
       height: 38,
       decoration: BoxDecoration(
-        color: iconColor.withValues(alpha: AppDesign.isDark(context) ? 0.18 : 0.11),
+        color: iconColor.withValues(
+          alpha: AppDesign.isDark(context) ? 0.18 : 0.11,
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
       child:

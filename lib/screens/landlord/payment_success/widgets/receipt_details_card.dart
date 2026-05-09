@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../widgets/app_info_row.dart';
-import '../../../../widgets/app_surface_card.dart';
+import 'package:student_nest/core/widgets/app_info_row.dart';
+import 'package:student_nest/core/widgets/app_surface_card.dart';
 
 class ReceiptDetailsCard extends StatelessWidget {
   final String planTitle;
@@ -39,4 +39,3 @@ class ReceiptDetailsCard extends StatelessWidget {
     );
   }
 }
-

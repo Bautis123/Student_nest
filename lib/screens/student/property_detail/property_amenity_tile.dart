@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../utils/student_nest_icons.dart';
-import '../../../utils/theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
 
 class PropertyAmenityTile extends StatelessWidget {
   final String label;
@@ -21,7 +22,7 @@ class PropertyAmenityTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
       decoration: BoxDecoration(
-        color: available ? AppTheme.primaryLight : const Color(0xFFF8FAFC),
+        color: available ? AppTheme.primaryLight : AppColors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color:
@@ -49,7 +50,7 @@ class PropertyAmenityTile extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 12,
-              color: available ? const Color(0xFF7B8494) : AppTheme.gray,
+              color: available ? AppColors.textSecondary : AppTheme.gray,
               fontWeight: FontWeight.w500,
             ),
           ),

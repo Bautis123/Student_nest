@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../utils/theme.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
 
 class BrowseHeader extends StatelessWidget {
   final ValueChanged<String> onSearchChanged;
@@ -32,7 +33,10 @@ class BrowseHeader extends StatelessWidget {
             style: const TextStyle(fontSize: 14),
             decoration: InputDecoration(
               hintText: 'Search by name or area...',
-              hintStyle: TextStyle(color: Colors.grey[400], fontSize: 13),
+              hintStyle: const TextStyle(
+                color: AppColors.textHint,
+                fontSize: 13,
+              ),
               prefixIcon: const Icon(Icons.search, size: 20),
               filled: true,
               fillColor: Colors.white,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/app_design.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
 import 'listing_room_card.dart';
 
 class AddListingRoomsPage extends StatelessWidget {
@@ -73,18 +73,19 @@ class AddListingRoomsPage extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           ...rooms.asMap().entries.map(
-                (entry) => ListingRoomCard(
-                  index: entry.key,
-                  room: entry.value,
-                  roomTypes: roomTypes,
-                  canRemove: rooms.length > 1,
-                  onRemove: () => onRemoveRoom(entry.key),
-                  onRoomTypeChanged: (value) => onRoomTypeChanged(entry.key, value),
-                  onPriceChanged: (value) => onPriceChanged(entry.key, value),
-                  onStudentsChanged: (value) => onStudentsChanged(entry.key, value),
-                  onTotalRoomsChanged: (value) => onTotalRoomsChanged(entry.key, value),
-                ),
-              ),
+            (entry) => ListingRoomCard(
+              index: entry.key,
+              room: entry.value,
+              roomTypes: roomTypes,
+              canRemove: rooms.length > 1,
+              onRemove: () => onRemoveRoom(entry.key),
+              onRoomTypeChanged: (value) => onRoomTypeChanged(entry.key, value),
+              onPriceChanged: (value) => onPriceChanged(entry.key, value),
+              onStudentsChanged: (value) => onStudentsChanged(entry.key, value),
+              onTotalRoomsChanged:
+                  (value) => onTotalRoomsChanged(entry.key, value),
+            ),
+          ),
         ],
       ),
     );

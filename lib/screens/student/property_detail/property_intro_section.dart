@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../models/property.dart';
+import 'package:student_nest/core/constants/app_strings.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/utils/formatters.dart';
 import '../../../utils/student_nest_icons.dart';
-import '../../../utils/theme.dart';
+import 'package:student_nest/core/theme/app_theme.dart';
 
 class PropertyIntroSection extends StatelessWidget {
   final Property property;
@@ -62,14 +65,14 @@ class PropertyIntroSection extends StatelessWidget {
             const StudentNestIcon(
               StudentNestIcons.mapPin,
               size: 17,
-              color: Color(0xFFA0A8B8),
+              color: AppColors.textHint,
             ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 property.address,
                 style: const TextStyle(
-                  color: Color(0xFF8A94A6),
+                  color: AppColors.textHint,
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                 ),
@@ -93,7 +96,7 @@ class PropertyIntroSection extends StatelessWidget {
             property.description!,
             style: const TextStyle(
               fontSize: 13,
-              color: Color(0xFF697386),
+              color: AppColors.textSecondary,
               height: 1.6,
             ),
           ),
@@ -120,9 +123,11 @@ class PropertyIntroSection extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              walkingDistanceKm != null
-                  ? '${distanceKm.toStringAsFixed(2)} km walk to ${property.schoolName ?? 'UNZA'}'
-                  : '${distanceKm.toStringAsFixed(2)} km from ${property.schoolName ?? 'UNZA'}',
+              Formatters.schoolDistance(
+                distanceKm: distanceKm,
+                schoolName: property.schoolName ?? AppStrings.unza,
+                isWalking: walkingDistanceKm != null,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(

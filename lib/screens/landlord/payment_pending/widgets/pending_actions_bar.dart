@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../utils/app_design.dart';
+import 'package:student_nest/core/widgets/sn_button.dart';
 
 class PendingActionsBar extends StatelessWidget {
   final VoidCallback onCheckStatus;
@@ -17,21 +17,15 @@ class PendingActionsBar extends StatelessWidget {
       children: [
         SizedBox(
           width: double.infinity,
-          child: ElevatedButton(
-            onPressed: onCheckStatus,
-            child: const Text('Check Status'),
-          ),
+          child: SNButton(label: 'Check Status', onPressed: onCheckStatus),
         ),
         const SizedBox(height: 10),
         SizedBox(
           width: double.infinity,
-          child: OutlinedButton(
+          child: SNButton(
+            label: 'Cancel',
             onPressed: onCancel,
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppDesign.muted(context),
-              side: BorderSide(color: AppDesign.border(context)),
-            ),
-            child: const Text('Cancel'),
+            variant: SNButtonVariant.ghost,
           ),
         ),
       ],

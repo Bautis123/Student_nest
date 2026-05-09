@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/app_design.dart';
+import 'package:student_nest/core/constants/app_strings.dart';
+import 'package:student_nest/core/theme/app_colors.dart';
+import 'package:student_nest/core/widgets/sn_button.dart';
 
 class AddRoomDialog extends StatefulWidget {
   const AddRoomDialog({super.key});
@@ -58,14 +60,17 @@ class _AddRoomDialogState extends State<AddRoomDialog> {
             DropdownButtonFormField<String>(
               value: _selectedType,
               decoration: const InputDecoration(labelText: 'Room Type'),
-              items: _roomTypes
-                  .map(
-                    (type) => DropdownMenuItem(
-                      value: type,
-                      child: Text(type[0].toUpperCase() + type.substring(1)),
-                    ),
-                  )
-                  .toList(),
+              items:
+                  _roomTypes
+                      .map(
+                        (type) => DropdownMenuItem(
+                          value: type,
+                          child: Text(
+                            type[0].toUpperCase() + type.substring(1),
+                          ),
+                        ),
+                      )
+                      .toList(),
               onChanged: (value) {
                 if (value == null) return;
                 setState(() => _selectedType = value);
@@ -113,16 +118,13 @@ class _AddRoomDialogState extends State<AddRoomDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: const Text(AppStrings.cancel),
         ),
-        ElevatedButton(
+        SNButton(
+          label: AppStrings.add,
           onPressed: _submit,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppDesign.accent,
-            foregroundColor: Colors.white,
-            elevation: 0,
-          ),
-          child: const Text('Add'),
+          fullWidth: false,
+          height: 40,
         ),
       ],
     );
@@ -158,10 +160,7 @@ class _CounterField extends StatelessWidget {
               color: AppDesign.accent,
               icon: const Icon(Icons.remove),
             ),
-            Text(
-              '$value',
-              style: TextStyle(color: AppDesign.text(context)),
-            ),
+            Text('$value', style: TextStyle(color: AppDesign.text(context))),
             IconButton(
               onPressed: onIncrement,
               color: AppDesign.accent,
