@@ -1,7 +1,7 @@
 class AppConstants {
   const AppConstants._();
 
-  static const String baseUrl = 'http://192.168.140.17:5000/api';
+  static const String baseUrl = 'http://192.168.223.17:5000/api';
   static const String appName = 'Student Nest';
   static const String appVersion = '1.0.0';
 
