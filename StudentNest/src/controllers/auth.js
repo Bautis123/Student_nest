@@ -4,9 +4,13 @@ const jwt = require('jsonwebtoken');
 
 // Register landlord
 const register = async (req, res) => {
-  const { full_name, phone, email, password } = req.body;
-
   try {
+    const { full_name, phone, email, password } = req.body || {};
+
+    if (!full_name || !phone || !password) {
+      return res.status(400).json({ message: 'Full name, phone, and password are required' });
+    }
+
     // Check if phone already exists
     const existing = await pool.query(
       'SELECT id FROM users WHERE phone = $1', [phone]
@@ -42,9 +46,13 @@ const register = async (req, res) => {
 
 // Login
 const login = async (req, res) => {
-  const { phone, password } = req.body;
-
   try {
+    const { phone, password } = req.body || {};
+
+    if (!phone || !password) {
+      return res.status(400).json({ message: 'Phone and password are required' });
+    }
+
     const result = await pool.query(
       'SELECT * FROM users WHERE phone = $1', [phone]
     );
