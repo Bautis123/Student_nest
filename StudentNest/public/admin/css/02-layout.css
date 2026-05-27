@@ -206,11 +206,12 @@
 
 .stat-card {
   display: grid;
-  grid-template-columns: 44px minmax(92px, 1fr) max-content;
+  grid-template-columns: 44px minmax(0, 1fr);
+  grid-template-rows: auto auto;
   align-items: center;
-  gap: 14px;
+  gap: 8px 14px;
   min-width: 0;
-  min-height: 82px;
+  min-height: 88px;
   padding: 15px 18px;
 }
 
@@ -269,6 +270,7 @@
 }
 
 .stat-label {
+  align-self: end;
   color: var(--muted);
   font-size: 13px;
   font-weight: 650;
@@ -277,11 +279,13 @@
 }
 
 .stat-value {
-  justify-self: end;
+  grid-column: 2;
+  align-self: start;
+  justify-self: start;
   margin-top: 0;
-  padding-right: 2px;
+  padding-right: 0;
   white-space: nowrap;
-  font-size: 27px;
+  font-size: 28px;
   font-weight: 750;
   line-height: 1;
 }
