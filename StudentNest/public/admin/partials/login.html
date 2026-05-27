@@ -6,7 +6,7 @@
       <p class="muted">Manage landlords, listings, and listing payments from the web.</p>
     </div>
 
-    <form class="login-form" id="loginForm" method="post" action="/api/auth/login">
+    <form class="login-form" id="loginForm" method="post" action="/admin/">
       <label>
         Phone number
         <input id="phoneInput" name="phone" autocomplete="username" required />
@@ -15,7 +15,7 @@
         Password
         <input id="passwordInput" name="password" type="password" autocomplete="current-password" required />
       </label>
-      <button type="submit">Sign in</button>
+      <button id="loginSubmitButton" type="button">Sign in</button>
       <p class="form-message" id="loginMessage"></p>
     </form>
   </div>

@@ -36,6 +36,10 @@ app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/admin/index.html'));
 });
 
+app.post('/admin', (req, res) => {
+  res.redirect(303, '/admin/');
+});
+
 // Test route
 app.get('/', (req, res) => {
   res.json({ message: 'Student Nest API is running' });

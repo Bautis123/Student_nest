@@ -32,6 +32,7 @@ const els = {
   loginView: document.getElementById('loginView'),
   dashboardView: document.getElementById('dashboardView'),
   loginForm: document.getElementById('loginForm'),
+  loginSubmitButton: document.getElementById('loginSubmitButton'),
   loginMessage: document.getElementById('loginMessage'),
   logoutButton: document.getElementById('logoutButton'),
   statsGrid: document.getElementById('statsGrid'),

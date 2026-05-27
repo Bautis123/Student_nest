@@ -38,6 +38,10 @@ els.loginForm.addEventListener('submit', async (event) => {
   }
 });
 
+els.loginSubmitButton.addEventListener('click', () => {
+  els.loginForm.requestSubmit();
+});
+
 els.logoutButton.addEventListener('click', logout);
 els.closeDetailButton.addEventListener('click', () => els.detailModal.close());
 els.adminMiniProfile.addEventListener('click', async () => {
