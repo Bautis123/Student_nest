@@ -77,6 +77,7 @@ p {
 h1 {
   margin-bottom: 10px;
   font-size: clamp(30px, 3.4vw, 44px);
+  font-weight: 800;
   line-height: 1.05;
   letter-spacing: 0;
 }
@@ -132,7 +133,7 @@ h2 {
   margin: 0 0 8px;
   color: var(--primary);
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .muted {
@@ -156,7 +157,7 @@ label {
   gap: 8px;
   color: var(--ink);
   font-size: 13px;
-  font-weight: 850;
+  font-weight: 650;
 }
 
 .login-form button,
@@ -166,7 +167,7 @@ label {
   background: var(--primary);
   color: #fff;
   padding: 13px 18px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .action-button.compact {
@@ -179,6 +180,6 @@ label {
   margin: 0;
   color: var(--danger);
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 650;
 }
 
