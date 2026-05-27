@@ -163,7 +163,7 @@
 
 .workspace {
   display: grid;
-  gap: 28px;
+  gap: 34px;
   min-width: 0;
   height: 100vh;
   overflow-x: hidden;
@@ -208,7 +208,7 @@
   display: grid;
   grid-template-columns: 44px minmax(0, 1fr);
   grid-template-rows: auto auto;
-  align-items: center;
+  align-items: start;
   gap: 8px 14px;
   min-width: 0;
   min-height: 88px;
@@ -228,6 +228,8 @@
   background-repeat: no-repeat;
   background-size: 22px 22px;
   box-shadow: inset 0 0 0 1px rgba(20, 117, 245, 0.08);
+  grid-row: 1 / 3;
+  align-self: start;
 }
 
 .stat-card:nth-child(1)::before {
@@ -270,7 +272,10 @@
 }
 
 .stat-label {
-  align-self: end;
+  align-self: center;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
   color: var(--muted);
   font-size: 13px;
   font-weight: 650;
@@ -280,7 +285,7 @@
 
 .stat-value {
   grid-column: 2;
-  align-self: start;
+  align-self: end;
   justify-self: start;
   margin-top: 0;
   padding-right: 0;

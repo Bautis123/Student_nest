@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
   gap: 14px;
-  margin-top: 28px;
+  margin-top: 40px;
 }
 
 .accounts-grid {
