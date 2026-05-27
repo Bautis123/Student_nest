@@ -53,41 +53,37 @@ function renderAdmins() {
         const isCurrentAdmin = String(admin.id) === String(currentAdminId);
         const isOwnerAdmin = admin.access_level === 'owner';
         return `
-          <tr>
-            <td colspan="6">
-              <button class="admin-account-card" type="button" data-admin-stats="${admin.id}" ${!canManageAdmins && !isCurrentAdmin ? 'disabled' : ''}>
-                <div class="admin-avatar">${escapeHtml(adminInitials(admin))}</div>
-                <div class="meta-stack admin-account-main">
-                  <strong>${escapeHtml(admin.full_name || 'Admin')}</strong>
-                  <span>${isCurrentAdmin ? 'You' : 'Admin account'}</span>
-                </div>
-                <div class="meta-stack">
-                  <strong>${escapeHtml(admin.phone || '-')}</strong>
-                  <span>${escapeHtml(admin.email || 'No email')}</span>
-                </div>
-                <div class="admin-card-badges">
-                  ${statusBadge(admin.access_level === 'owner' ? 'owner' : 'manager')}
-                  ${statusBadge(admin.is_approved ? 'approved' : 'pending')}
-                  <span class="muted small">Created ${formatDate(admin.created_at)}</span>
-                </div>
-                <div class="row-actions admin-card-actions">
-                  ${
-                    canManageAdmins && !isCurrentAdmin
-                      ? `<span data-admin-access="${admin.id}" data-access="${isOwnerAdmin ? 'manager' : 'owner'}">${isOwnerAdmin ? 'Make manager' : 'Give full access'}</span>`
-                      : ''
-                  }
-                  ${
-                    canManageAdmins && !isOwnerAdmin
-                      ? `<span class="danger" data-delete-admin="${admin.id}">Delete</span>`
-                      : ''
-                  }
-                </div>
-              </button>
-            </td>
-          </tr>
+          <button class="admin-account-card" type="button" data-admin-stats="${admin.id}" ${!canManageAdmins && !isCurrentAdmin ? 'disabled' : ''}>
+            <div class="admin-avatar">${escapeHtml(adminInitials(admin))}</div>
+            <div class="meta-stack admin-account-main">
+              <strong>${escapeHtml(admin.full_name || 'Admin')}</strong>
+              <span>${isCurrentAdmin ? 'You' : 'Admin account'}</span>
+            </div>
+            <div class="meta-stack admin-contact">
+              <strong>${escapeHtml(admin.phone || '-')}</strong>
+              <span>${escapeHtml(admin.email || 'No email')}</span>
+            </div>
+            <div class="admin-card-badges">
+              ${statusBadge(admin.access_level === 'owner' ? 'owner' : 'manager')}
+              ${statusBadge(admin.is_approved ? 'approved' : 'pending')}
+              <span class="muted small">Created ${formatDate(admin.created_at)}</span>
+            </div>
+            <div class="row-actions admin-card-actions">
+              ${
+                canManageAdmins && !isCurrentAdmin
+                  ? `<span data-admin-access="${admin.id}" data-access="${isOwnerAdmin ? 'manager' : 'owner'}">${isOwnerAdmin ? 'Make manager' : 'Give full access'}</span>`
+                  : ''
+              }
+              ${
+                canManageAdmins && !isOwnerAdmin
+                  ? `<span class="danger" data-delete-admin="${admin.id}">Delete</span>`
+                  : ''
+              }
+            </div>
+          </button>
         `;
       })
-      .join('') || '<tr><td class="empty-state" colspan="6">No admin accounts found.</td></tr>';
+      .join('') || '<div class="empty-state">No admin accounts found.</div>';
 }
 
 function updatePaymentMethodFields() {

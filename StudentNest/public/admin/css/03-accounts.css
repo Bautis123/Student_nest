@@ -24,23 +24,30 @@
   gap: 12px;
 }
 
+.admin-accounts-list {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+}
+
 .admin-account-card {
   display: grid;
   width: 100%;
-  grid-template-columns: auto minmax(160px, 1.1fr) minmax(160px, 1fr) minmax(180px, 1fr) auto;
+  grid-template-columns: 48px minmax(160px, 1.1fr) minmax(170px, 1fr);
   align-items: center;
-  gap: 14px;
-  border: 1px solid transparent;
-  border-radius: 18px;
-  background: transparent;
-  padding: 8px;
+  gap: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+  padding: 16px;
   color: inherit;
   text-align: left;
 }
 
 .admin-account-card:not(:disabled):hover {
-  border-color: var(--border);
+  border-color: rgba(20, 117, 245, 0.32);
   background: var(--soft);
+  box-shadow: var(--shadow-soft);
 }
 
 .admin-account-card:disabled {
@@ -52,12 +59,38 @@
   color: var(--primary);
 }
 
+.admin-contact,
+.admin-account-main {
+  min-width: 0;
+}
+
+.admin-contact strong,
+.admin-contact span,
+.admin-account-main strong,
+.admin-account-main span {
+  overflow-wrap: anywhere;
+}
+
 .admin-card-badges,
 .admin-card-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+}
+
+.admin-card-badges {
+  grid-column: 2 / 4;
+}
+
+.admin-card-actions {
+  grid-column: 2 / 4;
+  justify-content: flex-start;
+}
+
+.admin-card-badges:empty,
+.admin-card-actions:empty {
+  display: none;
 }
 
 .admin-card-actions span {

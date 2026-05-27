@@ -61,7 +61,7 @@
   }
 
   .admin-account-card {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: 48px minmax(0, 1fr);
   }
 
   .admin-card-badges,
