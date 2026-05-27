@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
+    "db:schema": "node scripts/applySchema.js",
     "create-admin": "node scripts/createAdmin.js"
   },
   "keywords": [],
