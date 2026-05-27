@@ -29,17 +29,35 @@
         </div>
       </div>
       <div class="quick-actions">
-        <button type="button" data-tab-shortcut="landlords">
-          <strong>Review landlords</strong>
-          <span id="pendingLandlordsShortcut">Pending approvals</span>
+        <button class="quick-action-card" type="button" data-tab-shortcut="landlords">
+          <span class="quick-action-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M16 19v-1a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v1M10 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8" /></svg>
+          </span>
+          <span class="quick-action-copy">
+            <strong>Review landlords</strong>
+            <span id="pendingLandlordsShortcut">Pending approvals</span>
+          </span>
+          <span class="quick-action-chevron" aria-hidden="true">›</span>
         </button>
-        <button type="button" data-tab-shortcut="properties">
-          <strong>Review properties</strong>
-          <span id="pendingPropertiesShortcut">Pending listings</span>
+        <button class="quick-action-card" type="button" data-tab-shortcut="properties">
+          <span class="quick-action-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-7h6v7" /></svg>
+          </span>
+          <span class="quick-action-copy">
+            <strong>Review properties</strong>
+            <span id="pendingPropertiesShortcut">Pending listings</span>
+          </span>
+          <span class="quick-action-chevron" aria-hidden="true">›</span>
         </button>
-        <button type="button" data-tab-shortcut="payments">
-          <strong>Check payments</strong>
-          <span id="paymentsShortcut">Manual reviews</span>
+        <button class="quick-action-card" type="button" data-tab-shortcut="payments">
+          <span class="quick-action-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M3 7h18v10H3zM3 10h18M7 15h3" /></svg>
+          </span>
+          <span class="quick-action-copy">
+            <strong>Check payments</strong>
+            <span id="paymentsShortcut">Manual reviews</span>
+          </span>
+          <span class="quick-action-chevron" aria-hidden="true">›</span>
         </button>
       </div>
     </section>

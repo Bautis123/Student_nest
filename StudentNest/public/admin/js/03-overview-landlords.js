@@ -55,7 +55,15 @@ function renderActivity() {
           </article>
         `,
       )
-      .join('') || '<div class="empty-state">No recent activity yet.</div>';
+      .join('') || `
+        <div class="empty-state activity-empty">
+          <span class="empty-state-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10" /></svg>
+          </span>
+          <strong>No recent activity</strong>
+          <span>New landlord, property, and payment activity will appear here.</span>
+        </div>
+      `;
 }
 
 function landlordPropertyCount(landlordId) {

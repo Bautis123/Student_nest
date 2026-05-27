@@ -29,8 +29,13 @@
 .activity-list,
 .quick-actions {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   padding: 20px 24px 24px;
+}
+
+.activity-list {
+  min-height: 178px;
 }
 
 .activity-item {
@@ -54,16 +59,66 @@
 
 .quick-actions button {
   display: grid;
-  gap: 6px;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
   border-radius: 10px;
   padding: 16px;
   text-align: left;
   box-shadow: var(--shadow-soft);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.quick-actions button:hover {
+  border-color: rgba(20, 117, 245, 0.32);
+  box-shadow: 0 14px 26px rgba(15, 23, 42, 0.08);
+  transform: translateY(-1px);
 }
 
 .quick-actions span {
   color: var(--muted);
   font-size: 12px;
+}
+
+.quick-action-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.quick-action-icon svg,
+.empty-state-icon svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.quick-action-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.quick-action-copy strong {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.quick-action-chevron {
+  color: #94a3b8;
+  font-size: 26px;
+  line-height: 1;
 }
 
 .integration-note {
@@ -184,4 +239,42 @@ tr:last-child td {
 }
 
 .empty-state,
-.loading-state,
+.loading-state {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  min-height: 132px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.activity-empty {
+  min-height: 170px;
+  align-content: center;
+  justify-items: center;
+}
+
+.activity-empty strong {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.activity-empty span:not(.empty-state-icon) {
+  max-width: 340px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.empty-state-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--soft);
+  color: #94a3b8;
+  box-shadow: inset 0 0 0 1px var(--border);
+}

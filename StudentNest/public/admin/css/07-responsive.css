@@ -9,18 +9,22 @@
   }
 
   .side-nav {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .side-link {
-    text-align: center;
+    justify-content: center;
   }
 
   .overview-grid,
   .accounts-grid,
   .dashboard-stats,
-  .stats-grid {
+    .stats-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard {
+    padding-right: 0;
   }
 }
 
@@ -51,6 +55,7 @@
   .admin-summary-grid,
   .dashboard-stats,
   .stats-grid,
+  .quick-actions,
   .photo-grid {
     grid-template-columns: 1fr;
   }
