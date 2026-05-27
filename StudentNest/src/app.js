@@ -37,7 +37,7 @@ app.get('/admin', (req, res) => {
 });
 
 app.post('/admin', (req, res) => {
-  res.redirect(303, '/admin/');
+  res.sendFile(path.join(__dirname, '../public/admin/index.html'));
 });
 
 // Test route
