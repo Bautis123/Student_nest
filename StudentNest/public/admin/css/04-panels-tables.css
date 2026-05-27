@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 18px 20px;
+  padding: 22px 26px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -29,17 +29,17 @@
 .activity-list,
 .quick-actions {
   display: grid;
-  gap: 10px;
-  padding: 16px;
+  gap: 12px;
+  padding: 20px 24px 24px;
 }
 
 .activity-item {
   display: grid;
-  gap: 4px;
+  gap: 6px;
   border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--soft);
-  padding: 12px;
+  border-radius: 10px;
+  background: #fff;
+  padding: 14px;
 }
 
 .activity-item strong {
@@ -54,10 +54,11 @@
 
 .quick-actions button {
   display: grid;
-  gap: 4px;
-  border-radius: 16px;
-  padding: 14px;
+  gap: 6px;
+  border-radius: 10px;
+  padding: 16px;
   text-align: left;
+  box-shadow: var(--shadow-soft);
 }
 
 .quick-actions span {
@@ -88,7 +89,7 @@ table {
 
 th,
 td {
-  padding: 14px 16px;
+  padding: 15px 18px;
   text-align: left;
   vertical-align: middle;
   border-bottom: 1px solid var(--border);
@@ -97,12 +98,12 @@ td {
 th {
   color: var(--muted);
   font-size: 12px;
-  font-weight: 950;
+  font-weight: 750;
 }
 
 td {
   font-size: 14px;
-  font-weight: 650;
+  font-weight: 550;
 }
 
 tr:last-child td {
@@ -118,7 +119,7 @@ tr:last-child td {
 .hint-list {
   color: var(--muted);
   font-size: 12px;
-  font-weight: 750;
+  font-weight: 650;
 }
 
 .badge {
@@ -128,7 +129,7 @@ tr:last-child td {
   border-radius: 999px;
   padding: 6px 10px;
   font-size: 12px;
-  font-weight: 950;
+  font-weight: 750;
 }
 
 .badge.approved,
