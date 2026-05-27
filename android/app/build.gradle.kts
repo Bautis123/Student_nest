@@ -22,7 +22,6 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.student_nest"
-        setProperty("archivesBaseName", "StudentNest")
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -42,16 +41,6 @@ android {
 
 flutter {
     source = "../.."
-}
-
-tasks.register<Copy>("copyReleaseApkAsStudentNest") {
-    from(layout.buildDirectory.file("outputs/flutter-apk/app-release.apk"))
-    into(layout.buildDirectory.dir("outputs/flutter-apk"))
-    rename { "StudentNest.apk" }
-}
-
-tasks.matching { it.name == "assembleRelease" }.configureEach {
-    finalizedBy("copyReleaseApkAsStudentNest")
 }
 
 configurations.all {
