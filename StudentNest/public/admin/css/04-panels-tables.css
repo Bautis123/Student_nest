@@ -29,13 +29,12 @@
 .activity-list,
 .quick-actions {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   padding: 20px 24px 24px;
 }
 
 .activity-list {
-  min-height: 178px;
+  min-height: 148px;
 }
 
 .activity-item {
@@ -61,7 +60,8 @@
   display: grid;
   grid-template-columns: 42px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  width: 100%;
   border-radius: 10px;
   padding: 16px;
   text-align: left;
@@ -251,7 +251,7 @@ tr:last-child td {
 }
 
 .activity-empty {
-  min-height: 170px;
+  min-height: 140px;
   align-content: center;
   justify-items: center;
 }
