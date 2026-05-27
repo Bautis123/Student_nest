@@ -1,8 +1,8 @@
-﻿function logout() {
+function logout() {
   state.token = '';
   state.user = null;
-  localStorage.removeItem('studentNestAdminToken');
-  localStorage.removeItem('studentNestAdminUser');
+  clearTimeout(idleTimer);
+  clearAdminSession();
   showLogin();
 }
 
@@ -27,12 +27,12 @@ els.loginForm.addEventListener('submit', async (event) => {
 
     state.token = result.token;
     state.user = result.user;
-    localStorage.setItem('studentNestAdminToken', result.token);
-    localStorage.setItem('studentNestAdminUser', JSON.stringify(result.user));
+    persistAdminSession();
     showDashboard();
     setTab('overview');
     await loadDashboard();
     startCountdownTimer();
+    resetIdleTimer();
   } catch (error) {
     els.loginMessage.textContent = error.message;
   }
@@ -73,7 +73,7 @@ function showPhotoAt(index) {
   activePhotoIndex = (index + activePhotos.length) % activePhotos.length;
   const photo = activePhotos[activePhotoIndex];
   els.photoViewerImage.src = photo.url;
-  els.photoViewerCaption.textContent = `Photo ${activePhotoIndex + 1} of ${activePhotos.length}${photo.is_cover ? ' Â· Cover photo' : ''}`;
+  els.photoViewerCaption.textContent = `Photo ${activePhotoIndex + 1} of ${activePhotos.length}${photo.is_cover ? ' - Cover photo' : ''}`;
   if (!els.photoViewer.open) {
     els.photoViewer.showModal();
   }

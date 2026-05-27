@@ -111,6 +111,9 @@ const els = {
 let activePhotos = [];
 let activePhotoIndex = 0;
 let countdownTimer;
+let idleTimer;
+
+const ADMIN_IDLE_TIMEOUT_MS = 30 * 60 * 1000;
 
 const money = new Intl.NumberFormat('en-ZM', {
   style: 'currency',

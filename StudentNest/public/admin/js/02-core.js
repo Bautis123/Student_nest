@@ -31,7 +31,47 @@ function authHeaders() {
   };
 }
 
+function persistAdminSession() {
+  localStorage.setItem('studentNestAdminToken', state.token);
+  localStorage.setItem('studentNestAdminUser', JSON.stringify(state.user));
+  localStorage.setItem('studentNestAdminLastActive', String(Date.now()));
+}
+
+function clearAdminSession() {
+  localStorage.removeItem('studentNestAdminToken');
+  localStorage.removeItem('studentNestAdminUser');
+  localStorage.removeItem('studentNestAdminLastActive');
+}
+
+function isAdminSessionIdleExpired() {
+  const lastActive = Number(localStorage.getItem('studentNestAdminLastActive') || Date.now());
+  return Date.now() - lastActive > ADMIN_IDLE_TIMEOUT_MS;
+}
+
+function touchAdminSession() {
+  if (!state.token) return;
+  localStorage.setItem('studentNestAdminLastActive', String(Date.now()));
+}
+
+function resetIdleTimer() {
+  clearTimeout(idleTimer);
+  if (!state.token) return;
+  idleTimer = setTimeout(logout, ADMIN_IDLE_TIMEOUT_MS);
+}
+
+function startIdleTracking() {
+  ['click', 'keydown', 'pointermove', 'scroll', 'touchstart'].forEach((eventName) => {
+    document.addEventListener(eventName, () => {
+      touchAdminSession();
+      resetIdleTimer();
+    }, { passive: true });
+  });
+  touchAdminSession();
+  resetIdleTimer();
+}
+
 async function api(path, options = {}) {
+  touchAdminSession();
   const response = await fetch(path, {
     ...options,
     headers: {
@@ -69,7 +109,7 @@ function setLoadingRows() {
   els.propertiesBody.innerHTML = row;
   els.paymentsBody.innerHTML = row;
   els.logsBody.innerHTML = '<tr><td class="loading-state" colspan="7">Loading admin logs...</td></tr>';
-  els.adminsBody.innerHTML = '<tr><td class="loading-state" colspan="4">Loading admin accounts...</td></tr>';
+  els.adminsBody.innerHTML = '<div class="loading-state">Loading admin accounts...</div>';
   els.activityList.innerHTML = '<div class="activity-item">Loading recent activity...</div>';
 }
 

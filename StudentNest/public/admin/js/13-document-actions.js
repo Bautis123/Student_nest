@@ -1,5 +1,5 @@
 ﻿document.addEventListener('click', async (event) => {
-  const target = event.target.closest('button');
+  const target = event.target.closest('button, [data-admin-access], [data-delete-admin]');
   if (!target) return;
 
   if (target.dataset.tab) {
