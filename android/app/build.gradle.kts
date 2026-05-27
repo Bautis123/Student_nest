@@ -50,7 +50,7 @@ tasks.register<Copy>("copyReleaseApkAsStudentNest") {
     rename { "StudentNest.apk" }
 }
 
-tasks.named("assembleRelease") {
+tasks.matching { it.name == "assembleRelease" }.configureEach {
     finalizedBy("copyReleaseApkAsStudentNest")
 }
 
