@@ -1,17 +1,37 @@
 # Student Nest
 
-Student Nest is a Zambia-focused student accommodation marketplace. The Flutter app serves students and landlords, while admin operations run through a protected web dashboard on the Node/PostgreSQL backend.
+Student Nest is a Zambia-focused student accommodation marketplace. The active frontend is now a React web app prepared for Vercel. It serves students and landlords; the existing Node/PostgreSQL backend and protected admin dashboard remain on Render.
+
+## Start the Web App
+
+```powershell
+cd web-app
+npm ci
+npm run dev
+```
+
+Open the local URL printed by Vite. Requests under `/api` proxy to the existing Render API. For a local backend, copy `web-app/.env.example` to `web-app/.env` and set `API_PROXY_TARGET=http://localhost:5000`.
+
+The web app supports campus/text/budget filtering, saved homes, property details, direct landlord contact, landlord registration and login, property creation and editing, room availability, and photo upload/cover/deletion. Payments remain manually verified in the existing admin dashboard.
+
+**Deployment:** import the repository into a new Vercel project and set **Root Directory** to `web-app`, **Framework** to Vite, **Build Command** to `npm run build`, and **Output Directory** to `dist`. Redeploy the backend changes first: private landlord detail and property editing routes are required by the new management UI. See [Web launch guide](docs/WEB_LAUNCH.md).
+
+## Flutter Archive
+
+Flutter development is paused. A verified source snapshot is stored at `archives/flutter-source-2026-10-19.zip` (320 files). The original Flutter directories remain available during the web cutover; Vercel only builds `web-app`. See [archive and restore instructions](archives/README.md).
 
 ## Project Structure
 
 ```text
-lib/                         Flutter mobile app
+web-app/                     Active React/Vite frontend (Vercel)
+archives/                    Verified Flutter source backup
+lib/                         Paused Flutter source, retained during cutover
 StudentNest/                 Node.js + Express backend
 StudentNest/public/admin/    Web admin dashboard
 docs/                        Project documentation
 ```
 
-## Mobile App
+## Paused Mobile App
 
 The Flutter app is focused on:
 
@@ -94,6 +114,23 @@ The backend:
 - auto-suspends expired listings on startup and every 6 hours by setting `is_active = false`
 
 ## Useful Checks
+
+Web checks:
+
+```powershell
+cd web-app
+npm run build
+npm test
+npm run test:e2e
+```
+
+Browser checks use installed Google Chrome and test fixtures; they do not mutate the live API.
+
+Backend regression checks:
+
+```powershell
+node --test StudentNest/tests/web-properties.test.js
+```
 
 Backend syntax:
 

@@ -95,7 +95,6 @@ const deletePhoto = async (req, res) => {
 
 const setCoverPhoto = async (req, res) => {
   const { photo_id } = req.params;
-  const { property_id } = req.body;
   const landlord_id = req.user.id;
 
   try {
@@ -113,7 +112,7 @@ const setCoverPhoto = async (req, res) => {
     // Unset all covers for this property
     await pool.query(
       'UPDATE photos SET is_cover = false WHERE property_id = $1',
-      [property_id]
+      [check.rows[0].property_id]
     );
 
     // Set new cover

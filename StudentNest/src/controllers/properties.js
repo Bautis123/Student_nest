@@ -14,6 +14,14 @@ const createProperty = async (req, res) => {
 
   const landlord_id = req.user.id;
 
+  if (typeof title !== 'string' || !title.trim() || title.length > 220 ||
+      typeof address !== 'string' || !address.trim() ||
+      latitude === null || latitude === '' || longitude === null || longitude === '' ||
+      !Number.isFinite(Number(latitude)) || !Number.isFinite(Number(longitude)) ||
+      Math.abs(Number(latitude)) > 90 || Math.abs(Number(longitude)) > 180) {
+    return res.status(400).json({ message: 'A title, address and valid property coordinates are required' });
+  }
+
   try {
     // Calculate distance from school in km using Haversine formula
     let distance_from_school = null;
@@ -231,6 +239,15 @@ const addRooms = async (req, res) => {
   const { property_id } = req.params;
   const { rooms } = req.body;
   const landlord_id = req.user.id;
+  if (!Array.isArray(rooms) || !rooms.length || rooms.length > 50 || rooms.some(room =>
+    !room || typeof room.room_type !== 'string' || !room.room_type.trim() || room.room_type.length > 120 ||
+    !Number.isFinite(Number(room.price_per_month)) || Number(room.price_per_month) <= 0 ||
+    !Number.isInteger(room.students_per_room) || room.students_per_room < 1 ||
+    !Number.isInteger(room.total_rooms) || room.total_rooms < 1 ||
+    !Number.isInteger(room.available_rooms) || room.available_rooms < 0 || room.available_rooms > room.total_rooms
+  )) {
+    return res.status(400).json({ message: 'Provide valid room types, prices, occupancy and availability' });
+  }
 
   try {
     // Make sure this property belongs to this landlord
@@ -376,7 +393,12 @@ const getSchools = async (req, res) => {
 const updateProperty = async (req, res) => {
   const { id } = req.params;
   const landlord_id = req.user.id;
-  const { title, description, address, amenities, is_active } = req.body;
+  const { title, description, address, amenities } = req.body;
+  // Publication is controlled by admin review and verified payment.
+  if (typeof title !== 'string' || !title.trim() || title.length > 220 ||
+      typeof address !== 'string' || !address.trim()) {
+    return res.status(400).json({ message: 'Title and address are required' });
+  }
 
   try {
     const check = await pool.query(
@@ -394,13 +416,14 @@ const updateProperty = async (req, res) => {
         description = COALESCE($2, description),
         address = COALESCE($3, address),
         amenities = COALESCE($4, amenities),
-        is_active = COALESCE($5, is_active),
+        is_approved = false,
+        is_active = false,
         updated_at = NOW()
-       WHERE id = $6
+       WHERE id = $5 AND landlord_id = $6
        RETURNING *`,
       [title, description, address,
        amenities ? JSON.stringify(amenities) : null,
-       is_active, id]
+       id, landlord_id]
     );
 
     res.json({ property: result.rows[0] });
@@ -437,10 +460,13 @@ const updateRoomAvailability = async (req, res) => {
   const { room_id } = req.params;
   const { available_rooms } = req.body;
   const landlord_id = req.user.id;
+  if (!Number.isInteger(available_rooms) || available_rooms < 0) {
+    return res.status(400).json({ message: 'Available rooms must be a non-negative whole number' });
+  }
 
   try {
     const check = await pool.query(
-      `SELECT r.id FROM rooms r
+      `SELECT r.id, r.total_rooms FROM rooms r
        JOIN properties p ON r.property_id = p.id
        WHERE r.id = $1 AND p.landlord_id = $2`,
       [room_id, landlord_id]
@@ -448,6 +474,10 @@ const updateRoomAvailability = async (req, res) => {
 
     if (check.rows.length === 0) {
       return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    if (available_rooms > check.rows[0].total_rooms) {
+      return res.status(400).json({ message: 'Available rooms cannot exceed total rooms' });
     }
 
     const result = await pool.query(
@@ -463,6 +493,24 @@ const updateRoomAvailability = async (req, res) => {
 };
 
 
+const getMyPropertyById = async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM properties WHERE id = $1 AND landlord_id = $2',
+      [req.params.id, req.user.id]
+    );
+    if (!result.rows.length) return res.status(404).json({ message: 'Property not found' });
+    const [rooms, photos] = await Promise.all([
+      pool.query('SELECT * FROM rooms WHERE property_id = $1 ORDER BY created_at', [req.params.id]),
+      pool.query('SELECT * FROM photos WHERE property_id = $1 ORDER BY is_cover DESC, id', [req.params.id]),
+    ]);
+    res.json({ property: { ...result.rows[0], rooms: rooms.rows, photos: photos.rows } });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
  module.exports = {
   createProperty,
   getProperties,
@@ -470,6 +518,7 @@ const updateRoomAvailability = async (req, res) => {
   addRooms,
   trackContactClick,
   getMyProperties,
+  getMyPropertyById,
   getSchools,
   updateProperty,
   deletePropertyLandlord,

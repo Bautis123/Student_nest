@@ -7,6 +7,7 @@ const {
   addRooms,
   trackContactClick,
   getMyProperties,
+  getMyPropertyById,
   getSchools,
   updateProperty,
   deletePropertyLandlord,
@@ -17,6 +18,7 @@ const { verifyToken, isLandlord } = require('../middleware/auth');
 // Static routes first - before any :id routes
 router.get('/schools', getSchools);
 router.get('/landlord/my-properties', verifyToken, isLandlord, getMyProperties);
+router.get('/landlord/my-properties/:id', verifyToken, isLandlord, getMyPropertyById);
 
 // Public routes
 router.get('/', getProperties);
@@ -29,5 +31,6 @@ router.post('/:property_id/rooms', verifyToken, isLandlord, addRooms);
 
 //Available for landlords to update property details and room availability
 router.patch('/rooms/:room_id', verifyToken, isLandlord, updateRoomAvailability);
+router.patch('/:id', verifyToken, isLandlord, updateProperty);
 
 module.exports = router;
