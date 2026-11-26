@@ -16,31 +16,14 @@ The web app supports campus/text/budget filtering, saved homes, property details
 
 **Deployment:** import the repository into a new Vercel project and set **Root Directory** to `web-app`, **Framework** to Vite, **Build Command** to `npm run build`, and **Output Directory** to `dist`. Redeploy the backend changes first: private landlord detail and property editing routes are required by the new management UI. See [Web launch guide](docs/WEB_LAUNCH.md).
 
-## Flutter Archive
-
-Flutter development is paused. A verified source snapshot is stored at `archives/flutter-source-2026-10-19.zip` (320 files). The original Flutter directories remain available during the web cutover; Vercel only builds `web-app`. See [archive and restore instructions](archives/README.md).
-
 ## Project Structure
 
 ```text
 web-app/                     Active React/Vite frontend (Vercel)
-archives/                    Verified Flutter source backup
-lib/                         Paused Flutter source, retained during cutover
 StudentNest/                 Node.js + Express backend
 StudentNest/public/admin/    Web admin dashboard
 docs/                        Project documentation
 ```
-
-## Paused Mobile App
-
-The Flutter app is focused on:
-
-- Student browsing and property details
-- Landlord registration/login
-- Landlord listing creation and management
-- Listing photos, rooms, payments, and profile/settings flows
-
-Admin screens were moved out of the Flutter app. Admins should use the web dashboard instead.
 
 ## Backend
 
@@ -140,15 +123,6 @@ node --check StudentNest\src\controllers\admin.js
 node --check StudentNest\public\admin\js\00-loader.js
 ```
 
-Flutter checks:
-
-```powershell
-dart format lib
-flutter analyze
-flutter test
-```
-
 ## More Documentation
 
 - [Web Admin Guide](docs/WEB_ADMIN.md)
-- [Codebase Refactor Guide](docs/CODEBASE_REFACTOR_GUIDE.md)

@@ -47,7 +47,7 @@ Do not put the existing Express process on Vercel as-is: its recurring expiry ti
 5. No new environment variables are required for the current Render URL. If the API moves, update both `vercel.json` and the development proxy target.
 6. Deploy, then complete the live smoke checks below.
 
-The checked-in `vercel.json` handles API forwarding and refreshing routes such as `/homes/:id` and `/landlord`. The full Flutter archive is outside Vercel's selected root directory.
+The checked-in `vercel.json` handles API forwarding and refreshing routes such as `/homes/:id` and `/landlord`.
 
 Configuration follows [Vercel's Vite guide](https://vercel.com/docs/frameworks/frontend/vite) and [rewrite documentation](https://vercel.com/docs/routing/rewrites).
 
@@ -71,7 +71,7 @@ node --test StudentNest/tests/web-properties.test.js
 
 If a restricted Windows shell forbids test child processes, run the unit checks with `node --test --test-isolation=none web-app/tests/utils.test.js StudentNest/tests/web-properties.test.js`.
 
-## Live smoke checks before retiring Flutter
+## Live smoke checks
 
 1. Browse real listings and campuses; check rent, photos and empty states.
 2. Refresh a property URL and confirm it opens correctly.
@@ -86,4 +86,4 @@ If a restricted Windows shell forbids test child processes, run the unit checks 
 
 This first web release provides the core student and landlord flows. There is no online checkout, embedded interactive map, password reset or student account system. Registration requires admin approval. The public catalogue uses client-side filters over the API's current result set; add server pagination when inventory warrants it. Public listing content is client-rendered, so search-engine indexing should be evaluated before an SEO-focused launch.
 
-The frontend build and automated tests can be completed locally. Production publication, backend redeployment and authenticated live smoke tests require the hosting accounts and a designated test landlord. Original Flutter files remain during this cutover and are backed up in `archives/`.
+The frontend build and automated tests can be completed locally. Production publication, backend redeployment and authenticated live smoke tests require the hosting accounts and a designated test landlord.
