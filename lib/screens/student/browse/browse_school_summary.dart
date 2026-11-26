@@ -72,7 +72,7 @@ class _BrowseSchoolSummaryDelegate extends SliverPersistentHeaderDelegate {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: AppDesign.muted(context),
-                  fontSize: 13,
+                  fontSize: 15,
                   fontWeight: FontWeight.w500,
                 ),
               ),

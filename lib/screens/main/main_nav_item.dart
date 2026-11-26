@@ -52,7 +52,7 @@ class MainNavItem extends StatelessWidget {
             label,
             style: TextStyle(
               color: color,
-              fontSize: 12,
+              fontSize: 13,
               fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
             ),
           ),

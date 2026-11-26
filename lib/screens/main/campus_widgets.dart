@@ -43,7 +43,7 @@ class CampusHeroCard extends StatelessWidget {
             'Keep the practical stuff close: safety checks, budgeting, move-in prep, and daily transport before you commit.',
             style: TextStyle(
               color: AppDesign.muted(context),
-              fontSize: 13,
+              fontSize: 15,
               fontWeight: FontWeight.w500,
               height: 1.45,
             ),
@@ -84,7 +84,7 @@ class _CampusStat extends StatelessWidget {
               label,
               style: TextStyle(
                 color: AppDesign.muted(context),
-                fontSize: 11,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -93,7 +93,7 @@ class _CampusStat extends StatelessWidget {
               value,
               style: TextStyle(
                 color: AppDesign.text(context),
-                fontSize: 13,
+                fontSize: 15,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -155,7 +155,7 @@ class _CampusChip extends StatelessWidget {
               label,
               style: TextStyle(
                 color: AppDesign.muted(context),
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -230,7 +230,7 @@ class CampusListRow extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: AppDesign.muted(context),
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
                     ),

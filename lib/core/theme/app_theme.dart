@@ -106,12 +106,12 @@ class AppTheme {
           vertical: 16,
         ),
         labelStyle: GoogleFonts.poppins(
-          fontSize: 14,
+          fontSize: 16,
           fontWeight: FontWeight.w500,
           color: mutedColor,
         ),
         hintStyle: GoogleFonts.poppins(
-          fontSize: 14,
+          fontSize: 16,
           fontWeight: FontWeight.w500,
           color: mutedColor,
         ),

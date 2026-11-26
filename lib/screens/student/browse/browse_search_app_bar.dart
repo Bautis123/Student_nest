@@ -43,7 +43,7 @@ class BrowseSearchAppBar extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: AppDesign.muted(context),
-                fontSize: 14,
+                fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -79,14 +79,14 @@ class BrowseSearchAppBar extends StatelessWidget {
                 onChanged: onSearchChanged,
                 style: TextStyle(
                   color: AppDesign.text(context),
-                  fontSize: 12,
+                  fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
                 decoration: InputDecoration(
                   hintText: 'Search by location or name',
                   hintStyle: TextStyle(
                     color: AppDesign.muted(context),
-                    fontSize: 12,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
                   prefixIcon: Padding(

@@ -50,7 +50,7 @@ class BrowseFilterButton extends StatelessWidget {
                 'Filters',
                 style: TextStyle(
                   color: foregroundColor,
-                  fontSize: 13,
+                  fontSize: 15,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -114,7 +114,7 @@ class BrowseCountPill extends StatelessWidget {
               label,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: AppDesign.text(context),
               ),

@@ -36,17 +36,17 @@ class AppTypography {
         color: textColor,
       ),
       bodyLarge: GoogleFonts.poppins(
-        fontSize: 15,
+        fontSize: 17,
         fontWeight: FontWeight.w500,
         color: textColor,
       ),
       bodyMedium: GoogleFonts.poppins(
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: FontWeight.w500,
         color: secondaryColor,
       ),
       labelLarge: GoogleFonts.poppins(
-        fontSize: 15,
+        fontSize: 16,
         fontWeight: FontWeight.w700,
         color: AppColors.white,
       ),

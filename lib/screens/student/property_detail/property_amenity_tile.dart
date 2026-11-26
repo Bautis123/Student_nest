@@ -49,7 +49,7 @@ class PropertyAmenityTile extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 14,
               color:
                   available ? AppDesign.text(context) : AppDesign.muted(context),
               fontWeight: FontWeight.w500,

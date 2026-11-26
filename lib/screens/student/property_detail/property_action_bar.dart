@@ -103,7 +103,7 @@ class _RouteButton extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: AppDesign.text(context),
-                    fontSize: 12,
+                    fontSize: 14,
                     height: 1.22,
                     fontWeight: FontWeight.w700,
                   ),

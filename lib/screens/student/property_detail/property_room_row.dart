@@ -62,7 +62,7 @@ class PropertyRoomRow extends StatelessWidget {
                 style: TextStyle(
                   color: AppDesign.text(context),
                   fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                  fontSize: 16,
                 ),
               ),
             ),
@@ -70,7 +70,7 @@ class PropertyRoomRow extends StatelessWidget {
             AppStatusBadge(
               label: isFull ? 'Full' : '${room.availableRooms} available',
               color: isFull ? AppColors.error : AppColors.success,
-              fontSize: 10,
+              fontSize: 12,
               horizontalPadding: 7,
               verticalPadding: 3,
               radius: 10,
@@ -81,7 +81,7 @@ class PropertyRoomRow extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           '${room.studentsPerRoom} student${room.studentsPerRoom > 1 ? 's' : ''} per room',
-          style: TextStyle(fontSize: 13, color: AppDesign.muted(context)),
+          style: TextStyle(fontSize: 15, color: AppDesign.muted(context)),
         ),
       ],
     );
