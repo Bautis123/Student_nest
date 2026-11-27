@@ -1,5 +1,26 @@
 const pool = require('../config/db');
 
+// Payments of at least this amount (ZMW) mark a listing as premium.
+const PREMIUM_LISTING_AMOUNT = 750;
+
+// Shared SQL fragments. All expect the property alias `p`.
+const LATEST_PAYMENT_JOIN = `LEFT JOIN LATERAL (
+        SELECT amount
+        FROM payments pm
+        WHERE pm.property_id = p.id
+          AND pm.status = 'confirmed'
+        ORDER BY pm.paid_at DESC NULLS LAST
+        LIMIT 1
+      ) lp ON true`;
+
+const LISTING_PLAN_COLUMNS = `CASE WHEN lp.amount >= ${PREMIUM_LISTING_AMOUNT} THEN 'premium' ELSE 'basic' END AS listing_plan,
+        COALESCE(lp.amount >= ${PREMIUM_LISTING_AMOUNT}, false) AS is_premium`;
+
+// Students may only see listings that are approved, paid/active and not expired.
+const PUBLICLY_VISIBLE = `p.is_approved = true
+        AND p.is_active = true
+        AND (p.listing_expires_at IS NULL OR p.listing_expires_at > NOW())`;
+
 // Create a new property listing
 const createProperty = async (req, res) => {
   const {
@@ -80,14 +101,7 @@ const getProperties = async (req, res) => {
         s.longitude AS school_lng,
         u.full_name AS landlord_name,
         u.phone AS landlord_phone,
-        CASE
-          WHEN lp.amount >= 750 THEN 'premium'
-          ELSE 'basic'
-        END AS listing_plan,
-        CASE
-          WHEN lp.amount >= 750 THEN true
-          ELSE false
-        END AS is_premium,
+        ${LISTING_PLAN_COLUMNS},
         COALESCE(cover.cover_photo, '[]'::jsonb) AS cover_photo,
         (
           SELECT COALESCE(SUM(rooms.available_rooms * rooms.students_per_room), 0)::int
@@ -99,14 +113,7 @@ const getProperties = async (req, res) => {
       FROM properties p
       LEFT JOIN schools s ON p.nearest_school_id = s.id
       LEFT JOIN users u ON p.landlord_id = u.id
-      LEFT JOIN LATERAL (
-        SELECT amount
-        FROM payments pm
-        WHERE pm.property_id = p.id
-          AND pm.status = 'confirmed'
-        ORDER BY pm.paid_at DESC NULLS LAST
-        LIMIT 1
-      ) lp ON true
+      ${LATEST_PAYMENT_JOIN}
       LEFT JOIN LATERAL (
         SELECT COALESCE(jsonb_agg(to_jsonb(photo_row)), '[]'::jsonb) AS cover_photo
         FROM (
@@ -118,9 +125,7 @@ const getProperties = async (req, res) => {
         ) photo_row
       ) cover ON true
       LEFT JOIN rooms r ON p.id = r.property_id
-      WHERE p.is_approved = true
-        AND p.is_active = true
-        AND (p.listing_expires_at IS NULL OR p.listing_expires_at > NOW())
+      WHERE ${PUBLICLY_VISIBLE}
     `;
 
     const params = [];
@@ -180,29 +185,13 @@ const getPropertyById = async (req, res) => {
         u.full_name AS landlord_name,
         u.phone AS landlord_phone,
         u.email AS landlord_email,
-        CASE
-          WHEN lp.amount >= 750 THEN 'premium'
-          ELSE 'basic'
-        END AS listing_plan,
-        CASE
-          WHEN lp.amount >= 750 THEN true
-          ELSE false
-        END AS is_premium
+        ${LISTING_PLAN_COLUMNS}
        FROM properties p
        LEFT JOIN schools s ON p.nearest_school_id = s.id
        LEFT JOIN users u ON p.landlord_id = u.id
-       LEFT JOIN LATERAL (
-         SELECT amount
-         FROM payments pm
-         WHERE pm.property_id = p.id
-           AND pm.status = 'confirmed'
-         ORDER BY pm.paid_at DESC NULLS LAST
-         LIMIT 1
-       ) lp ON true
+       ${LATEST_PAYMENT_JOIN}
        WHERE p.id = $1
-         AND p.is_approved = true
-         AND p.is_active = true
-         AND (p.listing_expires_at IS NULL OR p.listing_expires_at > NOW())`,
+         AND ${PUBLICLY_VISIBLE}`,
       [id]
     );
 
@@ -319,14 +308,7 @@ const getMyProperties = async (req, res) => {
         s.name AS school_name,
         s.latitude AS school_lat,
         s.longitude AS school_lng,
-        CASE
-          WHEN lp.amount >= 750 THEN 'premium'
-          ELSE 'basic'
-        END AS listing_plan,
-        CASE
-          WHEN lp.amount >= 750 THEN true
-          ELSE false
-        END AS is_premium,
+        ${LISTING_PLAN_COLUMNS},
         COUNT(r.id) AS room_types_count,
         COALESCE(SUM(r.total_rooms), 0)::int AS total_rooms_count,
         COALESCE(SUM(r.available_rooms), 0)::int AS available_rooms_count,
@@ -336,14 +318,7 @@ const getMyProperties = async (req, res) => {
         )::int AS occupied_rooms_count
        FROM properties p
        LEFT JOIN schools s ON p.nearest_school_id = s.id
-       LEFT JOIN LATERAL (
-         SELECT amount
-         FROM payments pm
-         WHERE pm.property_id = p.id
-           AND pm.status = 'confirmed'
-         ORDER BY pm.paid_at DESC NULLS LAST
-         LIMIT 1
-       ) lp ON true
+       ${LATEST_PAYMENT_JOIN}
        LEFT JOIN rooms r ON p.id = r.property_id
        WHERE p.landlord_id = $1
        GROUP BY p.id, s.name, s.latitude, s.longitude, lp.amount
@@ -433,29 +408,6 @@ const updateProperty = async (req, res) => {
   }
 };
 
-// Delete a property (soft delete by setting is_active to false)
-const deletePropertyLandlord = async (req, res) => {
-  const { id } = req.params;
-  const landlord_id = req.user.id;
-
-  try {
-    const check = await pool.query(
-      'SELECT id FROM properties WHERE id = $1 AND landlord_id = $2',
-      [id, landlord_id]
-    );
-
-    if (check.rows.length === 0) {
-      return res.status(403).json({ message: 'Not authorized' });
-    }
-
-    await pool.query('DELETE FROM properties WHERE id = $1', [id]);
-    res.json({ message: 'Property deleted successfully' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
 const updateRoomAvailability = async (req, res) => {
   const { room_id } = req.params;
   const { available_rooms } = req.body;
@@ -492,7 +444,7 @@ const updateRoomAvailability = async (req, res) => {
   }
 };
 
-
+// Landlord's own listing (any status) with rooms and photos
 const getMyPropertyById = async (req, res) => {
   try {
     const result = await pool.query(
@@ -511,7 +463,7 @@ const getMyPropertyById = async (req, res) => {
   }
 };
 
- module.exports = {
+module.exports = {
   createProperty,
   getProperties,
   getPropertyById,
@@ -521,6 +473,5 @@ const getMyPropertyById = async (req, res) => {
   getMyPropertyById,
   getSchools,
   updateProperty,
-  deletePropertyLandlord,
   updateRoomAvailability
 };

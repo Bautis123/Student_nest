@@ -112,16 +112,14 @@ Browser checks use installed Google Chrome and test fixtures; they do not mutate
 Backend regression checks:
 
 ```powershell
-node --test StudentNest/tests/web-properties.test.js
+cd StudentNest
+npm ci
+npm test
 ```
 
-Backend syntax:
+These use a database double and never touch real data.
 
-```powershell
-node --check StudentNest\src\app.js
-node --check StudentNest\src\controllers\admin.js
-node --check StudentNest\public\admin\js\00-loader.js
-```
+`node_modules/` is not committed; Render installs dependencies during its build. On startup the backend runs idempotent schema migrations (`src/services/schemaService.js`) before accepting requests, and refuses to start without `JWT_SECRET`.
 
 ## More Documentation
 

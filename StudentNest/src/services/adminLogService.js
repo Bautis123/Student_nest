@@ -17,16 +17,15 @@ const ensureAdminLogsTable = async () => {
       created_at TIMESTAMP DEFAULT NOW()
     )
   `);
+  // Older databases created the table before access levels were logged.
+  await pool.query(
+    `ALTER TABLE admin_logs
+     ADD COLUMN IF NOT EXISTS admin_access_level VARCHAR(40)`
+  );
 };
 
 const recordAdminLog = async (req, log) => {
   try {
-    await ensureAdminLogsTable();
-    await pool.query(
-      `ALTER TABLE admin_logs
-       ADD COLUMN IF NOT EXISTS admin_access_level VARCHAR(40)`
-    );
-
     await pool.query(
       `INSERT INTO admin_logs
         (admin_id, admin_access_level, action, entity_type, entity_id, status, message, metadata, ip_address, user_agent)
@@ -58,8 +57,6 @@ const getAdminLogs = async ({
   dateTo,
   limit = 100,
 }) => {
-  await ensureAdminLogsTable();
-
   const conditions = [];
   const params = [];
 

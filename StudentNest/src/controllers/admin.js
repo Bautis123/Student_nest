@@ -1,13 +1,14 @@
-const { acceptsLanguages } = require('express/lib/request');
+const bcrypt = require('bcryptjs');
 const pool = require('../config/db');
 const { getAdminLogs, recordAdminLog } = require('../services/adminLogService');
 
-const ensureAdminAccessLevelColumn = async () => {
-  await pool.query(
-    `ALTER TABLE users
-     ADD COLUMN IF NOT EXISTS access_level VARCHAR(40)`
-  );
-};
+const MIN_PASSWORD_LENGTH = 6;
+const DEFAULT_LISTING_MONTHS = 12;
+
+const isValidPassword = (password) =>
+  typeof password === 'string' && password.length >= MIN_PASSWORD_LENGTH;
+
+const normalizeAccessLevel = (level) => (level === 'owner' ? 'owner' : 'manager');
 
 const isOwner = (user) =>
   user?.role === 'admin' && user?.access_level === 'owner';
@@ -256,7 +257,6 @@ const getStats = async (req, res) => {
 // Create admin account
 const createAdmin = async (req, res) => {
   const { full_name, phone, email, password, access_level } = req.body;
-  const bcrypt = require('bcryptjs');
 
   try {
     if (!isOwner(req.user)) {
@@ -265,7 +265,11 @@ const createAdmin = async (req, res) => {
       });
     }
 
-    await ensureAdminAccessLevelColumn();
+    if (!full_name || !phone || !isValidPassword(password)) {
+      return res.status(400).json({
+        message: `Full name, phone and a password of at least ${MIN_PASSWORD_LENGTH} characters are required`
+      });
+    }
 
     const existing = await pool.query(
       'SELECT id FROM users WHERE phone = $1', [phone]
@@ -276,7 +280,7 @@ const createAdmin = async (req, res) => {
     }
 
     const password_hash = await bcrypt.hash(password, 10);
-    const normalizedAccessLevel = access_level === 'owner' ? 'owner' : 'manager';
+    const normalizedAccessLevel = normalizeAccessLevel(access_level);
 
     const result = await pool.query(
       `INSERT INTO users (full_name, phone, email, password_hash, role, is_approved, access_level)
@@ -305,53 +309,31 @@ const createAdmin = async (req, res) => {
 };
 
 
-// Update landlord details (admin)
-const updateLandlord = async (req, res) => {
+// Reset landlord password
+const resetLandlordPassword = async (req, res) => {
   const { id } = req.params;
-  const { full_name, phone, email, is_approved } = req.body;
+  const { password } = req.body;
+
+  if (!isValidPassword(password)) {
+    return res.status(400).json({
+      message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters`
+    });
+  }
 
   try {
+    const password_hash = await bcrypt.hash(password, 10);
+    // Scoped to landlords so this endpoint can never reset an admin's password.
     const result = await pool.query(
-      `UPDATE users SET
-        full_name = COALESCE($1, full_name),
-        phone = COALESCE($2, phone),
-        email = COALESCE($3, email),
-        is_approved = COALESCE($4, is_approved)
-       WHERE id = $5 AND role = 'landlord'
-       RETURNING id, full_name, phone, email, is_approved`,
-      [full_name, phone, email, is_approved, id]
+      `UPDATE users SET password_hash = $1
+       WHERE id = $2 AND role = 'landlord'
+       RETURNING id`,
+      [password_hash, id]
     );
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'Landlord not found' });
     }
 
-    res.json({ landlord: result.rows[0] });
-
-    await recordAdminLog(req, {
-      action: 'landlord_updated',
-      entityType: 'landlord',
-      entityId: id,
-      message: 'Updated landlord details',
-      metadata: { changes: req.body, landlord: result.rows[0] },
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
- // Reset landlord password
-const resetLandlordPassword = async (req, res) => {
-  const { id } = req.params;
-  const { password } = req.body;
-  const bcrypt = require('bcryptjs');
-
-  try {
-    const password_hash = await bcrypt.hash(password, 10);
-    await pool.query(
-      'UPDATE users SET password_hash = $1 WHERE id = $2',
-      [password_hash, id]
-    );
     res.json({ message: 'Password reset successfully' });
 
     await recordAdminLog(req, {
@@ -366,15 +348,20 @@ const resetLandlordPassword = async (req, res) => {
   }
 };
 
- // Delete landlord account
+// Delete landlord account
 const deleteLandlord = async (req, res) => {
   const { id } = req.params;
 
   try {
-    await pool.query(
-      'DELETE FROM users WHERE id = $1 AND role = $2',
-      [id, 'landlord']
+    const result = await pool.query(
+      `DELETE FROM users WHERE id = $1 AND role = 'landlord' RETURNING id`,
+      [id]
     );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Landlord not found' });
+    }
+
     res.json({ message: 'Landlord deleted successfully' });
 
     await recordAdminLog(req, {
@@ -444,28 +431,12 @@ const recordPayment = async (req, res) => {
       });
     }
 
+    const months = Number(duration_months) || DEFAULT_LISTING_MONTHS;
     const paid_at = new Date();
-    const expires_at = new Date();
-    expires_at.setMonth(expires_at.getMonth() + (duration_months || 12));
+    const expires_at = new Date(paid_at);
+    expires_at.setMonth(expires_at.getMonth() + months);
 
-    await pool.query(
-      `ALTER TABLE payments
-       ADD COLUMN IF NOT EXISTS payment_reference TEXT,
-       ADD COLUMN IF NOT EXISTS mobile_money_provider VARCHAR(40),
-       ADD COLUMN IF NOT EXISTS bank_name VARCHAR(120),
-       ADD COLUMN IF NOT EXISTS duration_months INTEGER,
-       ADD COLUMN IF NOT EXISTS expires_at TIMESTAMP`
-    );
-
-    const columnsResult = await pool.query(
-      `SELECT column_name
-       FROM information_schema.columns
-       WHERE table_name = 'payments'`
-    );
-    const paymentColumns = new Set(
-      columnsResult.rows.map((row) => row.column_name)
-    );
-
+    // `reference` / `transaction_reference` are legacy column names kept in sync for older reports.
     const valuesByColumn = {
       landlord_id: resolvedLandlordId,
       property_id,
@@ -476,29 +447,14 @@ const recordPayment = async (req, res) => {
       payment_reference,
       reference: payment_reference,
       transaction_reference: payment_reference,
-      duration_months: duration_months || 12,
+      duration_months: months,
       status: status || 'confirmed',
       paid_at,
       expires_at,
     };
 
-    const insertColumns = [
-      'landlord_id',
-      'property_id',
-      'amount',
-      'payment_method',
-      'mobile_money_provider',
-      'bank_name',
-      'payment_reference',
-      'reference',
-      'transaction_reference',
-      'duration_months',
-      'status',
-      'paid_at',
-      'expires_at',
-    ].filter((column) => paymentColumns.has(column));
-
-    const insertValues = insertColumns.map((column) => valuesByColumn[column]);
+    const insertColumns = Object.keys(valuesByColumn);
+    const insertValues = Object.values(valuesByColumn);
     const placeholders = insertColumns.map((_, index) => `$${index + 1}`);
 
     const result = await pool.query(
@@ -534,7 +490,6 @@ const recordPayment = async (req, res) => {
 
 const getAdminProfile = async (req, res) => {
   try {
-    await ensureAdminAccessLevelColumn();
     const result = await pool.query(
       `SELECT id, full_name, phone, email, role, access_level, created_at
        FROM users
@@ -557,7 +512,6 @@ const updateAdminProfile = async (req, res) => {
   const { full_name, email } = req.body;
 
   try {
-    await ensureAdminAccessLevelColumn();
     const result = await pool.query(
       `UPDATE users
        SET full_name = COALESCE($1, full_name),
@@ -588,7 +542,6 @@ const updateAdminProfile = async (req, res) => {
 
 const getAdmins = async (req, res) => {
   try {
-    await ensureAdminAccessLevelColumn();
     const result = await pool.query(
       `SELECT id, full_name, phone, email, role, access_level, is_approved, created_at
        FROM users
@@ -610,8 +563,6 @@ const getAdminDetails = async (req, res) => {
   const { id } = req.params;
 
   try {
-    await ensureAdminAccessLevelColumn();
-
     const canViewStats = isOwner(req.user) || String(req.user.id) === String(id);
     if (!canViewStats) {
       return res.status(403).json({
@@ -629,23 +580,6 @@ const getAdminDetails = async (req, res) => {
     if (adminResult.rows.length === 0) {
       return res.status(404).json({ message: 'Admin not found' });
     }
-
-    await pool.query(
-      `CREATE TABLE IF NOT EXISTS admin_logs (
-        id BIGSERIAL PRIMARY KEY,
-        admin_id UUID,
-        admin_access_level VARCHAR(40),
-        action VARCHAR(80) NOT NULL,
-        entity_type VARCHAR(80) NOT NULL,
-        entity_id TEXT,
-        status VARCHAR(40) DEFAULT 'success',
-        message TEXT,
-        metadata JSONB DEFAULT '{}'::jsonb,
-        ip_address TEXT,
-        user_agent TEXT,
-        created_at TIMESTAMP DEFAULT NOW()
-      )`
-    );
 
     const [
       totalActions,
@@ -696,6 +630,9 @@ const getAdminDetails = async (req, res) => {
       ),
     ]);
 
+    const countFor = (action) =>
+      actionBreakdown.rows.find((row) => row.action === action)?.count || 0;
+
     res.json({
       admin: adminResult.rows[0],
       stats: {
@@ -703,16 +640,11 @@ const getAdminDetails = async (req, res) => {
         action_breakdown: actionBreakdown.rows,
         entity_breakdown: entityBreakdown.rows,
         daily_activity: dailyActivity.rows,
-        payments_recorded:
-          actionBreakdown.rows.find((row) => row.action === 'payment_recorded')?.count || 0,
-        properties_approved:
-          actionBreakdown.rows.find((row) => row.action === 'property_approved')?.count || 0,
-        properties_rejected:
-          actionBreakdown.rows.find((row) => row.action === 'property_rejected')?.count || 0,
-        landlords_approved:
-          actionBreakdown.rows.find((row) => row.action === 'landlord_approved')?.count || 0,
-        landlords_suspended:
-          actionBreakdown.rows.find((row) => row.action === 'landlord_suspended')?.count || 0,
+        payments_recorded: countFor('payment_recorded'),
+        properties_approved: countFor('property_approved'),
+        properties_rejected: countFor('property_rejected'),
+        landlords_approved: countFor('landlord_approved'),
+        landlords_suspended: countFor('landlord_suspended'),
         destructive_actions: actionBreakdown.rows
           .filter((row) => row.action.includes('deleted') || row.action.includes('suspended') || row.action.includes('rejected'))
           .reduce((sum, row) => sum + Number(row.count || 0), 0),
@@ -736,9 +668,7 @@ const updateAdminAccess = async (req, res) => {
       });
     }
 
-    await ensureAdminAccessLevelColumn();
-
-    const normalizedAccessLevel = access_level === 'owner' ? 'owner' : 'manager';
+    const normalizedAccessLevel = normalizeAccessLevel(access_level);
     const result = await pool.query(
       `UPDATE users
        SET access_level = $1
@@ -775,8 +705,6 @@ const deleteAdmin = async (req, res) => {
         message: 'Only owner admins can delete admin accounts'
       });
     }
-
-    await ensureAdminAccessLevelColumn();
 
     const target = await pool.query(
       `SELECT id, full_name, access_level
@@ -834,7 +762,6 @@ module.exports = {
   deleteProperty,
   getStats,
   createAdmin,
-  updateLandlord,
   resetLandlordPassword,
   deleteLandlord,
   getPayments,

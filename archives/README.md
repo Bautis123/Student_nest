@@ -13,7 +13,7 @@ Every entry was compared byte-for-byte using SHA-256 against the working source 
 
 Generated builds, dependency caches, IDE state, environment secrets, signing credentials and backend runtime are excluded. The Node backend continues separately in `StudentNest/`. The old `lib.zip` is not this backup: it does not replace a complete project archive.
 
-The original Flutter files remain in place during cutover. They are not part of the Vercel build. Retire them after the deployed web app has passed live smoke tests; retain this archive and the Git history.
+The Flutter source has since been removed from the working tree; this archive and the Git history are the record of it.
 
 ## Restore later
 
