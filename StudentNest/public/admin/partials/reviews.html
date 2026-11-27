@@ -1,0 +1,36 @@
+<section class="panel view hidden" id="reviewsPanel">
+  <div class="panel-header stacked">
+    <div>
+      <h2>Tenant reviews</h2>
+      <p class="muted small">Students submit reviews without an account. Confirm the stay before approving, for example by calling the reviewer or the landlord.</p>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" id="reviewSearch" placeholder="Search home, reviewer, number" />
+      <select id="reviewStatusFilter">
+        <option value="pending">Waiting for review</option>
+        <option value="approved">Published</option>
+        <option value="rejected">Rejected</option>
+        <option value="all">All</option>
+      </select>
+    </div>
+  </div>
+  <div class="integration-note">
+    Reject reviews that are abusive, name private individuals, or can't be confirmed. Don't reject a genuine review just because it is negative. Landlords can reply publicly, but they can't remove reviews.
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Home</th>
+          <th>Reviewer</th>
+          <th>Ratings</th>
+          <th>Review</th>
+          <th>Status</th>
+          <th>Submitted</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="reviewsBody"></tbody>
+    </table>
+  </div>
+</section>

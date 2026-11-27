@@ -78,3 +78,10 @@
     width: 100%;
   }
 }
+
+@media (max-width: 980px) {
+  /* Centred sidebar links: keep the count bubble next to its label, not pushed aside. */
+  .nav-count {
+    margin-left: 0;
+  }
+}

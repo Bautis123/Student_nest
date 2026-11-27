@@ -2,6 +2,7 @@ const pool = require('../config/db');
 const { ensureAdminLogsTable } = require('./adminLogService');
 const { ensureAdminAccessLevels } = require('./adminAccessService');
 const { ROOMMATE_TABLES_SQL } = require('./roommateSchema');
+const { REVIEW_TABLES_SQL } = require('./reviewSchema');
 
 // Columns added to `payments` after the first production deploy. New databases
 // get them from database/schema.sql; this keeps older databases in step.
@@ -42,6 +43,7 @@ const prepareDatabase = async () => {
   await ensurePaymentColumns();
   await ensurePropertyVerificationColumn();
   await pool.query(ROOMMATE_TABLES_SQL);
+  await pool.query(REVIEW_TABLES_SQL);
 };
 
 module.exports = { prepareDatabase };

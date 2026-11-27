@@ -302,3 +302,8 @@ tr:last-child td {
   max-width: 280px;
   white-space: normal;
 }
+
+.review-comment-cell {
+  max-width: 320px;
+  white-space: normal;
+}

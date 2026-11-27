@@ -107,6 +107,15 @@ In the Lenco dashboard, set the webhook URL to `https://student-nest-api.onrende
 
 With `PAYMENT_PROVIDER=mock`, numbers ending in `1111111` (e.g. `0961111111`) succeed after a few seconds and any other number is declined. No money moves.
 
+## Tenant Reviews
+
+Students who lived in a home can review it from the home's page: five ratings (overall, landlord, water & power, security, value for money), when they moved in and out, a written review, an optional display name, and a phone number.
+
+- **No account; confirmed by an admin.** The phone number is never shown publicly; admins use it to confirm the stay before publishing (admin portal → **Reviews**). Reviews are moderated for honesty, not to remove negative but genuine feedback.
+- **One review per phone number per home.** A rejected reviewer can submit again.
+- **Landlord replies.** The landlord sees approved reviews on their listing page and can post one public reply (editable). Landlords cannot delete reviews.
+- **Ratings on listings.** Cards show the average and count (e.g. ★ 4.5 (2)); the home page shows the average, a breakdown by category and every published review.
+
 ## Roommate Matching
 
 Students looking to share a room post a short request at `/roommates/new`: first name, campus, monthly budget, optional move-in date, lifestyle tags, who they would share with, and a WhatsApp number. There are no student accounts:
