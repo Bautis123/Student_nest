@@ -32,3 +32,17 @@ test('verified-only filter keeps just admin-verified homes', () => {
   assert.deepEqual(filterProperties(homes, { verifiedOnly: true }).map(p => p.id), [1]);
   assert.equal(filterProperties(homes).length, 3);
 });
+test('travel estimates allow for detours and minibus waiting time', async () => {
+  const { travelEstimates, formatMinutes, commuteLabel, campusDistance, distanceKm } = await import('../src/utils.js');
+  assert.deepEqual(travelEstimates(1.2), { km: 1.2, walkMinutes: 20, busMinutes: 15 });
+  assert.equal(travelEstimates(0.5).busMinutes, null, 'short trips are walked');
+  assert.equal(travelEstimates(null), null);
+  assert.equal(travelEstimates('not a number'), null);
+  assert.equal(formatMinutes(45), '45 min');
+  assert.equal(formatMinutes(125), '2 h 5 min');
+  assert.equal(commuteLabel({ distance_from_school: '1.2' }), '~20 min walk to campus');
+  assert.equal(commuteLabel({ distance_from_school: 6 }), '~36 min by minibus to campus');
+  assert.equal(commuteLabel({}), null);
+  assert.equal(campusDistance({ latitude: -15.39, longitude: 28.33, school_lat: -15.39, school_lng: 28.34 }), distanceKm(-15.39, 28.33, -15.39, 28.34));
+  assert.ok(Math.abs(distanceKm(-15.3947, 28.3322, -15.4167, 28.2833) - 5.75) < 0.2, 'UNZA to Lusaka CBD is ~5.7 km');
+});

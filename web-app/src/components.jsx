@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowUpRight, Heart, MapPin, Home, AlertCircle, LoaderCircle, BadgeCheck } from 'lucide-react';
 import { api } from './api';
 import { useApp } from './context';
-import { money, safeImage } from './utils';
+import { money, safeImage, commuteLabel } from './utils';
 
 export function useResource(path, token, refresh = 0) {
   const [state, setState] = useState({ loading: true, data: null, error: '' });
@@ -47,7 +47,7 @@ export function PropertyCard({ property: p }) {
       <button className={`save-button ${saved.includes(p.id) ? 'selected' : ''}`} onClick={() => toggleSaved(p.id)} aria-label={`${saved.includes(p.id) ? 'Unsave' : 'Save'} ${p.title}`} aria-pressed={saved.includes(p.id)}><Heart size={19} fill={saved.includes(p.id) ? 'currentColor' : 'none'} /></button>
     </div>
     <div className="card-body"><div className="card-tags"><p className="eyebrow">{p.school_name || 'Student accommodation'}</p>{p.is_verified && <VerifiedBadge />}</div><Link className="card-title" to={`/homes/${p.id}`}>{p.title}<ArrowUpRight size={19} /></Link><p className="muted location"><MapPin size={14} />{p.address}</p>
-      <div className="card-meta"><span>{p.distance_from_school != null ? `${p.distance_from_school} km from campus` : 'Explore this home'}</span><span>{Number(p.available_spaces_count || 0)} spaces</span></div>
+      <div className="card-meta"><span>{commuteLabel(p) || 'Explore this home'}</span><span>{Number(p.available_spaces_count || 0)} spaces</span></div>
       <div className="card-bottom"><span><strong>{money(p.min_price)}</strong>{p.min_price != null && <small> / month</small>}</span><Link to={`/homes/${p.id}`}>View home <ArrowUpRight size={15} /></Link></div>
     </div>
   </article>;

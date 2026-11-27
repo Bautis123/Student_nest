@@ -84,6 +84,6 @@ If a restricted Windows shell forbids test child processes, run the unit checks 
 
 ## Current scope
 
-This first web release provides the core student and landlord flows. There is no online checkout, embedded interactive map, password reset or student account system. Registration requires admin approval. The public catalogue uses client-side filters over the API's current result set; add server pagination when inventory warrants it. Public listing content is client-rendered, so search-engine indexing should be evaluated before an SEO-focused launch.
+This first web release provides the core student and landlord flows. There is no password reset or student account system. Homes can be browsed on an OpenStreetMap map (Leaflet), and each home shows estimated walking and minibus times to its campus; these are estimates from straight-line distance, not routed directions. Registration requires admin approval. The public catalogue uses client-side filters over the API's current result set; add server pagination when inventory warrants it. Public listing content is client-rendered, so search-engine indexing should be evaluated before an SEO-focused launch.
 
 The frontend build and automated tests can be completed locally. Production publication, backend redeployment and authenticated live smoke tests require the hosting accounts and a designated test landlord.

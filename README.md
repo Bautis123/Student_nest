@@ -12,7 +12,7 @@ npm run dev
 
 Open the local URL printed by Vite. Requests under `/api` proxy to the existing Render API. For a local backend, copy `web-app/.env.example` to `web-app/.env` and set `API_PROXY_TARGET=http://localhost:5000`.
 
-The web app supports campus/text/budget filtering, saved homes, property details, direct landlord contact, landlord registration and login, property creation and editing, room availability, and photo upload/cover/deletion. Payments remain manually verified in the existing admin dashboard.
+The web app supports campus/text/budget filtering, a map view of homes and campuses (Leaflet + OpenStreetMap, no API key), estimated walking and minibus times to campus, saved homes, property details, direct landlord contact, landlord registration and login, property creation and editing, room availability, and photo upload/cover/deletion. Payments remain manually verified in the existing admin dashboard.
 
 **Deployment:** import the repository into a new Vercel project and set **Root Directory** to `web-app`, **Framework** to Vite, **Build Command** to `npm run build`, and **Output Directory** to `dist`. Redeploy the backend changes first: private landlord detail and property editing routes are required by the new management UI. See [Web launch guide](docs/WEB_LAUNCH.md).
 
