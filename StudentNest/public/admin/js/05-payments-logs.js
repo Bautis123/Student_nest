@@ -36,7 +36,7 @@ function renderPayments() {
 function paymentMethodLabel(payment) {
   if (payment.payment_method !== 'mobile_money') {
     if (payment.payment_method === 'bank_transfer') {
-      return payment.bank_name ? `Bank transfer Â· ${payment.bank_name}` : 'Bank transfer';
+      return payment.bank_name ? `Bank transfer · ${payment.bank_name}` : 'Bank transfer';
     }
     return payment.payment_method || '-';
   }

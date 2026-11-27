@@ -76,7 +76,7 @@ function recentAdminActions(actions) {
           (action) => `
             <article class="activity-item">
               <strong>${escapeHtml(actionLabel(action.action))}</strong>
-              <span>${escapeHtml(action.message || action.entity_type || '')} Â· ${formatDate(action.created_at)}</span>
+              <span>${escapeHtml(action.message || action.entity_type || '')} · ${formatDate(action.created_at)}</span>
             </article>
           `,
         )

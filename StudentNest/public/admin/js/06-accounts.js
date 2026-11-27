@@ -111,7 +111,7 @@ function populatePaymentForm() {
   els.paymentLandlordInput.innerHTML = state.data.landlords
     .map(
       (landlord) =>
-        `<option value="${landlord.id}">${escapeHtml(landlord.full_name)} Â· ${escapeHtml(landlord.phone)}</option>`,
+        `<option value="${landlord.id}">${escapeHtml(landlord.full_name)} · ${escapeHtml(landlord.phone)}</option>`,
     )
     .join('');
 
@@ -124,7 +124,7 @@ function populatePaymentForm() {
   els.paymentPropertyInput.innerHTML = properties
     .map(
       (property) =>
-        `<option value="${property.id}">${escapeHtml(property.title)} Â· ${escapeHtml(property.address || 'No address')}</option>`,
+        `<option value="${property.id}">${escapeHtml(property.title)} · ${escapeHtml(property.address || 'No address')}</option>`,
     )
     .join('');
 

@@ -38,11 +38,16 @@ function renderProperties() {
             </td>
             <td>
               <div class="meta-stack">
-                <strong>${Number(property.room_types || 0)} rooms Â· ${Number(property.photo_count || 0)} photos</strong>
+                <strong>${Number(property.room_types || 0)} rooms · ${Number(property.photo_count || 0)} photos</strong>
                 <span class="hint-list">${hints.length ? escapeHtml(hints.join(', ')) : 'Ready for review'}</span>
               </div>
             </td>
-            <td>${statusBadge(status)}</td>
+            <td>
+              <div class="meta-stack">
+                ${statusBadge(status)}
+                ${property.verified_at ? '<span class="badge verified" title="Inspected or ownership checked by an admin">Verified</span>' : ''}
+              </div>
+            </td>
             <td>
               <div class="meta-stack">
                 ${statusBadge(expiry.status)}
@@ -56,6 +61,9 @@ function renderProperties() {
                 <button class="primary" type="button" data-detail="property" data-id="${property.id}">View</button>
                 <button type="button" data-property-status="${property.id}" data-approved="true" ${property.is_approved ? 'disabled' : ''}>Approve</button>
                 <button class="danger" type="button" data-property-status="${property.id}" data-approved="false" ${!property.is_approved ? 'disabled' : ''}>Reject</button>
+                ${property.verified_at
+                  ? `<button type="button" data-property-verify="${property.id}" data-verified="false">Unverify</button>`
+                  : `<button type="button" data-property-verify="${property.id}" data-verified="true" ${!property.is_approved ? 'disabled title="Approve before verifying"' : ''}>Verify</button>`}
                 <button class="danger" type="button" data-delete-property="${property.id}">Delete</button>
               </div>
             </td>

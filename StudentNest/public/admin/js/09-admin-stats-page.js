@@ -10,7 +10,7 @@
     const stats = result.stats || {};
 
     els.adminStatsTitle.textContent = admin.full_name || 'Admin stats';
-    els.adminStatsSubtitle.textContent = `${admin.access_level === 'owner' ? 'Owner / full access' : 'Manager access'} Â· ${admin.phone || admin.email || 'Admin account'}`;
+    els.adminStatsSubtitle.textContent = `${admin.access_level === 'owner' ? 'Owner / full access' : 'Manager access'} · ${admin.phone || admin.email || 'Admin account'}`;
     els.adminStatsPage.innerHTML = `
       <section class="profile-hero admin-stats-hero">
         <div class="admin-avatar large">${escapeHtml(adminInitials(admin))}</div>

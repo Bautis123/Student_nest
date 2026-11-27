@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const home = { id: 'home-1', title: 'Garden View Student Lodge', address: 'Kalundu, Lusaka', nearest_school_id: 'unza', school_name: 'UNZA', min_price: '950', distance_from_school: '1.2', available_spaces_count: 4, total_rooms_count: 2, available_rooms_count: 2, is_approved: true, is_active: true, landlord_name: 'Jane Banda', landlord_phone: '0971234567', latitude: -15.39, longitude: 28.33, amenities: { wifi: true }, rooms: [{ id: 'room-1', room_type: 'Double sharing', price_per_month: 950, students_per_room: 2, total_rooms: 2, available_rooms: 2 }], photos: [] };
+const home = { id: 'home-1', title: 'Garden View Student Lodge', address: 'Kalundu, Lusaka', nearest_school_id: 'unza', school_name: 'UNZA', min_price: '950', distance_from_school: '1.2', available_spaces_count: 4, total_rooms_count: 2, available_rooms_count: 2, is_approved: true, is_active: true, is_verified: true, landlord_name: 'Jane Banda', landlord_phone: '0971234567', latitude: -15.39, longitude: 28.33, amenities: { wifi: true }, rooms: [{ id: 'room-1', room_type: 'Double sharing', price_per_month: 950, students_per_room: 2, total_rooms: 2, available_rooms: 2 }], photos: [] };
 test.beforeEach(async ({ page }) => {
   await page.route('https://fonts.googleapis.com/**', route => route.abort());
   await page.route('**/api/**', async route => {
@@ -12,7 +12,7 @@ test.beforeEach(async ({ page }) => {
     else if (path === '/api/properties/landlord/my-properties') data = { properties: [home] };
     else if (path.includes('/properties/landlord/my-properties/')) data = { property: home };
     else if (path === '/api/properties/home-1') data = { property: home };
-    else if (path === '/api/properties') data = route.request().method() === 'POST' ? { property: home } : { properties: [home, { ...home, id: 'home-2', title: 'Riverside Student House', address: 'Riverside, Kitwe', nearest_school_id: 'cbu', school_name: 'Copperbelt University', min_price: '600' }] };
+    else if (path === '/api/properties') data = route.request().method() === 'POST' ? { property: home } : { properties: [home, { ...home, id: 'home-2', title: 'Riverside Student House', address: 'Riverside, Kitwe', nearest_school_id: 'cbu', school_name: 'Copperbelt University', min_price: '600', is_verified: false }] };
     await route.fulfill({ json: data });
   });
 });
@@ -33,6 +33,17 @@ test('students can search, filter, save and open a real detail route', async ({ 
   await page.reload();
   await expect(page.getByRole('heading', { name: home.title })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+});
+
+test('verified homes show a badge and can be filtered', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.property-card .verified-badge')).toHaveCount(1);
+  await page.getByRole('button', { name: 'Filters' }).click();
+  await page.getByRole('checkbox', { name: 'Verified homes only' }).check();
+  await expect(page.locator('.property-card')).toHaveCount(1);
+  await expect(page).toHaveURL(/verified=1/);
+  await page.getByRole('link', { name: 'Garden View Student Lodge', exact: true }).click();
+  await expect(page.locator('.verified-note')).toContainText('inspected this home');
 });
 
 test('empty results and API failures are actionable', async ({ page }) => {

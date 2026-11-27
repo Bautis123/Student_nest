@@ -77,6 +77,27 @@
     return;
   }
 
+  if (target.dataset.propertyVerify) {
+    const verified = target.dataset.verified === 'true';
+    const note = await confirmAction({
+      title: verified ? 'Verify property?' : 'Remove verification?',
+      message: verified
+        ? 'Only verify after you have inspected the property or checked proof of ownership. Students will see a "Verified" badge. Add a note on how it was checked.'
+        : 'Students will no longer see the "Verified" badge on this listing. Add a reason for your records.',
+      needsReason: true,
+      confirmLabel: verified ? 'Verify' : 'Remove badge',
+    });
+    if (note === null) return;
+    await runAction(
+      () => api(`/api/admin/properties/${target.dataset.propertyVerify}/verification`, {
+        method: 'PATCH',
+        body: JSON.stringify({ verified, note }),
+      }),
+      verified ? 'Property verified.' : 'Verification removed.',
+    );
+    return;
+  }
+
   if (target.dataset.deleteLandlord) {
     const confirmed = await confirmAction({
       title: 'Delete landlord?',

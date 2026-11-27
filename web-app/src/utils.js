@@ -13,8 +13,9 @@ export function phoneLink(phone, whatsapp = false) {
   if (digits.startsWith('0')) digits = `260${digits.slice(1)}`;
   return digits ? whatsapp ? `https://wa.me/${digits}` : `tel:+${digits}` : null;
 }
-export function filterProperties(properties, { query = '', school = '', maxPrice = '', sort = 'newest' } = {}) {
+export function filterProperties(properties, { query = '', school = '', maxPrice = '', sort = 'newest', verifiedOnly = false } = {}) {
   const result = properties.filter(p => (!school || String(p.nearest_school_id) === school)
+    && (!verifiedOnly || p.is_verified === true)
     && (!maxPrice || (p.min_price != null && Number(p.min_price) <= Number(maxPrice)))
     && `${p.title} ${p.address} ${p.school_name || ''}`.toLowerCase().includes(query.toLowerCase().trim()));
   if (sort === 'price') result.sort((a, b) => (a.min_price == null ? Infinity : Number(a.min_price)) - (b.min_price == null ? Infinity : Number(b.min_price)));

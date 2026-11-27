@@ -41,6 +41,9 @@ CREATE TABLE IF NOT EXISTS properties (
   is_approved BOOLEAN NOT NULL DEFAULT false,
   is_active BOOLEAN NOT NULL DEFAULT false,
   listing_expires_at TIMESTAMP,
+  -- Set when an admin has inspected the property or checked proof of ownership.
+  -- Who verified it, and any note, is kept in admin_logs.
+  verified_at TIMESTAMP,
   view_count INTEGER NOT NULL DEFAULT 0,
   contact_click_count INTEGER NOT NULL DEFAULT 0,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
