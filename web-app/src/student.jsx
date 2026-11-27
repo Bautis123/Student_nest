@@ -1,12 +1,12 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Search, MapPin, Heart, SlidersHorizontal, GraduationCap, ShieldCheck, MessageCircle, Phone, Check, Compass, ArrowUpRight, List, Map as MapIcon, Footprints, Bus, Users } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Search, MapPin, Heart, SlidersHorizontal, GraduationCap, ShieldCheck, MessageCircle, Phone, Check, Compass, ArrowUpRight, List, Map as MapIcon, Footprints, Bus, Users, LoaderCircle } from 'lucide-react';
 import { useApp } from './context';
 import { api } from './api';
 import { PropertyReviews } from './reviews';
 import { ListingSafety } from './reportListing';
 import { BookViewing } from './viewings';
-import { useResource, Loading, ErrorState, Empty, PropertyCard, PropertyImage, Field, VerifiedBadge, VERIFIED_EXPLAINER } from './components';
+import { useResource, ErrorState, Empty, PropertyCard, PropertyImage, Field, VerifiedBadge, VERIFIED_EXPLAINER, SkeletonGrid, DetailSkeleton } from './components';
 import { amenityNames, money, filterProperties, phoneLink, campusDistance, travelEstimates, formatMinutes } from './utils';
 
 // Leaflet is only downloaded when a map is actually shown.
@@ -29,8 +29,9 @@ export function Browse({ savedOnly = false }) {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const view = params.get('view') === 'map' ? 'map' : 'list';
   const { saved } = useApp();
-  const properties = useResource('/properties', undefined, refresh);
-  const schools = useResource('/properties/schools', undefined, refresh);
+  // Cached on the device: repeat visits show homes instantly while the list refreshes.
+  const properties = useResource('/properties', undefined, refresh, { cache: true });
+  const schools = useResource('/properties/schools', undefined, refresh, { cache: true });
   const update = (name, value) => setParams(previous => { const next = new URLSearchParams(previous); value ? next.set(name, value) : next.delete(name); return next; }, { replace: true });
   const matching = filterProperties((properties.data?.properties || []).filter(p => !savedOnly || saved.includes(p.id)), { query, school, maxPrice, sort, verifiedOnly });
   return <>
@@ -38,8 +39,9 @@ export function Browse({ savedOnly = false }) {
     <section className="browse-section container" aria-labelledby="browse-title"><div className="search-panel"><label className="search-input"><Search size={20} /><span className="sr-only">Search homes</span><input placeholder="Search by area, campus or home…" value={query} onChange={e => update('q', e.target.value)} /></label><label className="school-select"><GraduationCap size={21} /><span className="sr-only">Campus</span><select value={school} onChange={e => update('school', e.target.value)}><option value="">All campuses</option>{schools.data?.schools?.map(s => <option value={s.id} key={s.id}>{s.name}</option>)}</select></label><button className={`filter-button ${filtersOpen || maxPrice || verifiedOnly ? 'active' : ''}`} onClick={() => setFiltersOpen(!filtersOpen)} aria-expanded={filtersOpen}><SlidersHorizontal size={18} />Filters{(maxPrice || verifiedOnly) && <span className="green-dot" />}</button></div>
       {schools.error && <p className="inline-note">Campus filters are unavailable. You can still search by name. <button className="text-button" onClick={() => setRefresh(r => r + 1)}>Retry</button></p>}
       {filtersOpen && <div className="filter-panel"><Field label="Maximum monthly rent (K)" type="number" min="0" value={maxPrice} placeholder="Any budget" onChange={e => update('budget', e.target.value)} /><label className="check-filter" title={VERIFIED_EXPLAINER}><input type="checkbox" checked={verifiedOnly} onChange={e => { setVerifiedOnly(e.target.checked); update('verified', e.target.checked ? '1' : ''); }} /><span>Verified homes only</span></label><button className="text-button" onClick={() => setParams({})}>Clear all filters</button></div>}
-      <div className="results-heading"><div><p className="eyebrow">{savedOnly ? 'Made for your next move' : 'Find your corner of campus life'}</p><h2 id="browse-title">{savedOnly ? 'Your saved homes' : 'A home for your next chapter'}<span>{!properties.loading && !properties.error && matching.length}</span></h2></div><div className="results-tools"><div className="view-toggle" role="group" aria-label="Show homes as"><button type="button" aria-pressed={view === 'list'} onClick={() => update('view', '')}><List size={16} />List</button><button type="button" aria-pressed={view === 'map'} onClick={() => update('view', 'map')}><MapIcon size={16} />Map</button></div><label className="sort-control">Sort by <select aria-label="Sort homes" value={sort} onChange={e => update('sort', e.target.value)}><option value="newest">Newest first</option><option value="price">Lowest rent</option><option value="distance">Closest to campus</option></select></label></div></div>
-      {properties.loading ? <Loading /> : properties.error ? <ErrorState message={properties.error} retry={() => setRefresh(r => r + 1)} /> : matching.length ? view === 'map' ? <Suspense fallback={<MapLoading />}><ListingsMap properties={matching} schools={schools.data?.schools || []} selectedSchool={school} /></Suspense> : <div className="property-grid">{matching.map(p => <PropertyCard key={p.id} property={p} />)}</div> : <Empty title={savedOnly ? 'Your next home could be one click away' : 'No homes found just yet'}>{savedOnly ? <Link to="/">Browse homes and tap the heart to save a favourite.</Link> : <>Try another campus or a wider budget. <button className="text-button" onClick={() => setParams({})}>Reset search</button></>}</Empty>}
+      <div className="results-heading"><div><p className="eyebrow">{savedOnly ? 'Made for your next move' : 'Find your corner of campus life'}</p><h2 id="browse-title">{savedOnly ? 'Your saved homes' : 'A home for your next chapter'}{properties.data && <span>{matching.length}</span>}</h2></div><div className="results-tools"><div className="view-toggle" role="group" aria-label="Show homes as"><button type="button" aria-pressed={view === 'list'} onClick={() => update('view', '')}><List size={16} />List</button><button type="button" aria-pressed={view === 'map'} onClick={() => update('view', 'map')}><MapIcon size={16} />Map</button></div><label className="sort-control">Sort by <select aria-label="Sort homes" value={sort} onChange={e => update('sort', e.target.value)}><option value="newest">Newest first</option><option value="price">Lowest rent</option><option value="distance">Closest to campus</option></select></label></div></div>
+      {properties.data && properties.error && <p className="inline-note" role="status">Showing homes saved on this device. We couldn’t reach Student Nest just now. <button className="text-button" onClick={() => setRefresh(r => r + 1)}>Retry</button></p>}{properties.data && properties.loading && properties.stale && <p className="updating-note" role="status"><LoaderCircle className="spin" size={14} aria-hidden="true" />Checking for new homes…</p>}
+      {!properties.data ? properties.error ? <ErrorState message={properties.error} retry={() => setRefresh(r => r + 1)} /> : <SkeletonGrid /> : matching.length ? view === 'map' ? <Suspense fallback={<MapLoading />}><ListingsMap properties={matching} schools={schools.data?.schools || []} selectedSchool={school} /></Suspense> : <div className="property-grid">{matching.map(p => <PropertyCard key={p.id} property={p} />)}</div> : <Empty title={savedOnly ? 'Your next home could be one click away' : 'No homes found just yet'}>{savedOnly ? <Link to="/">Browse homes and tap the heart to save a favourite.</Link> : <>Try another campus or a wider budget. <button className="text-button" onClick={() => setParams({})}>Reset search</button></>}</Empty>}
     </section>
     {!savedOnly && <section className="landlord-banner container"><div className="banner-icon"><HomeMark /></div><div><p className="eyebrow">Have a place students will love?</p><h2>Good homes deserve to be found.</h2><p>Reach students looking for a place near your property.</p></div><Link className="button" to="/register">Become a landlord <ArrowRight size={18} /></Link></section>}
   </>;
@@ -68,7 +70,7 @@ export function PropertyDetail() {
   const { data, loading, error } = useResource(`/properties/${encodeURIComponent(id)}`, undefined, refresh);
   const { saved, toggleSaved } = useApp();
   const [activePhoto, setActivePhoto] = useState(0);
-  if (loading) return <Loading label="Opening this home…" />;
+  if (loading) return <DetailSkeleton />;
   if (error) return <div className="container"><Link className="back-link" to="/"><ArrowLeft size={16} />Back to homes</Link><ErrorState message={error} retry={() => setRefresh(r => r + 1)} /></div>;
   const p = data?.property;
   if (!p) return <Empty title="This home is no longer available"><Link to="/">Browse other homes</Link></Empty>;

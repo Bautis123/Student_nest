@@ -189,12 +189,41 @@ test('landlords see viewing requests and confirm them', async ({ page }) => {
   expect(answer).toEqual({ status: 'confirmed', note: 'Ask for Jane at the gate' });
 });
 
+test('a slow first load shows skeletons, and repeat visits show saved homes instantly', async ({ page }) => {
+  let mode = 'slow';
+  await page.route('**/api/properties', async route => {
+    if (mode === 'down') return route.fulfill({ status: 503, json: { message: 'Unavailable' } });
+    if (mode === 'slow') await new Promise(r => setTimeout(r, 5500));
+    return route.fulfill({ json: { properties: [home] } });
+  });
+  // First visit: nothing saved yet, so skeleton cards, then a note if the server is slow to wake.
+  await page.goto('/');
+  await expect(page.locator('.skeleton-card').first()).toBeVisible();
+  await expect(page.getByText('Waking up Student Nest')).toBeVisible({ timeout: 5000 });
+  await expect(page.locator('.property-card:not(.skeleton-card)')).toHaveCount(1, { timeout: 10000 });
+
+  // Repeat visit while the server is slow: saved homes appear at once.
+  await page.reload();
+  await expect(page.locator('.property-card:not(.skeleton-card)')).toHaveCount(1, { timeout: 1500 });
+  await expect(page.getByText('Checking for new homes…')).toBeVisible();
+  await expect(page.getByText('Checking for new homes…')).toBeHidden({ timeout: 10000 });
+
+  // Repeat visit while the server is down: saved homes stay, with a way to retry.
+  mode = 'down';
+  await page.reload();
+  await expect(page.locator('.property-card:not(.skeleton-card)')).toHaveCount(1);
+  await expect(page.getByText('Showing homes saved on this device')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Retry' })).toBeVisible();
+});
+
 test('empty results and API failures are actionable', async ({ page }) => {
   await page.goto('/?q=not-a-home');
   await expect(page.getByRole('heading', { name: 'No homes found just yet' })).toBeVisible();
   await page.getByRole('button', { name: 'Reset search' }).click();
   await expect(page.locator('.property-card')).toHaveCount(2);
   await page.route('**/api/properties', route => route.fulfill({ status: 503, json: { message: 'Temporarily unavailable' } }));
+  // With nothing saved on the device a failure shows the error state (saved homes are covered above).
+  await page.evaluate(() => localStorage.clear());
   await page.reload();
   await expect(page.getByRole('alert')).toContainText('Temporarily unavailable');
   await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible();

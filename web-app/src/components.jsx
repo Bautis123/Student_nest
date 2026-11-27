@@ -5,22 +5,92 @@ import { api } from './api';
 import { useApp } from './context';
 import { money, safeImage, commuteLabel } from './utils';
 
-export function useResource(path, token, refresh = 0) {
-  const [state, setState] = useState({ loading: true, data: null, error: '' });
+// Public, non-personal responses (home list, campuses) can be kept on the device so
+// repeat visits show something instantly while the API wakes up or refreshes.
+const CACHE_PREFIX = 'sn-cache:';
+const CACHE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+const CACHE_MAX_CHARS = 1_500_000;
+function readCache(path) {
+  try {
+    const entry = JSON.parse(localStorage.getItem(CACHE_PREFIX + path));
+    return entry && Date.now() - entry.savedAt < CACHE_MAX_AGE_MS ? entry.data : null;
+  } catch { return null; }
+}
+function writeCache(path, data) {
+  try {
+    const value = JSON.stringify({ savedAt: Date.now(), data });
+    if (value.length <= CACHE_MAX_CHARS) localStorage.setItem(CACHE_PREFIX + path, value);
+  } catch { /* storage full or blocked: caching is only a speed-up */ }
+}
+
+/**
+ * Load an API resource. With { cache: true } the last good response is shown
+ * immediately (stale: true) and kept if the refresh fails; only use it for
+ * public data that is safe to store on the device.
+ */
+export function useResource(path, token, refresh = 0, { cache = false } = {}) {
+  const [state, setState] = useState(() => {
+    const cached = cache ? readCache(path) : null;
+    return { loading: true, data: cached, error: '', stale: Boolean(cached) };
+  });
   const lastPath = useRef(path);
   useEffect(() => {
     const controller = new AbortController();
     // On a refresh of the same resource keep showing the current data while reloading.
     const samePath = lastPath.current === path;
     lastPath.current = path;
-    setState(previous => ({ loading: true, data: samePath ? previous.data : null, error: '' }));
+    setState(previous => {
+      const data = samePath ? previous.data : (cache ? readCache(path) : null);
+      return { loading: true, data, error: '', stale: previous.stale && samePath };
+    });
     api(path, { token, signal: controller.signal })
-      .then(data => { if (!controller.signal.aborted) setState({ loading: false, data, error: '' }); })
-      .catch(error => { if (!controller.signal.aborted) setState({ loading: false, data: null, error: error.message }); });
+      .then(data => {
+        if (controller.signal.aborted) return;
+        if (cache) writeCache(path, data);
+        setState({ loading: false, data, error: '', stale: false });
+      })
+      .catch(error => {
+        if (controller.signal.aborted) return;
+        setState(previous => ({ loading: false, data: cache ? previous.data : null, error: error.message, stale: cache && Boolean(previous.data) }));
+      });
     return () => controller.abort();
-  }, [path, token, refresh]);
+  }, [path, token, refresh, cache]);
   return state;
 }
+
+/** True once `ms` have passed, e.g. to explain a slow first load. */
+export function useSlow(active, ms = 4000) {
+  const [slow, setSlow] = useState(false);
+  useEffect(() => {
+    if (!active) { setSlow(false); return undefined; }
+    const timer = setTimeout(() => setSlow(true), ms);
+    return () => clearTimeout(timer);
+  }, [active, ms]);
+  return slow;
+}
+function WakeUpNote() {
+  return <p className="wake-note" role="status"><LoaderCircle className="spin" size={16} aria-hidden="true" />Waking up Student Nest. The first visit after a quiet spell can take up to a minute.</p>;
+}
+
+/** Placeholder cards shown while homes load, so the page has its shape immediately. */
+export function SkeletonGrid({ count = 6 }) {
+  const slow = useSlow(true);
+  return <div aria-busy="true" aria-label="Loading homes">
+    {slow && <WakeUpNote />}
+    <div className="property-grid">{Array.from({ length: count }, (_, i) => <div key={i} className="property-card skeleton-card" aria-hidden="true"><div className="skeleton skeleton-image" /><div className="card-body"><span className="skeleton skeleton-line short" /><span className="skeleton skeleton-line" /><span className="skeleton skeleton-line medium" /><span className="skeleton skeleton-line short" /></div></div>)}</div>
+  </div>;
+}
+
+/** Placeholder for a home's page. */
+export function DetailSkeleton() {
+  const slow = useSlow(true);
+  return <div className="container detail-page" aria-busy="true" aria-label="Opening this home">
+    {slow && <WakeUpNote />}
+    <div className="detail-heading" aria-hidden="true"><span className="skeleton skeleton-line short" /><span className="skeleton skeleton-title" /><span className="skeleton skeleton-line medium" /></div>
+    <div className="detail-layout" aria-hidden="true"><div className="skeleton skeleton-gallery" /><div className="skeleton skeleton-aside" /></div>
+  </div>;
+}
+
 export function Loading({ label = 'Finding your next home…' }) {
   return <div className="state" role="status"><LoaderCircle className="spin" size={28} /><h3>{label}</h3><p>This may take a moment while the server wakes up.</p></div>;
 }

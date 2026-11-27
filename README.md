@@ -189,6 +189,15 @@ npm run seed:demo -- --days=30
 
 `--days` accepts 1 to 90 (default 7). The script only runs against the project's Supabase database.
 
+## Fast First Load
+
+The API runs on Render's free plan, which sleeps after about 15 minutes without traffic; the next visitor then waits roughly 30–60 seconds while it starts. The web app softens this:
+
+- **Saved homes on the device.** The home list and campuses are kept in the browser (public data only, up to 7 days old) and shown instantly on repeat visits, with "Checking for new homes…" while the fresh list loads. If the API can't be reached, the saved homes stay on screen with a Retry option.
+- **Skeleton cards** instead of a spinner, and after 4 seconds a note explaining the server is waking up.
+
+To stop the sleep itself, either move the API to an always-on paid plan, or have something request it regularly during the day, e.g. a free uptime monitor (such as UptimeRobot) checking `https://student-nest-api.onrender.com/api/properties/schools` every 10 minutes. Keep total awake time under Render's 750 free hours a month. Pinging the schools endpoint also keeps a free Supabase project from pausing for inactivity.
+
 ## Useful Checks
 
 Web checks:
