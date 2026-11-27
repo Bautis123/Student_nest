@@ -1,5 +1,12 @@
-const { Pool } = require('pg');
+const { Pool, types } = require('pg');
 require('dotenv').config();
+
+// Return DATE columns (move-in days, viewing days, stay months) as plain
+// "YYYY-MM-DD" strings. By default pg turns them into a Date at the server's
+// local midnight, which serialises to the previous day in UTC whenever the
+// server runs ahead of UTC (Zambia is UTC+2). TIMESTAMP columns are unaffected.
+const DATE_OID = 1082;
+types.setTypeParser(DATE_OID, (value) => value);
 
 const poolConfig = process.env.DATABASE_URL
   ? {

@@ -107,6 +107,33 @@ In the Lenco dashboard, set the webhook URL to `https://student-nest-api.onrende
 
 With `PAYMENT_PROVIDER=mock`, numbers ending in `1111111` (e.g. `0961111111`) succeed after a few seconds and any other number is declined. No money moves.
 
+## Viewing Requests and WhatsApp Alerts
+
+Students tap **Book a viewing** on a home's page, enter their name and WhatsApp number, pick a day (today to 60 days ahead) and a time of day (morning 8am–12pm, afternoon 12–4pm, evening 4–6pm), and can add a message. No account is needed.
+
+- **Tap-to-send (works with no setup).** After booking, **Send request on WhatsApp** opens WhatsApp with the request already written to the landlord.
+- **Landlord inbox.** Requests appear under **Viewing requests** on the landlord dashboard, waiting ones first. The landlord taps **Confirm** or **Decline** (with an optional note, e.g. "Ask for Jane at the gate") and then **Send confirmation on WhatsApp**, which opens a ready-written reply to the student.
+- **Limits.** One waiting request per home per number, and at most five waiting requests per number. Only published homes can be booked.
+
+### Automatic WhatsApp alerts to landlords
+
+Landlords can also receive an automatic WhatsApp alert for every new request. Configure the backend (Render environment):
+
+| Variable | Value |
+| --- | --- |
+| `WHATSAPP_PROVIDER` | `meta` for real alerts, `log` for a demo (alerts are written to the server log), unset for off |
+| `WHATSAPP_TOKEN` | Permanent access token for the WhatsApp Business Cloud API |
+| `WHATSAPP_PHONE_NUMBER_ID` | The sending number's ID from Meta's WhatsApp Manager |
+| `WHATSAPP_TEMPLATE_VIEWING` | Approved template name (default `viewing_request`) |
+| `WHATSAPP_TEMPLATE_LANGUAGE` | Template language code (default `en`) |
+| `WEB_APP_URL` | Link used in alerts (default `https://student-home-iota.vercel.app`) |
+
+WhatsApp only allows businesses to start a conversation with an **approved message template**. Create a *Utility* template named `viewing_request` whose body has four variables, for example:
+
+> New viewing request on Student Nest: {{1}} would like to view "{{2}}" on {{3}}. Reply from your dashboard: {{4}}
+
+The alert is sent after the request is saved; if WhatsApp fails, the booking still succeeds and the failure is recorded on the request.
+
 ## Scam Reporting
 
 Every home page shows **Stay safe** tips (never pay before viewing; Student Nest never asks you to pay landlords through us) and a **Report this listing** option. Students choose a reason (asked for payment before a viewing, fake or unavailable, misleading details, impersonating the landlord, other), can add details, and may leave a private phone number for follow-up. No account is needed.
