@@ -307,3 +307,13 @@ tr:last-child td {
   max-width: 320px;
   white-space: normal;
 }
+
+.report-details-cell {
+  max-width: 320px;
+  white-space: normal;
+}
+
+.report-details-cell em {
+  font-style: normal;
+  color: var(--muted);
+}

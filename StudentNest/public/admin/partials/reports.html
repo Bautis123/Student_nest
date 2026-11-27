@@ -1,0 +1,34 @@
+<section class="panel view hidden" id="reportsPanel">
+  <div class="panel-header stacked">
+    <div>
+      <h2>Scam reports</h2>
+      <p class="muted small">Students report listings they think are fake or unsafe. A listing reported by three different phone numbers within 30 days is hidden from students until you decide.</p>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" id="reportSearch" placeholder="Search listing, landlord, details" />
+      <select id="reportStatusFilter">
+        <option value="open">Needs a decision</option>
+        <option value="hidden">Hidden after reports</option>
+        <option value="all">All reported listings</option>
+      </select>
+    </div>
+  </div>
+  <div class="integration-note">
+    Call the landlord and, where possible, a reporter before deciding. <strong>Dismiss</strong> if the reports are unfounded (the listing shows again). <strong>Take down</strong> if it looks like a scam: the listing is unpublished, loses its verified badge and must be re-approved.
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Listing</th>
+          <th>Reports</th>
+          <th>What students said</th>
+          <th>Visibility</th>
+          <th>Last report</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="reportsBody"></tbody>
+    </table>
+  </div>
+</section>

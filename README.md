@@ -107,6 +107,15 @@ In the Lenco dashboard, set the webhook URL to `https://student-nest-api.onrende
 
 With `PAYMENT_PROVIDER=mock`, numbers ending in `1111111` (e.g. `0961111111`) succeed after a few seconds and any other number is declined. No money moves.
 
+## Scam Reporting
+
+Every home page shows **Stay safe** tips (never pay before viewing; Student Nest never asks you to pay landlords through us) and a **Report this listing** option. Students choose a reason (asked for payment before a viewing, fake or unavailable, misleading details, impersonating the landlord, other), can add details, and may leave a private phone number for follow-up. No account is needed.
+
+- Reports go to the admin portal's **Scam reports** tab, grouped by listing.
+- A listing reported by **three different phone numbers within 30 days** is hidden from students until an admin decides. Anonymous reports are reviewed but never hide a listing on their own, and one number can't report the same listing twice while reports are open, so a single person can't take down a competitor.
+- Admins **Dismiss** unfounded reports (the listing shows again) or **Take down** the listing (unpublished, verified badge removed, must be re-approved). Both are logged.
+- The landlord sees "Hidden: under review after reports" on their dashboard.
+
 ## Tenant Reviews
 
 Students who lived in a home can review it from the home's page: five ratings (overall, landlord, water & power, security, value for money), when they moved in and out, a written review, an optional display name, and a phone number.

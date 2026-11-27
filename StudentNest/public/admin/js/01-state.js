@@ -11,6 +11,7 @@
     payments: [],
     roommates: [],
     reviews: [],
+    reports: [],
     logs: [],
     admins: [],
     profile: null,

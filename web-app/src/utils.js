@@ -5,6 +5,7 @@ export function safeImage(url) {
 }
 export function statusOf(property) {
   if (!property.is_approved) return 'Awaiting review';
+  if (property.flagged_at) return 'Hidden: under review after reports';
   if (property.listing_expires_at && new Date(property.listing_expires_at).getTime() <= Date.now()) return 'Expired';
   return property.is_active ? 'Live' : 'Awaiting activation';
 }

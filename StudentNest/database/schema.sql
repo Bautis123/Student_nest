@@ -123,6 +123,26 @@ CREATE INDEX IF NOT EXISTS idx_payments_reference ON payments(payment_reference)
 CREATE INDEX IF NOT EXISTS idx_admin_logs_admin ON admin_logs(admin_id);
 CREATE INDEX IF NOT EXISTS idx_admin_logs_created_at ON admin_logs(created_at);
 
+-- Listing reports (keep in sync with src/services/listingReportSchema.js)
+ALTER TABLE properties ADD COLUMN IF NOT EXISTS flagged_at TIMESTAMP;
+
+CREATE TABLE IF NOT EXISTS listing_reports (
+  id BIGSERIAL PRIMARY KEY,
+  property_id UUID NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+  reason VARCHAR(40) NOT NULL
+    CHECK (reason IN ('fake_listing', 'upfront_payment', 'misleading', 'impersonation', 'other')),
+  details TEXT,
+  reporter_phone VARCHAR(20),
+  status VARCHAR(20) NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'resolved', 'dismissed')),
+  resolution_note TEXT,
+  resolved_by UUID REFERENCES users(id) ON DELETE SET NULL,
+  resolved_at TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_listing_reports_property_status ON listing_reports(property_id, status);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_listing_reports_one_open_per_phone
+  ON listing_reports(property_id, reporter_phone) WHERE status = 'open' AND reporter_phone IS NOT NULL;
+
 -- Tenant reviews (keep in sync with src/services/reviewSchema.js)
 CREATE TABLE IF NOT EXISTS reviews (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

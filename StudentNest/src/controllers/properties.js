@@ -22,10 +22,12 @@ const LISTING_BADGE_COLUMNS = `CASE WHEN lp.amount >= ${PREMIUM_LISTING_AMOUNT} 
         (SELECT COUNT(*)::int FROM reviews rv
           WHERE rv.property_id = p.id AND rv.status = 'approved') AS review_count`;
 
-// Students may only see listings that are approved, paid/active and not expired.
+// Students may only see listings that are approved, paid/active, not expired, and
+// not hidden after repeated scam reports (flagged_at) pending admin review.
 const PUBLICLY_VISIBLE = `p.is_approved = true
         AND p.is_active = true
-        AND (p.listing_expires_at IS NULL OR p.listing_expires_at > NOW())`;
+        AND (p.listing_expires_at IS NULL OR p.listing_expires_at > NOW())
+        AND p.flagged_at IS NULL`;
 
 // Create a new property listing
 const createProperty = async (req, res) => {

@@ -46,3 +46,7 @@ test('travel estimates allow for detours and minibus waiting time', async () => 
   assert.equal(campusDistance({ latitude: -15.39, longitude: 28.33, school_lat: -15.39, school_lng: 28.34 }), distanceKm(-15.39, 28.33, -15.39, 28.34));
   assert.ok(Math.abs(distanceKm(-15.3947, 28.3322, -15.4167, 28.2833) - 5.75) < 0.2, 'UNZA to Lusaka CBD is ~5.7 km');
 });
+test('landlords see when a listing is hidden after reports', () => {
+  assert.equal(statusOf({ is_approved: true, is_active: true, flagged_at: '2026-11-27' }), 'Hidden: under review after reports');
+  assert.equal(statusOf({ is_approved: false, flagged_at: '2026-11-27' }), 'Awaiting review');
+});
