@@ -27,3 +27,8 @@ test('photo URLs exclude executable and relative schemes', () => {
   assert.equal(safeImage('/not-a-public-photo'), '');
   assert.equal(safeImage('https://example.com/home.jpg'), 'https://example.com/home.jpg');
 });
+test('verified-only filter keeps just admin-verified homes', () => {
+  const homes = [{ id: 1, title: 'A', address: '', is_verified: true }, { id: 2, title: 'B', address: '', is_verified: false }, { id: 3, title: 'C', address: '' }];
+  assert.deepEqual(filterProperties(homes, { verifiedOnly: true }).map(p => p.id), [1]);
+  assert.equal(filterProperties(homes).length, 3);
+});

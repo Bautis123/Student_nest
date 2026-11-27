@@ -55,3 +55,40 @@ test('recording a payment issues no schema changes', async () => {
   const insert = queries.find(({ sql }) => sql.includes('INSERT INTO payments'));
   assert.ok(insert.params.includes(6));
 });
+
+test('verification requires an explicit boolean', async () => {
+  reset(); const res = response();
+  await admin.updatePropertyVerification(request({ params: { id: 'prop' }, body: { verified: 'yes' } }), res);
+  assert.equal(res.statusCode, 400);
+  assert.equal(queries.length, 0);
+});
+
+test('an unapproved property cannot be verified', async () => {
+  reset(); results = [{ rows: [{ id: 'prop', is_approved: false }] }]; const res = response();
+  await admin.updatePropertyVerification(request({ params: { id: 'prop' }, body: { verified: true } }), res);
+  assert.equal(res.statusCode, 400);
+  assert.equal(queries.length, 1);
+});
+
+test('verifying stamps verified_at and logs who did it with the note', async () => {
+  reset(); results = [{ rows: [{ id: 'prop', is_approved: true }] }, { rows: [{ id: 'prop', verified_at: 'now' }] }]; const res = response();
+  await admin.updatePropertyVerification(request({ params: { id: 'prop' }, body: { verified: true, note: ' Site visit 2 Dec ' } }), res);
+  assert.equal(res.statusCode, 200);
+  assert.match(queries[1].sql, /verified_at = NOW\(\)/);
+  const log = queries.find(({ sql }) => sql.includes('INSERT INTO admin_logs'));
+  assert.equal(log.params[0], 'admin');
+  assert.equal(log.params[2], 'property_verified');
+  assert.match(log.params[7], /Site visit 2 Dec/);
+});
+
+test('removing verification clears verified_at', async () => {
+  reset(); results = [{ rows: [{ id: 'prop', is_approved: true }] }, { rows: [{ id: 'prop', verified_at: null }] }]; const res = response();
+  await admin.updatePropertyVerification(request({ params: { id: 'prop' }, body: { verified: false } }), res);
+  assert.match(queries[1].sql, /verified_at = NULL/);
+});
+
+test('rejecting a property also clears its verified badge', async () => {
+  reset(); results = [{ rows: [{ id: 'prop', is_approved: false }] }]; const res = response();
+  await admin.updatePropertyStatus(request({ params: { id: 'prop' }, body: { is_approved: false } }), res);
+  assert.match(queries[0].sql, /verified_at = CASE WHEN \$1 THEN verified_at ELSE NULL END/);
+});

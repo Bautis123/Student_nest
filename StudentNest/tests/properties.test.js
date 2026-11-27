@@ -34,6 +34,7 @@ test('editing details cannot publish a listing and requires re-review', async ()
   await controller.updateProperty({ params: { id: 'own' }, user: { id: 'landlord' }, body: { title: 'Home', address: 'Lusaka', is_active: true, is_approved: true } }, res);
   assert.match(queries[1].sql, /is_active = false/);
   assert.match(queries[1].sql, /is_approved = false/);
+  assert.match(queries[1].sql, /verified_at = NULL/);
   assert.deepEqual(queries[1].params.slice(-2), ['own', 'landlord']);
 });
 test('invalid availability is rejected before touching the database', async () => {

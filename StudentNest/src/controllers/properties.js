@@ -13,8 +13,9 @@ const LATEST_PAYMENT_JOIN = `LEFT JOIN LATERAL (
         LIMIT 1
       ) lp ON true`;
 
-const LISTING_PLAN_COLUMNS = `CASE WHEN lp.amount >= ${PREMIUM_LISTING_AMOUNT} THEN 'premium' ELSE 'basic' END AS listing_plan,
-        COALESCE(lp.amount >= ${PREMIUM_LISTING_AMOUNT}, false) AS is_premium`;
+const LISTING_BADGE_COLUMNS = `CASE WHEN lp.amount >= ${PREMIUM_LISTING_AMOUNT} THEN 'premium' ELSE 'basic' END AS listing_plan,
+        COALESCE(lp.amount >= ${PREMIUM_LISTING_AMOUNT}, false) AS is_premium,
+        (p.verified_at IS NOT NULL) AS is_verified`;
 
 // Students may only see listings that are approved, paid/active and not expired.
 const PUBLICLY_VISIBLE = `p.is_approved = true
@@ -101,7 +102,7 @@ const getProperties = async (req, res) => {
         s.longitude AS school_lng,
         u.full_name AS landlord_name,
         u.phone AS landlord_phone,
-        ${LISTING_PLAN_COLUMNS},
+        ${LISTING_BADGE_COLUMNS},
         COALESCE(cover.cover_photo, '[]'::jsonb) AS cover_photo,
         (
           SELECT COALESCE(SUM(rooms.available_rooms * rooms.students_per_room), 0)::int
@@ -185,7 +186,7 @@ const getPropertyById = async (req, res) => {
         u.full_name AS landlord_name,
         u.phone AS landlord_phone,
         u.email AS landlord_email,
-        ${LISTING_PLAN_COLUMNS}
+        ${LISTING_BADGE_COLUMNS}
        FROM properties p
        LEFT JOIN schools s ON p.nearest_school_id = s.id
        LEFT JOIN users u ON p.landlord_id = u.id
@@ -308,7 +309,7 @@ const getMyProperties = async (req, res) => {
         s.name AS school_name,
         s.latitude AS school_lat,
         s.longitude AS school_lng,
-        ${LISTING_PLAN_COLUMNS},
+        ${LISTING_BADGE_COLUMNS},
         COUNT(r.id) AS room_types_count,
         COALESCE(SUM(r.total_rooms), 0)::int AS total_rooms_count,
         COALESCE(SUM(r.available_rooms), 0)::int AS available_rooms_count,
@@ -393,6 +394,8 @@ const updateProperty = async (req, res) => {
         amenities = COALESCE($4, amenities),
         is_approved = false,
         is_active = false,
+        -- Changed details have not been checked, so the verified badge must be re-earned.
+        verified_at = NULL,
         updated_at = NOW()
        WHERE id = $5 AND landlord_id = $6
        RETURNING *`,

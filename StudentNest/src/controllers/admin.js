@@ -141,7 +141,11 @@ const updatePropertyStatus = async (req, res) => {
 
   try {
     const result = await pool.query(
-      `UPDATE properties SET is_approved = $1, updated_at = NOW()
+      `UPDATE properties SET
+         is_approved = $1,
+         -- A rejected listing loses its verified badge; it must be re-checked.
+         verified_at = CASE WHEN $1 THEN verified_at ELSE NULL END,
+         updated_at = NOW()
        WHERE id = $2
        RETURNING id, title, is_approved`,
       [is_approved, id]
@@ -164,6 +168,57 @@ const updatePropertyStatus = async (req, res) => {
       metadata: { property: result.rows[0] },
     });
 
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Mark a property as verified (inspected / ownership checked) or remove the badge.
+const updatePropertyVerification = async (req, res) => {
+  const { id } = req.params;
+  const { verified, note } = req.body || {};
+
+  if (typeof verified !== 'boolean') {
+    return res.status(400).json({ message: 'verified must be true or false' });
+  }
+
+  const cleanNote = typeof note === 'string' ? note.trim().slice(0, 500) : '';
+
+  try {
+    const current = await pool.query(
+      'SELECT id, title, is_approved FROM properties WHERE id = $1',
+      [id]
+    );
+
+    if (current.rows.length === 0) {
+      return res.status(404).json({ message: 'Property not found' });
+    }
+
+    if (verified && !current.rows[0].is_approved) {
+      return res.status(400).json({ message: 'Approve the property before verifying it' });
+    }
+
+    const result = await pool.query(
+      `UPDATE properties
+       SET verified_at = ${verified ? 'NOW()' : 'NULL'}, updated_at = NOW()
+       WHERE id = $1
+       RETURNING id, title, is_approved, verified_at`,
+      [id]
+    );
+
+    res.json({
+      message: verified ? 'Property verified' : 'Verification removed',
+      property: result.rows[0]
+    });
+
+    await recordAdminLog(req, {
+      action: verified ? 'property_verified' : 'property_unverified',
+      entityType: 'property',
+      entityId: id,
+      message: verified ? 'Verified property listing' : 'Removed property verification',
+      metadata: { property: result.rows[0], note: cleanNote || undefined },
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
@@ -759,6 +814,7 @@ module.exports = {
   updateLandlordStatus,
   getProperties,
   updatePropertyStatus,
+  updatePropertyVerification,
   deleteProperty,
   getStats,
   createAdmin,

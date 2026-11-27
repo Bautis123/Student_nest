@@ -26,6 +26,7 @@
       ['Address', property.address],
       ['Rooms', Number(property.room_types || 0)],
       ['Photos', Number(property.photo_count || 0)],
+      ['Verified', property.verified_at ? formatDate(property.verified_at) : 'Not verified'],
       ['Listing expiry', formatDate(property.listing_expires_at)],
       ['Expiry countdown', expiryInfo(property).countdown],
       ['Moderation hints', propertyHints(property).join(', ') || 'Ready for review'],

@@ -17,6 +17,12 @@ const ensurePaymentColumns = () =>
      ADD COLUMN IF NOT EXISTS expires_at TIMESTAMP`
   );
 
+const ensurePropertyVerificationColumn = () =>
+  pool.query(
+    `ALTER TABLE properties
+     ADD COLUMN IF NOT EXISTS verified_at TIMESTAMP`
+  );
+
 /**
  * Idempotent runtime migrations. Run once at startup, before the server
  * accepts requests, so request handlers never need to issue DDL.
@@ -25,6 +31,7 @@ const prepareDatabase = async () => {
   await ensureAdminLogsTable();
   await ensureAdminAccessLevels();
   await ensurePaymentColumns();
+  await ensurePropertyVerificationColumn();
 };
 
 module.exports = { prepareDatabase };

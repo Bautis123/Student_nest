@@ -37,11 +37,11 @@ function renderActivity() {
   }));
   const propertyEvents = state.data.properties.slice(0, 3).map((property) => ({
     title: `${property.title || 'Property'} ${property.is_approved ? 'is approved' : 'awaits review'}`,
-    meta: `${property.landlord_name || 'Unknown landlord'} Â· ${formatDate(property.updated_at || property.created_at)}`,
+    meta: `${property.landlord_name || 'Unknown landlord'} · ${formatDate(property.updated_at || property.created_at)}`,
   }));
   const paymentEvents = state.data.payments.slice(0, 3).map((payment) => ({
     title: `${money.format(Number(payment.amount || 0))} payment ${payment.status || 'pending'}`,
-    meta: `${payment.landlord_name || 'Unknown payer'} Â· ${formatDate(payment.paid_at || payment.created_at)}`,
+    meta: `${payment.landlord_name || 'Unknown payer'} · ${formatDate(payment.paid_at || payment.created_at)}`,
   }));
 
   const events = [...landlordEvents, ...propertyEvents, ...paymentEvents].slice(0, 8);
