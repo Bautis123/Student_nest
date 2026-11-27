@@ -9,6 +9,7 @@
     landlords: [],
     properties: [],
     payments: [],
+    roommates: [],
     logs: [],
     admins: [],
     profile: null,

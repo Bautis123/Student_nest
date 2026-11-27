@@ -68,6 +68,48 @@ test('map view pins homes and leads to travel times on the home page', async ({ 
   expect(errors).toEqual([]);
 });
 
+test('students browse roommate requests, reveal WhatsApp and post their own', async ({ page }) => {
+  const post = { id: 'rm-1', display_name: 'Chanda', share_with: 'any', school_name: 'UNZA', budget_max: '750.00', about: 'Final-year engineering student.', tags: ['early_riser', 'cooks'] };
+  const token = 'a'.repeat(43);
+  let created;
+  await page.route('**/api/roommates**', async route => {
+    const url = new URL(route.request().url());
+    if (url.pathname === '/api/roommates' && route.request().method() === 'POST') { created = route.request().postDataJSON(); return route.fulfill({ status: 201, json: { post: { id: 'rm-2', status: 'pending' }, manage_token: token } }); }
+    if (url.pathname === '/api/roommates') return route.fulfill({ json: { posts: [post] } });
+    if (url.pathname.endsWith('/contact')) return route.fulfill({ json: { phone: '0961234567', whatsapp: 'https://wa.me/260961234567' } });
+    return route.fulfill({ status: 404, json: { message: 'Not found' } });
+  });
+  await page.goto('/roommates');
+  await expect(page.getByRole('heading', { name: 'Chanda' })).toBeVisible();
+  await expect(page.getByText('0961234567')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Show WhatsApp' }).click();
+  await expect(page.getByRole('link', { name: /WhatsApp 0961234567/ })).toHaveAttribute('href', 'https://wa.me/260961234567');
+
+  await page.getByRole('link', { name: 'Post a request' }).click();
+  await page.getByLabel('First name').fill('Bwalya');
+  await page.getByLabel('Campus').selectOption('unza');
+  await page.getByLabel('I am').selectOption('female');
+  await page.getByLabel('I’d share with').selectOption('female');
+  await page.getByLabel('Budget (K/month)').fill('850');
+  await page.getByText('Quiet', { exact: true }).click();
+  await page.getByLabel('WhatsApp number').fill('0771234560');
+  await page.getByRole('button', { name: 'Send for review' }).click();
+  await expect(page.getByRole('heading', { name: 'Request sent for review' })).toBeVisible();
+  await expect(page.locator('.manage-link code')).toContainText(`/roommates/manage/${token}`);
+  expect(created).toMatchObject({ display_name: 'Bwalya', school_id: 'unza', gender: 'female', share_with: 'female', budget_max: 850, tags: ['quiet'], phone: '0771234560' });
+});
+
+test('the private manage page keeps the saved campus even though campuses load later', async ({ page }) => {
+  const token = 'b'.repeat(43);
+  await page.route('**/api/properties/schools', async route => { await new Promise(r => setTimeout(r, 600)); return route.fulfill({ json: { schools: [{ id: 'cbu', name: 'Copperbelt University' }, { id: 'unza', name: 'UNZA' }] } }); });
+  await page.route(`**/api/roommates/manage/${token}`, route => route.fulfill({ json: { post: { id: 'rm-3', display_name: 'Bwalya', gender: 'female', share_with: 'female', school_id: 'unza', budget_max: '850.00', tags: ['quiet'], phone: '0771234560', status: 'pending' } } }));
+  await page.goto(`/roommates/manage/${token}`);
+  await expect(page.getByRole('heading', { name: 'Hi Bwalya.' })).toBeVisible();
+  await expect(page.getByText('Waiting for review')).toBeVisible();
+  await expect(page.getByLabel('Campus').locator('option', { hasText: 'UNZA' })).toBeAttached();
+  await expect(page.getByLabel('Campus')).toHaveValue('unza');
+});
+
 test('empty results and API failures are actionable', async ({ page }) => {
   await page.goto('/?q=not-a-home');
   await expect(page.getByRole('heading', { name: 'No homes found just yet' })).toBeVisible();

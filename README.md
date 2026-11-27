@@ -107,6 +107,18 @@ In the Lenco dashboard, set the webhook URL to `https://student-nest-api.onrende
 
 With `PAYMENT_PROVIDER=mock`, numbers ending in `1111111` (e.g. `0961111111`) succeed after a few seconds and any other number is declined. No money moves.
 
+## Roommate Matching
+
+Students looking to share a room post a short request at `/roommates/new`: first name, campus, monthly budget, optional move-in date, lifestyle tags, who they would share with, and a WhatsApp number. There are no student accounts:
+
+- **Private link instead of a login.** Posting returns a one-time link (`/roommates/manage/<token>`) to edit or remove the post. Only a SHA-256 hash of the token is stored, so a lost link can't be recovered; the student just posts again.
+- **Admin approval first.** New and edited posts wait in the admin portal's **Roommates** tab (the sidebar shows how many are waiting). Approved posts are visible for 30 days.
+- **Numbers on tap.** Phone numbers never appear in the public listing; a student taps **Show WhatsApp** on an approved post to reveal it (each reveal is counted for admins).
+- **Reports.** Anyone can report a post with a reason. Three reports hide it until an admin reviews it again; re-approving clears the count.
+- **Limits.** A number can have at most two active posts.
+
+Students can filter by campus, budget and who a post is open to. Homes with shared rooms link to roommate requests for the same campus.
+
 ## Listing Expiry
 
 Confirmed payments set:

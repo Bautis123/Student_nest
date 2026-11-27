@@ -1,0 +1,37 @@
+<section class="panel view hidden" id="roommatesPanel">
+  <div class="panel-header stacked">
+    <div>
+      <h2>Roommate requests</h2>
+      <p class="muted small">Students post these without an account. Approve genuine requests; they stay visible for 30 days. Posts reported several times are hidden and come back here.</p>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" id="roommateSearch" placeholder="Search name, campus, number" />
+      <select id="roommateStatusFilter">
+        <option value="pending">Waiting for review</option>
+        <option value="approved">Live</option>
+        <option value="expired">Expired</option>
+        <option value="rejected">Rejected</option>
+        <option value="all">All</option>
+      </select>
+    </div>
+  </div>
+  <div class="integration-note">
+    Check for scams before approving: requests for money, ID or bank details, links, or anything that isn't about sharing a room. Phone numbers are only shown to students after approval, when they tap “Show WhatsApp”.
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Campus &amp; budget</th>
+          <th>About</th>
+          <th>Status</th>
+          <th>Reports</th>
+          <th>Submitted</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="roommatesBody"></tbody>
+    </table>
+  </div>
+</section>
