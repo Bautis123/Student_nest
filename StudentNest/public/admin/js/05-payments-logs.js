@@ -45,7 +45,8 @@ function paymentMethodLabel(payment) {
     airtel: 'Airtel Money',
     zamtel: 'Zamtel Kwacha',
   };
-  return providers[payment.mobile_money_provider] || 'Mobile money';
+  const label = providers[payment.mobile_money_provider] || 'Mobile money';
+  return payment.provider ? `${label} · in app` : label;
 }
 
 function actionLabel(action) {

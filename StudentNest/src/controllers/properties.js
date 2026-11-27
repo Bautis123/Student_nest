@@ -1,7 +1,8 @@
 const pool = require('../config/db');
+const { LISTING_PLANS } = require('../config/listingPlans');
 
-// Payments of at least this amount (ZMW) mark a listing as premium.
-const PREMIUM_LISTING_AMOUNT = 750;
+// Payments of at least the Premium plan price mark a listing as premium.
+const PREMIUM_LISTING_AMOUNT = Number(LISTING_PLANS.premium.amount);
 
 // Shared SQL fragments. All expect the property alias `p`.
 const LATEST_PAYMENT_JOIN = `LEFT JOIN LATERAL (

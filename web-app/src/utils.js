@@ -25,3 +25,11 @@ export function filterProperties(properties, { query = '', school = '', maxPrice
 export function readStored(storage, key, fallback) {
   try { return JSON.parse(storage.getItem(key)) ?? fallback; } catch { return fallback; }
 }
+const OPERATOR_PREFIXES = { mtn: ['096', '076'], airtel: ['097', '077'], zamtel: ['095', '075'] };
+export const operatorNames = { mtn: 'MTN MoMo', airtel: 'Airtel Money', zamtel: 'Zamtel Kwacha' };
+export function detectOperator(phone) {
+  let digits = String(phone || '').replace(/\D/g, '');
+  if (digits.startsWith('260')) digits = `0${digits.slice(3)}`;
+  return Object.keys(OPERATOR_PREFIXES).find(op => OPERATOR_PREFIXES[op].some(prefix => digits.startsWith(prefix))) || '';
+}
+export const formatDate = (value) => value ? new Date(value).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Africa/Lusaka' }) : '';

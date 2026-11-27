@@ -49,7 +49,15 @@
       ['Status', payment.status],
       ['Paid at', formatDate(payment.paid_at || payment.created_at)],
       ['Payment expiry', formatDate(payment.expires_at)],
-      ['Integration status', 'Manual records are supported. Automated provider callbacks need backend credential and webhook setup.'],
+      ['Recorded by', payment.provider ? `Landlord paid in the app (${payment.provider})` : 'Admin (manual record)'],
+      ...(payment.provider
+        ? [
+            ['Plan', payment.plan || '-'],
+            ['Paying number', payment.phone || '-'],
+            ['Provider reference', payment.provider_reference || '-'],
+            ['Failure reason', payment.failure_reason || '-'],
+          ]
+        : []),
     ];
   }
 

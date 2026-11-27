@@ -78,11 +78,34 @@ Recommended production flow:
 
 1. Landlord submits a listing with details, rooms, and photos.
 2. Admin reviews and approves or rejects the listing.
-3. Landlord pays for the approved listing.
-4. Admin records/verifies payment.
+3. Landlord pays for the approved listing in the web app with MTN, Airtel or Zamtel mobile money (or an admin records a cash/bank payment).
+4. The payment is confirmed automatically by the payment provider.
 5. Listing becomes active and visible to students until expiry.
 
 Student-facing listing APIs only return listings that are approved, active, and not expired.
+
+## Mobile Money Payments
+
+Landlords choose a plan on their listing page, enter their mobile money number and approve the prompt on their phone. Plans are defined in `StudentNest/src/config/listingPlans.js`:
+
+| Plan | Price | Length |
+| --- | --- | --- |
+| Basic | K300 | 12 months |
+| Premium (Featured label) | K750 | 12 months |
+
+Payments go through [Lenco](https://lenco.co), which collects from MTN, Airtel and Zamtel with one integration. A confirmed payment activates the listing; paying again extends it from the current expiry.
+
+Backend settings (Render environment):
+
+| Variable | Value |
+| --- | --- |
+| `PAYMENT_PROVIDER` | `lenco` for real payments, `mock` for demos, unset to switch in-app payments off |
+| `LENCO_API_TOKEN` | API token from the Lenco Pay section of the Lenco dashboard |
+| `LENCO_API_BASE_URL` | Optional. Defaults to `https://api.lenco.co/access/v2`; set Lenco's sandbox host while testing |
+
+In the Lenco dashboard, set the webhook URL to `https://student-nest-api.onrender.com/api/payments/webhooks/lenco`. Webhooks are verified with Lenco's `X-Lenco-Signature` header; the app also checks status directly with Lenco while the landlord waits, so payments confirm even if a webhook is delayed.
+
+With `PAYMENT_PROVIDER=mock`, numbers ending in `1111111` (e.g. `0961111111`) succeed after a few seconds and any other number is declined. No money moves.
 
 ## Listing Expiry
 

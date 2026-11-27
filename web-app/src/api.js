@@ -16,6 +16,7 @@ export async function api(path, { method = 'GET', body, token, signal } = {}) {
     if (!response.ok) {
       const error = new Error(data.message || `Request failed (${response.status}). Please try again.`);
       error.status = response.status;
+      error.data = data;
       if (response.status === 401 && token) window.dispatchEvent(new Event('session-expired'));
       throw error;
     }
