@@ -1,16 +1,22 @@
 const express = require('express');
+const multer = require('multer');
 const router = express.Router();
 const { uploadPhotos, deletePhoto, setCoverPhoto } = require('../controllers/photos');
 const { verifyToken, isLandlord } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
+const MAX_PHOTOS_PER_UPLOAD = 10;
+
 const handleUpload = (req, res, next) => {
-  upload.array('photos', 10)(req, res, (err) => {
-    if (err) {
-      console.error('Multer/Cloudinary error:', err.message, JSON.stringify(err));
-      return res.status(500).json({ message: err.message, details: err });
+  upload.array('photos', MAX_PHOTOS_PER_UPLOAD)(req, res, (err) => {
+    if (!err) return next();
+
+    console.error('Photo upload failed:', err.message);
+    // Multer errors (too large, too many files) are the client's to fix; anything else is ours.
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ message: err.message });
     }
-    next();
+    return res.status(500).json({ message: 'Photo upload failed. Please try again.' });
   });
 };
 
