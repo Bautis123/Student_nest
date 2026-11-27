@@ -29,16 +29,22 @@ function FitBounds({ points, maxZoom = 15 }) {
   const key = points.map(p => p.join(',')).join('|');
   // The map can mount before its container has its final size (lazy chunk, layout
   // shifts); re-measure so every tile is requested.
+  // Moves are instant: an animation still running when the page changes would
+  // touch a map React has already removed (Leaflet's "_leaflet_pos" error).
   useEffect(() => {
     const container = map.getContainer();
-    const observer = new ResizeObserver(() => map.invalidateSize());
+    let frame = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => { if (container.isConnected) map.invalidateSize({ animate: false }); });
+    });
     observer.observe(container);
-    return () => observer.disconnect();
+    return () => { observer.disconnect(); cancelAnimationFrame(frame); };
   }, [map]);
   useEffect(() => {
-    map.invalidateSize();
-    if (points.length === 1) map.setView(points[0], maxZoom);
-    else if (points.length > 1) map.fitBounds(points, { padding: [40, 40], maxZoom });
+    map.invalidateSize({ animate: false });
+    if (points.length === 1) map.setView(points[0], maxZoom, { animate: false });
+    else if (points.length > 1) map.fitBounds(points, { padding: [40, 40], maxZoom, animate: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, map, maxZoom]);
   return null;
