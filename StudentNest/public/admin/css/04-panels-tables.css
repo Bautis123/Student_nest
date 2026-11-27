@@ -201,6 +201,7 @@ tr:last-child td {
 
 .badge.rejected,
 .badge.failed,
+.badge.expired,
 .badge.inactive {
   background: rgba(220, 58, 51, 0.1);
   color: var(--danger);

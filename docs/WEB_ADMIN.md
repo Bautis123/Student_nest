@@ -8,7 +8,7 @@ The web admin dashboard is the browser-based management interface for Student Ne
 
 - landlord accounts
 - property approvals
-- listing status and expiry
+- listing status and expiry, including reactivating or extending a listing without a payment (Properties → Reactivate / Extend; filter by Expired)
 - manual listing payments
 - admin accounts
 - admin activity logs

@@ -119,6 +119,19 @@ The backend:
 - hides expired listings from student APIs immediately
 - auto-suspends expired listings on startup and every 6 hours by setting `is_active = false`
 
+### Bringing an expired listing back
+
+- **Landlord:** pays again from the listing page; the new period starts from today (or from the current expiry if it hasn't passed yet).
+- **Admin, without a payment** (demo listings, complimentary time, corrections): in the admin portal, open **Properties**, filter by **Expired**, click **Reactivate**, choose 7 days to 12 months and add a note. On a live listing the same button says **Extend** and adds time after the current expiry. Every use is recorded in the admin logs with the admin, the period and the note.
+- **Demo listings:** re-run the seed script; it recreates deleted demo listings and refreshes expired ones instead of skipping them:
+
+```powershell
+cd StudentNest
+npm run seed:demo -- --days=30
+```
+
+`--days` accepts 1 to 90 (default 7). The script only runs against the project's Supabase database.
+
 ## Useful Checks
 
 Web checks:

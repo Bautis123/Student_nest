@@ -1,9 +1,26 @@
-﻿function filteredProperties() {
+﻿// One place decides a listing's admin status. Order matters: unapproved listings
+// are "pending" even though they are also inactive.
+function listingStatus(property) {
+  if (!property.is_approved) return 'pending';
+  if (property.listing_expires_at && new Date(property.listing_expires_at).getTime() <= Date.now()) return 'expired';
+  if (!property.is_active) return 'inactive';
+  return 'approved';
+}
+
+function listingPeriodButton(property) {
+  if (!property.is_approved) {
+    return `<button type="button" disabled title="Approve before activating">Activate</button>`;
+  }
+  const live = listingStatus(property) === 'approved';
+  return `<button type="button" data-listing-period="${property.id}" data-live="${live}">${live ? 'Extend' : 'Reactivate'}</button>`;
+}
+
+function filteredProperties() {
   const { search, status, sort } = state.filters.properties;
   const filtered = state.data.properties.filter((property) => {
     const haystack = `${property.title || ''} ${property.address || ''} ${property.landlord_name || ''} ${property.school_name || ''}`.toLowerCase();
     const matchesSearch = haystack.includes(search.toLowerCase());
-    const propertyStatus = !property.is_active ? 'inactive' : statusFromApproval(property);
+    const propertyStatus = listingStatus(property);
     return matchesSearch && (status === 'all' || propertyStatus === status);
   });
 
@@ -19,7 +36,7 @@ function renderProperties() {
   els.propertiesBody.innerHTML =
     properties
       .map((property) => {
-        const status = !property.is_active ? 'inactive' : statusFromApproval(property);
+        const status = listingStatus(property);
         const hints = propertyHints(property);
         const expiry = expiryInfo(property);
         return `
@@ -64,13 +81,14 @@ function renderProperties() {
                 ${property.verified_at
                   ? `<button type="button" data-property-verify="${property.id}" data-verified="false">Unverify</button>`
                   : `<button type="button" data-property-verify="${property.id}" data-verified="true" ${!property.is_approved ? 'disabled title="Approve before verifying"' : ''}>Verify</button>`}
+                ${listingPeriodButton(property)}
                 <button class="danger" type="button" data-delete-property="${property.id}">Delete</button>
               </div>
             </td>
           </tr>
         `;
       })
-      .join('') || '<tr><td class="empty-state" colspan="6">No properties match this view.</td></tr>';
+      .join('') || '<tr><td class="empty-state" colspan="7">No properties match this view.</td></tr>';
 }
 
 function startCountdownTimer() {
