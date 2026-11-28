@@ -95,15 +95,19 @@ Landlords choose a plan on their listing page, enter their mobile money number a
 
 Payments go through [Lenco](https://lenco.co), which collects from MTN, Airtel and Zamtel with one integration. A confirmed payment activates the listing; paying again extends it from the current expiry.
 
+To configure this on Render, open the `student-nest-api` web service, then go to **Environment** and add the variables below. Save changes to trigger a deploy. Keep `PAYMENT_PROVIDER` unset to leave the existing manual-payment flow in place; landlords continue to see “In-app payments are coming soon.”
+
 Backend settings (Render environment):
 
 | Variable | Value |
 | --- | --- |
-| `PAYMENT_PROVIDER` | `lenco` for real payments, `mock` for demos, unset to switch in-app payments off |
+| `PAYMENT_PROVIDER` | `lenco` for real payments, `mock` for demos (no money moves), unset to switch in-app payments off |
 | `LENCO_API_TOKEN` | API token from the Lenco Pay section of the Lenco dashboard |
 | `LENCO_API_BASE_URL` | Optional. Defaults to `https://api.lenco.co/access/v2`; set Lenco's sandbox host while testing |
 
-In the Lenco dashboard, set the webhook URL to `https://student-nest-api.onrender.com/api/payments/webhooks/lenco`. Webhooks are verified with Lenco's `X-Lenco-Signature` header; the app also checks status directly with Lenco while the landlord waits, so payments confirm even if a webhook is delayed.
+For sandbox testing, set `PAYMENT_PROVIDER=lenco`, use the sandbox API token in `LENCO_API_TOKEN`, and set `LENCO_API_BASE_URL` to the sandbox host Lenco provides. For live payments, use the live token and remove `LENCO_API_BASE_URL` so the documented production endpoint is used. Never put API tokens in source control.
+
+In the Lenco dashboard's Lenco Pay settings, set the webhook URL to `https://student-nest-api.onrender.com/api/payments/webhooks/lenco`. Webhooks are verified with Lenco's `X-Lenco-Signature` header; the app also checks status directly with Lenco while the landlord waits, so payments confirm even if a webhook is delayed.
 
 With `PAYMENT_PROVIDER=mock`, numbers ending in `1111111` (e.g. `0961111111`) succeed after a few seconds and any other number is declined. No money moves.
 
