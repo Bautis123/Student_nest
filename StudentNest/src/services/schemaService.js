@@ -14,7 +14,15 @@ const ensurePaymentColumns = () =>
      ADD COLUMN IF NOT EXISTS bank_name VARCHAR(120),
      ADD COLUMN IF NOT EXISTS duration_months INTEGER,
      ADD COLUMN IF NOT EXISTS paid_at TIMESTAMP,
-     ADD COLUMN IF NOT EXISTS expires_at TIMESTAMP`
+     ADD COLUMN IF NOT EXISTS expires_at TIMESTAMP,
+     ADD COLUMN IF NOT EXISTS plan VARCHAR(20),
+     ADD COLUMN IF NOT EXISTS provider VARCHAR(40),
+     ADD COLUMN IF NOT EXISTS provider_reference TEXT,
+     ADD COLUMN IF NOT EXISTS provider_collection_id TEXT,
+     ADD COLUMN IF NOT EXISTS phone VARCHAR(20),
+     ADD COLUMN IF NOT EXISTS failure_reason TEXT`
+  ).then(() =>
+    pool.query('CREATE INDEX IF NOT EXISTS idx_payments_reference ON payments(payment_reference)')
   );
 
 const ensurePropertyVerificationColumn = () =>

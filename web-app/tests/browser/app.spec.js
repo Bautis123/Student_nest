@@ -103,6 +103,31 @@ test('landlord creates a property, updates availability and uploads browser file
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
 
+test('landlord pays the listing fee by mobile money and sees it confirmed', async ({ page }) => {
+  const plans = [{ id: 'basic', name: 'Basic', amount: 300, months: 12, description: 'Visible for 12 months.' }, { id: 'premium', name: 'Premium', amount: 750, months: 12, description: 'Featured for 12 months.' }];
+  const pending = { id: 'pay-1', status: 'pending', amount: '750.00', phone: '0961111111', mobile_money_provider: 'mtn', plan: 'premium' };
+  let checks = 0;
+  await page.route('**/api/payments/**', async route => {
+    const path = new URL(route.request().url()).pathname;
+    if (path.endsWith('/plans')) return route.fulfill({ json: { enabled: true, plans } });
+    if (path.endsWith('/mine')) return route.fulfill({ json: { payments: [] } });
+    if (path.endsWith('/listing')) return route.fulfill({ status: 201, json: { payment: pending } });
+    checks += 1; // the second status check reports the landlord approved it on their phone
+    return route.fulfill({ json: { payment: checks < 2 ? pending : { ...pending, status: 'confirmed', paid_at: '2026-11-27', expires_at: '2027-11-27' } } });
+  });
+  await signIn(page);
+  await page.goto('/landlord/home-1');
+  await expect(page.getByRole('heading', { name: 'Listing plan & payment' })).toBeVisible();
+  await page.getByText('Premium', { exact: true }).click();
+  await page.getByLabel('Mobile money number').fill('096 111 1111');
+  await expect(page.getByLabel('Network')).toHaveValue('mtn');
+  const started = page.waitForRequest(request => request.url().endsWith('/api/payments/listing'));
+  await page.getByRole('button', { name: 'Pay K750 with mobile money' }).click();
+  expect((await started).postDataJSON()).toEqual({ property_id: 'home-1', plan: 'premium', phone: '096 111 1111', operator: 'mtn' });
+  await expect(page.getByRole('heading', { name: 'Check your phone' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Payment received. Your listing is live!' })).toBeVisible({ timeout: 15000 });
+});
+
 test('expired authentication returns landlord to sign in', async ({ page }) => {
   await signIn(page);
   await page.route('**/api/properties/landlord/my-properties', route => route.fulfill({ status: 401, json: { message: 'Expired' } }));

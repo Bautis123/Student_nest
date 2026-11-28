@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, Heart, MapPin, Home, AlertCircle, LoaderCircle, BadgeCheck } from 'lucide-react';
 import { api } from './api';
@@ -7,9 +7,13 @@ import { money, safeImage } from './utils';
 
 export function useResource(path, token, refresh = 0) {
   const [state, setState] = useState({ loading: true, data: null, error: '' });
+  const lastPath = useRef(path);
   useEffect(() => {
     const controller = new AbortController();
-    setState({ loading: true, data: null, error: '' });
+    // On a refresh of the same resource keep showing the current data while reloading.
+    const samePath = lastPath.current === path;
+    lastPath.current = path;
+    setState(previous => ({ loading: true, data: samePath ? previous.data : null, error: '' }));
     api(path, { token, signal: controller.signal })
       .then(data => { if (!controller.signal.aborted) setState({ loading: false, data, error: '' }); })
       .catch(error => { if (!controller.signal.aborted) setState({ loading: false, data: null, error: error.message }); });

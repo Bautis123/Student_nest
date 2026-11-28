@@ -85,6 +85,13 @@ CREATE TABLE IF NOT EXISTS payments (
     CHECK (status IN ('pending', 'confirmed', 'failed')),
   paid_at TIMESTAMP,
   expires_at TIMESTAMP,
+  -- In-app mobile money payments (NULL provider = recorded manually by an admin)
+  plan VARCHAR(20),
+  provider VARCHAR(40),
+  provider_reference TEXT,
+  provider_collection_id TEXT,
+  phone VARCHAR(20),
+  failure_reason TEXT,
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -112,6 +119,7 @@ CREATE INDEX IF NOT EXISTS idx_rooms_property ON rooms(property_id);
 CREATE INDEX IF NOT EXISTS idx_photos_property ON photos(property_id);
 CREATE INDEX IF NOT EXISTS idx_payments_property ON payments(property_id);
 CREATE INDEX IF NOT EXISTS idx_payments_landlord ON payments(landlord_id);
+CREATE INDEX IF NOT EXISTS idx_payments_reference ON payments(payment_reference);
 CREATE INDEX IF NOT EXISTS idx_admin_logs_admin ON admin_logs(admin_id);
 CREATE INDEX IF NOT EXISTS idx_admin_logs_created_at ON admin_logs(created_at);
 

@@ -34,6 +34,15 @@ app.use(
   })
 );
 app.use(cors());
+
+// Payment provider webhook: needs the exact raw bytes to verify its signature,
+// so it is registered before the JSON body parser.
+app.post(
+  '/api/payments/webhooks/lenco',
+  express.raw({ type: '*/*', limit: '100kb' }),
+  require('./controllers/payments').providerWebhook
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(PUBLIC_DIR));
@@ -42,6 +51,7 @@ app.use(express.static(PUBLIC_DIR));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/properties', require('./routes/properties'));
 app.use('/api/photos', require('./routes/photos'));
+app.use('/api/payments', require('./routes/payments'));
 app.use('/api/admin', require('./routes/admin'));
 
 app.use('/api', (req, res) => {

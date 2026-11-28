@@ -22,3 +22,34 @@
 .check-filter{display:inline-flex;align-items:center;gap:8px;font-size:.9rem;font-weight:600;color:var(--ink);cursor:pointer}
 .check-filter input{width:18px;height:18px;accent-color:var(--green)}
 @media(max-width:540px){.verified-note{flex-direction:column;align-items:flex-start;gap:8px}}
+
+/* Listing payments */
+.plan-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;border:0;margin:0 0 20px;padding:0}
+.plan-options legend{font-size:.77rem;font-weight:600;margin-bottom:8px}
+.plan-option{position:relative;display:flex;flex-direction:column;gap:4px;padding:16px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;background:var(--white)}
+.plan-option.selected{border-color:var(--green);background:var(--mint)}
+.plan-option input{position:absolute;opacity:0;pointer-events:none}
+.plan-option:has(input:focus-visible){outline:2px solid var(--green);outline-offset:2px}
+.plan-name{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--green)}
+.plan-option strong{font-size:1.3rem;color:var(--ink)}
+.plan-option strong small{font-size:.7rem;font-weight:500;color:var(--muted)}
+.plan-description{font-size:.72rem;color:var(--muted);line-height:1.5}
+.pay-hint{margin:12px 0 0}
+.pay-status{display:flex;align-items:flex-start;gap:14px;padding:18px;border-radius:10px;margin-bottom:18px}
+.pay-status h3{font-size:.95rem;margin-bottom:4px}
+.pay-status p{font-size:.8rem;line-height:1.6}
+.pay-status .button{margin-top:12px}
+.pay-status.pending{background:#fff9ed;color:#6a5426}
+.pay-status.success{background:var(--mint);color:var(--green)}
+.pay-status.success p{color:#446a51}
+.pay-status.failed{background:#fff1ec;color:#a63e27}
+.pay-status>svg{flex-shrink:0;margin-top:2px}
+.pay-waiting{display:inline-flex;align-items:center;gap:7px;margin-top:10px;font-weight:600}
+.pay-history{margin-top:20px;border-top:1px solid var(--line);padding-top:14px}
+.pay-history summary{cursor:pointer;font-size:.8rem;font-weight:600;color:var(--green)}
+.pay-history ul{list-style:none;padding:0;margin:12px 0 0;display:flex;flex-direction:column;gap:8px}
+.pay-history li{display:flex;justify-content:space-between;gap:10px;font-size:.76rem;color:var(--muted)}
+.pay-pill{font-style:normal;margin-left:6px;padding:2px 7px;border-radius:999px;font-size:.66rem;font-weight:600;background:#faf1db;color:#886729}
+.pay-pill.confirmed{background:var(--mint);color:var(--green)}
+.pay-pill.failed{background:#fff1ec;color:#a63e27}
+@media(max-width:540px){.plan-options{grid-template-columns:1fr}}
