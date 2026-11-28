@@ -16,7 +16,11 @@ const LATEST_PAYMENT_JOIN = `LEFT JOIN LATERAL (
 
 const LISTING_BADGE_COLUMNS = `CASE WHEN lp.amount >= ${PREMIUM_LISTING_AMOUNT} THEN 'premium' ELSE 'basic' END AS listing_plan,
         COALESCE(lp.amount >= ${PREMIUM_LISTING_AMOUNT}, false) AS is_premium,
-        (p.verified_at IS NOT NULL) AS is_verified`;
+        (p.verified_at IS NOT NULL) AS is_verified,
+        (SELECT ROUND(AVG(rv.rating_overall)::numeric, 1)::float FROM reviews rv
+          WHERE rv.property_id = p.id AND rv.status = 'approved') AS rating_average,
+        (SELECT COUNT(*)::int FROM reviews rv
+          WHERE rv.property_id = p.id AND rv.status = 'approved') AS review_count`;
 
 // Students may only see listings that are approved, paid/active and not expired.
 const PUBLICLY_VISIBLE = `p.is_approved = true

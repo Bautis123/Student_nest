@@ -53,6 +53,7 @@ app.use('/api/properties', require('./routes/properties'));
 app.use('/api/photos', require('./routes/photos'));
 app.use('/api/payments', require('./routes/payments'));
 app.use('/api/roommates', require('./routes/roommates'));
+app.use('/api/reviews', require('./routes/reviews'));
 app.use('/api/admin', require('./routes/admin'));
 
 app.use('/api', (req, res) => {

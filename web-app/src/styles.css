@@ -122,3 +122,55 @@
 .remove-post{margin-top:18px}
 .roommate-cta{display:inline-flex;align-items:center;gap:8px;margin-top:16px;color:var(--green);font-weight:600;font-size:.85rem}
 @media(max-width:800px){.roommate-filters{grid-template-columns:1fr}}
+
+/* Tenant reviews */
+.stars{display:inline-flex;gap:1px;vertical-align:middle}
+.stars svg{color:#d9d3c2}
+.stars svg.full{color:#e2a32b;fill:#e2a32b}
+.half-star{position:relative;display:inline-block}
+.half-star>span{position:absolute;inset:0 50% 0 0;overflow:hidden}
+.rating-pill{display:inline-flex;align-items:center;gap:3px;margin-right:8px;font-weight:700;color:var(--ink)}
+.rating-pill svg{color:#e2a32b;fill:#e2a32b}
+.rating-pill small{font-weight:500;color:var(--muted);margin-left:1px}
+.card-meta-end{display:inline-flex;align-items:center}
+.reviews-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.reviews-heading h2{margin:0}
+.review-summary{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center;padding:20px;border:1px solid var(--line);border-radius:12px;background:var(--white);margin-bottom:20px}
+.review-score{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:110px}
+.review-score strong{font-size:2.4rem;line-height:1;color:var(--ink)}
+.review-score span{font-size:.75rem;color:var(--muted)}
+.review-bars{display:grid;gap:8px;margin:0}
+.review-bars>div{display:grid;grid-template-columns:120px 1fr;align-items:center;gap:10px;font-size:.78rem}
+.review-bars dt{color:var(--muted)}
+.review-bars dd{display:flex;align-items:center;gap:8px;margin:0}
+.review-bars .bar{flex:1;height:7px;border-radius:999px;background:var(--mint);overflow:hidden}
+.review-bars .bar i{display:block;height:100%;background:var(--green);border-radius:999px}
+.review-bars b{width:28px;text-align:right;color:var(--ink)}
+.review-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.review-list>li{padding:16px 18px;border:1px solid var(--line);border-radius:10px;background:var(--white)}
+.review-list header{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin-bottom:8px}
+.review-list header strong{font-size:.88rem}
+.review-list header span{font-size:.72rem;color:var(--muted)}
+.review-list p{font-size:.84rem;line-height:1.65}
+.review-list.compact>li{padding:14px}
+.landlord-reply{display:flex;gap:10px;margin:12px 0 0;padding:12px 14px;border-left:3px solid var(--green);background:var(--mint);border-radius:0 8px 8px 0;color:var(--green)}
+.landlord-reply strong{font-size:.74rem}
+.landlord-reply p{color:var(--ink);font-size:.8rem;margin-top:3px}
+.review-form{padding:20px;border:1px solid var(--line);border-radius:12px;background:var(--white);margin-bottom:20px}
+.review-hint{margin:0 0 16px}
+.star-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px 20px;margin-bottom:18px}
+.star-input{border:0;margin:0;padding:0}
+.star-input legend{font-size:.77rem;font-weight:600;margin-bottom:4px}
+.star-input>div{display:flex;gap:2px}
+.star-input label{position:relative;cursor:pointer;color:#d9d3c2;padding:2px}
+.star-input label.on{color:#e2a32b}
+.star-input label.on svg{fill:#e2a32b}
+.star-input input{position:absolute;opacity:0;width:1px;height:1px}
+.star-input label:has(input:focus-visible){outline:2px solid var(--green);outline-offset:1px;border-radius:4px}
+.still-here{margin:-6px 0 16px}
+.form-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+@media(max-width:540px){.review-summary{grid-template-columns:1fr;gap:16px}.review-bars>div{grid-template-columns:100px 1fr}}
+/* Grid columns default to their content's minimum width; date/month inputs have a
+   wide one, which pushed two-column rows past small screens. Let them shrink. */
+.form-row>*{min-width:0}
+.field input{min-width:0}

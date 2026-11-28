@@ -110,6 +110,37 @@ test('the private manage page keeps the saved campus even though campuses load l
   await expect(page.getByLabel('Campus')).toHaveValue('unza');
 });
 
+test('students see tenant reviews and can submit their own', async ({ page }) => {
+  const summary = { count: 2, rating_overall: 4.5, rating_landlord: 5, rating_utilities: 4, rating_security: 4, rating_value: 4.5 };
+  const reviews = [{ id: 'rv-1', reviewer_name: 'Mutale', stay_from: '2025-01-01', stay_to: '2025-12-01', rating_overall: 4, comment: 'Water was reliable and the landlord fixed things quickly.', landlord_reply: 'Thank you Mutale!' }];
+  let submitted;
+  await page.route('**/api/properties', route => route.fulfill({ json: { properties: [{ ...home, rating_average: 4.5, review_count: 2 }] } }));
+  await page.route('**/api/reviews**', async route => {
+    if (route.request().method() === 'POST') { submitted = route.request().postDataJSON(); return route.fulfill({ status: 201, json: { review: { id: 'rv-2', status: 'pending' }, message: 'Thank you! Our team will confirm your stay before your review appears.' } }); }
+    return route.fulfill({ json: { reviews, summary } });
+  });
+  await page.goto('/');
+  await expect(page.locator('.property-card .rating-pill')).toContainText('4.5');
+  await page.goto('/homes/home-1');
+  await expect(page.getByRole('heading', { name: 'What past tenants say' })).toBeVisible();
+  await expect(page.locator('.review-score strong')).toHaveText('4.5');
+  await expect(page.getByRole('img', { name: '4.5 out of 5 stars' })).toBeVisible();
+  await expect(page.locator('.landlord-reply')).toContainText('Thank you Mutale!');
+
+  await page.getByRole('button', { name: 'Write a review' }).click();
+  for (const [legend, stars] of [['Overall', 4], ['Landlord', 5], ['Water & power', 3], ['Security', 4], ['Value for money', 4]]) {
+    await page.getByRole('group', { name: legend }).getByRole('radio', { name: `${stars} star${stars === 1 ? '' : 's'}`, exact: true }).check();
+  }
+  await page.getByLabel('Moved in').fill('2025-01');
+  await page.getByLabel('I still live here').check();
+  await page.getByLabel('Your review').fill('Quiet, safe and close to campus. Power cuts are rare.');
+  await page.getByLabel('Phone (private)').fill('0971110001');
+  await page.getByRole('button', { name: 'Submit review' }).click();
+  await expect(page.getByRole('heading', { name: 'Thanks for your review' })).toBeVisible();
+  expect(submitted).toMatchObject({ property_id: 'home-1', rating_overall: 4, rating_landlord: 5, rating_utilities: 3, rating_security: 4, rating_value: 4, stay_from: '2025-01', stay_to: null, phone: '0971110001' });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+});
+
 test('empty results and API failures are actionable', async ({ page }) => {
   await page.goto('/?q=not-a-home');
   await expect(page.getByRole('heading', { name: 'No homes found just yet' })).toBeVisible();

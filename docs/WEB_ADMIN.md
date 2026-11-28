@@ -13,6 +13,7 @@ The web admin dashboard is the browser-based management interface for Student Ne
 - admin accounts
 - admin activity logs
 - student roommate requests (Roommates tab: approve, reject, see reports and contact views)
+- tenant reviews (Reviews tab: confirm the stay with the reviewer, then publish or reject)
 - platform overview metrics
 
 The mobile app is for students and landlords. The web dashboard is for internal operations because admin workflows need tables, review tools, account controls, logs, and larger detail views.

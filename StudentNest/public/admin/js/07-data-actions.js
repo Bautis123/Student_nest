@@ -6,6 +6,7 @@
   renderProperties();
   renderPayments();
   renderRoommates();
+  renderReviews();
   renderLogs();
   renderAdminProfile();
   renderAdmins();
@@ -15,7 +16,7 @@ async function loadDashboard() {
   state.loading = true;
   setLoadingRows();
   try {
-    const [stats, landlords, properties, payments, logs, profile, admins, roommates] = await Promise.all([
+    const [stats, landlords, properties, payments, logs, profile, admins, roommates, reviews] = await Promise.all([
       api('/api/admin/stats'),
       api('/api/admin/landlords'),
       api('/api/admin/properties'),
@@ -24,6 +25,7 @@ async function loadDashboard() {
       api('/api/admin/profile'),
       api('/api/admin/admins'),
       api('/api/admin/roommates'),
+      api('/api/admin/reviews'),
     ]);
 
     state.data.stats = stats.stats || {};
@@ -34,6 +36,7 @@ async function loadDashboard() {
     state.data.profile = profile.admin || null;
     state.data.admins = admins.admins || [];
     state.data.roommates = roommates.posts || [];
+    state.data.reviews = reviews.reviews || [];
     renderAll();
   } catch (error) {
     if (/token|unauthorized|forbidden/i.test(error.message)) {

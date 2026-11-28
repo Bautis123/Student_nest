@@ -10,6 +10,7 @@
     properties: [],
     payments: [],
     roommates: [],
+    reviews: [],
     logs: [],
     admins: [],
     profile: null,
