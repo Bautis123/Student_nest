@@ -83,3 +83,42 @@
 .travel-note{margin-top:10px;font-size:.72rem;color:var(--muted)}
 @media(max-width:800px){.results-tools{align-self:stretch;justify-content:space-between}.leaflet-map{height:440px}}
 @media(max-width:540px){.travel-grid{grid-template-columns:1fr 1fr}.leaflet-map{height:380px}.leaflet-map.detail-map{height:260px}}
+
+/* Roommate matching */
+.roommates-page{padding-bottom:60px}
+.roommates-page>.info-panel{margin:0 0 25px}
+.roommate-filters{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:20px;background:var(--mint);border-radius:10px}
+.roommate-filters .field{margin:0}
+.roommate-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px}
+.roommate-card{display:flex;flex-direction:column;gap:14px;padding:22px;background:var(--white);border:1px solid var(--line);border-radius:12px}
+.roommate-card header{display:flex;align-items:center;gap:12px}
+.roommate-card header .avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--mint);color:var(--green);font-weight:700}
+.roommate-card h3{font-size:1.05rem}
+.roommate-card header p{font-size:.75rem}
+.roommate-facts{display:grid;gap:8px;margin:0}
+.roommate-facts>div{display:flex;justify-content:space-between;gap:10px;font-size:.8rem}
+.roommate-facts dt{display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
+.roommate-facts dd{margin:0;font-weight:600;color:var(--ink);text-align:right}
+.roommate-about{font-size:.82rem;line-height:1.6;color:var(--ink)}
+.tag-list{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:0}
+.tag-list li{padding:4px 9px;border-radius:999px;background:var(--mint);color:var(--green);font-size:.7rem;font-weight:600}
+.roommate-card footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:12px;border-top:1px solid var(--line)}
+.report-link{font-size:.72rem;color:var(--muted)}
+.report-form .field{margin-bottom:10px}
+.narrow-page{max-width:760px;padding-bottom:60px}
+.narrow-page>.info-panel{margin:0 0 20px}
+.roommate-form .tag-picker{display:flex;flex-wrap:wrap;gap:8px;border:0;margin:4px 0 20px;padding:0}
+.tag-picker legend{font-size:.77rem;font-weight:600;margin-bottom:8px}
+.tag-picker label{position:relative;padding:7px 12px;border:1.5px solid var(--line);border-radius:999px;font-size:.76rem;cursor:pointer;background:var(--white)}
+.tag-picker label.selected{border-color:var(--green);background:var(--mint);color:var(--green);font-weight:600}
+.tag-picker input{position:absolute;opacity:0;pointer-events:none}
+.tag-picker label:has(input:focus-visible){outline:2px solid var(--green);outline-offset:2px}
+.manage-link{display:flex;flex-direction:column;gap:12px;margin:6px 0 18px;padding:18px;border:1px dashed var(--green);border-radius:10px;background:#fbfdf9}
+.manage-link p{font-size:.82rem;line-height:1.6}
+.manage-link code{display:block;padding:10px;border-radius:6px;background:var(--mint);font-size:.72rem;word-break:break-all}
+.manage-link-actions{display:flex;flex-wrap:wrap;gap:10px}
+.info-panel.status-pending{background:#fff9ed;border-color:#f1e3c2;color:#6a5426}
+.info-panel.status-rejected{background:#fff1ec;border-color:#f6d5c9;color:#a63e27}
+.remove-post{margin-top:18px}
+.roommate-cta{display:inline-flex;align-items:center;gap:8px;margin-top:16px;color:var(--green);font-weight:600;font-size:.85rem}
+@media(max-width:800px){.roommate-filters{grid-template-columns:1fr}}

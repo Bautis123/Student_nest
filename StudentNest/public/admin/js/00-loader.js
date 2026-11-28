@@ -5,6 +5,7 @@ const partials = [
   ['workspaceMount', '/admin/partials/landlords.html', true],
   ['workspaceMount', '/admin/partials/properties.html', true],
   ['workspaceMount', '/admin/partials/payments.html', true],
+  ['workspaceMount', '/admin/partials/roommates.html', true],
   ['workspaceMount', '/admin/partials/logs.html', true],
   ['workspaceMount', '/admin/partials/accounts.html', true],
   ['modalMount', '/admin/partials/modals.html'],
@@ -25,6 +26,7 @@ const scripts = [
   '11-events-main.js',
   '12-form-events.js',
   '13-document-actions.js',
+  '15-roommates.js', // must load before boot, which renders every tab
   '14-boot.js',
 ];
 

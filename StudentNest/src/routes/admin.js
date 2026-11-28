@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const admin = require('../controllers/admin');
 const { verifyToken, isAdmin } = require('../middleware/auth');
+const roommates = require('../controllers/roommates');
 
 // Every admin route requires an authenticated admin; owner-only checks live in the controller.
 router.use(verifyToken, isAdmin);
@@ -33,6 +34,10 @@ router.patch('/properties/:id', admin.updatePropertyStatus);
 router.patch('/properties/:id/verification', admin.updatePropertyVerification);
 router.patch('/properties/:id/listing-period', admin.extendListingPeriod);
 router.delete('/properties/:id', admin.deleteProperty);
+
+// Roommate posts (students)
+router.get('/roommates', roommates.adminList);
+router.patch('/roommates/:id', roommates.adminModerate);
 
 // Payments
 router.get('/payments', admin.getPayments);
