@@ -187,3 +187,30 @@
 .report-reasons legend{font-size:.77rem;font-weight:600;color:var(--ink);margin-bottom:6px}
 .report-reasons label{display:flex;align-items:flex-start;gap:8px;font-size:.78rem;color:var(--ink);cursor:pointer}
 .report-reasons input{margin-top:3px;accent-color:var(--green)}
+
+/* Viewing requests */
+.book-viewing{margin-top:12px}
+.viewing-form{margin-top:16px;padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--white)}
+.viewing-form-title,.viewing-booked-title{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--green);margin:0 0 12px}
+.time-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border:0;margin:0 0 18px;padding:0}
+.time-options legend{font-size:.77rem;font-weight:600;margin-bottom:8px}
+.time-options label{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 4px;border:1.5px solid var(--line);border-radius:8px;cursor:pointer;background:var(--white);text-align:center}
+.time-options label span{font-size:.8rem;font-weight:600}
+.time-options label small{font-size:.74rem;color:var(--muted)}
+.time-options label.selected{border-color:var(--green);background:var(--mint);color:var(--green)}
+.time-options input{position:absolute;opacity:0;pointer-events:none}
+.time-options label:has(input:focus-visible){outline:2px solid var(--green);outline-offset:2px}
+.viewing-booked{margin-top:16px;padding:16px;border-radius:10px;background:var(--mint);color:#446a51}
+.viewing-booked p{font-size:.8rem;line-height:1.6;margin:0 0 12px}
+.viewings-panel{margin-top:30px}
+.viewings-panel .results-heading{margin:0 0 16px}
+.viewings-panel h2 span{background:#fff4e3;color:#9a6a15}
+.viewing-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.viewing-item{padding:18px;border:1px solid var(--line);border-radius:10px;background:var(--white);display:flex;flex-direction:column;gap:6px}
+.viewing-item.pending{border-color:#f1e3c2;box-shadow:0 0 0 3px #fff9ed}
+.viewing-item header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.viewing-when{display:flex;align-items:center;gap:6px;font-weight:600;font-size:.85rem;margin:0}
+.viewing-item .muted{font-size:.78rem;margin:0}
+.viewing-message{font-size:.8rem;margin:4px 0;color:var(--ink)}
+.viewing-item .field{margin:6px 0}
+.viewing-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:4px}

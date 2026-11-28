@@ -154,6 +154,41 @@ test('students see safety tips and can report a suspicious listing', async ({ pa
   expect(reported).toEqual({ reason: 'fake_listing', details: 'Address is an empty plot.' });
 });
 
+test('students book a viewing and get a pre-written WhatsApp message', async ({ page }) => {
+  let booked;
+  await page.route('**/api/viewings', route => {
+    booked = route.request().postDataJSON();
+    return route.fulfill({ status: 201, json: { request: { id: 'v1', status: 'pending', preferred_date: booked.preferred_date, preferred_time: booked.preferred_time }, landlord_name: 'Jane Banda', whatsapp_link: 'https://wa.me/260971234567?text=Hi%20Jane' } });
+  });
+  await page.goto('/homes/home-1');
+  await page.getByRole('button', { name: 'Book a viewing' }).click();
+  await page.getByLabel('Your name').fill('Mwila');
+  await page.getByLabel('Your WhatsApp number').fill('0971200001');
+  const day = await page.getByLabel('Day').inputValue();
+  await page.getByText('Evening', { exact: true }).click();
+  await page.getByLabel('Message (optional)').fill('Is the twin room still free?');
+  await page.getByRole('button', { name: 'Send request' }).click();
+  await expect(page.getByText('Viewing request sent')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Send request on WhatsApp' })).toHaveAttribute('href', 'https://wa.me/260971234567?text=Hi%20Jane');
+  expect(booked).toEqual({ property_id: 'home-1', student_name: 'Mwila', student_phone: '0971200001', preferred_date: day, preferred_time: 'evening', message: 'Is the twin room still free?' });
+});
+
+test('landlords see viewing requests and confirm them', async ({ page }) => {
+  let answer;
+  const request = { id: 'v1', property_title: 'Garden View Student Lodge', student_name: 'Chanda', student_phone: '0961200004', when: 'Sat 28 Nov, morning (8am–12pm)', message: 'Can I bring my mother?', status: 'pending', reply_link: 'https://wa.me/260961200004' };
+  await page.route('**/api/viewings/**', route => {
+    if (route.request().method() === 'PATCH') { answer = route.request().postDataJSON(); return route.fulfill({ json: { request: { ...request, status: 'confirmed' } } }); }
+    return route.fulfill({ json: { requests: answer ? [{ ...request, status: 'confirmed', reply_link: 'https://wa.me/260961200004?text=confirmed' }] : [request] } });
+  });
+  await signIn(page);
+  await expect(page.getByRole('heading', { name: /Viewing requests/ })).toContainText('1 new');
+  await expect(page.getByText('Sat 28 Nov, morning (8am–12pm)')).toBeVisible();
+  await page.getByLabel('Note to student (optional)').fill('Ask for Jane at the gate');
+  await page.getByRole('button', { name: 'Confirm' }).click();
+  await expect(page.getByRole('link', { name: 'Send confirmation on WhatsApp' })).toHaveAttribute('href', /text=confirmed/);
+  expect(answer).toEqual({ status: 'confirmed', note: 'Ask for Jane at the gate' });
+});
+
 test('empty results and API failures are actionable', async ({ page }) => {
   await page.goto('/?q=not-a-home');
   await expect(page.getByRole('heading', { name: 'No homes found just yet' })).toBeVisible();
