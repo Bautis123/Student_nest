@@ -14,6 +14,7 @@ const {
   updateRoomAvailability
 } = require('../controllers/properties');
 const { verifyToken, isLandlord } = require('../middleware/auth');
+const listingReports = require('../controllers/listingReports');
 
 // Static routes first - before any :id routes
 router.get('/schools', getSchools);
@@ -24,6 +25,7 @@ router.get('/landlord/my-properties/:id', verifyToken, isLandlord, getMyProperty
 router.get('/', getProperties);
 router.get('/:id', getPropertyById);
 router.post('/:id/contact', trackContactClick);
+router.post('/:id/report', listingReports.reportListing);
 
 // Landlord protected routes
 router.post('/', verifyToken, isLandlord, createProperty);

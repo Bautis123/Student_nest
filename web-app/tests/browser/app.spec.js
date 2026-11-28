@@ -141,6 +141,19 @@ test('students see tenant reviews and can submit their own', async ({ page }) =>
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
 });
 
+test('students see safety tips and can report a suspicious listing', async ({ page }) => {
+  let reported;
+  await page.route('**/api/properties/home-1/report', route => { reported = route.request().postDataJSON(); return route.fulfill({ status: 201, json: { message: 'Thank you. Our team will review this listing. Never pay anyone before you have viewed a room in person.' } }); });
+  await page.goto('/homes/home-1');
+  await expect(page.getByText('Never pay a deposit or rent before you have viewed the room in person.')).toBeVisible();
+  await page.getByRole('button', { name: 'Report this listing' }).click();
+  await page.getByLabel('The home doesn’t exist or isn’t available').check();
+  await page.getByLabel('Details (optional)').fill('Address is an empty plot.');
+  await page.getByRole('button', { name: 'Send report' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Our team will review this listing' })).toBeVisible();
+  expect(reported).toEqual({ reason: 'fake_listing', details: 'Address is an empty plot.' });
+});
+
 test('empty results and API failures are actionable', async ({ page }) => {
   await page.goto('/?q=not-a-home');
   await expect(page.getByRole('heading', { name: 'No homes found just yet' })).toBeVisible();

@@ -4,6 +4,7 @@ const admin = require('../controllers/admin');
 const { verifyToken, isAdmin } = require('../middleware/auth');
 const roommates = require('../controllers/roommates');
 const reviews = require('../controllers/reviews');
+const listingReports = require('../controllers/listingReports');
 
 // Every admin route requires an authenticated admin; owner-only checks live in the controller.
 router.use(verifyToken, isAdmin);
@@ -43,6 +44,10 @@ router.patch('/roommates/:id', roommates.adminModerate);
 // Tenant reviews
 router.get('/reviews', reviews.adminList);
 router.patch('/reviews/:id', reviews.adminModerate);
+
+// Student reports about listings
+router.get('/reports', listingReports.adminList);
+router.patch('/reports/:propertyId', listingReports.adminResolve);
 
 // Payments
 router.get('/payments', admin.getPayments);

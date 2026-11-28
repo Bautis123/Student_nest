@@ -63,6 +63,7 @@ function renderProperties() {
               <div class="meta-stack">
                 ${statusBadge(status)}
                 ${property.verified_at ? '<span class="badge verified" title="Inspected or ownership checked by an admin">Verified</span>' : ''}
+                ${property.flagged_at ? '<span class="badge inactive" title="Hidden from students after repeated scam reports; see Scam reports">Hidden: reported</span>' : ''}
               </div>
             </td>
             <td>
