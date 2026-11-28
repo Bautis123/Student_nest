@@ -57,18 +57,38 @@ function setTab(tab) {
   });
 }
 
-function confirmAction({ title, message, needsReason = false, confirmLabel = 'Confirm' }) {
+/**
+ * Ask the admin to confirm. Resolves to null when cancelled; otherwise to the
+ * typed reason, or, when `choice` is given, to `{ reason, choice }`.
+ * choice: { label, options: [{ value, label }], value }
+ */
+function confirmAction({ title, message, needsReason = false, confirmLabel = 'Confirm', choice = null }) {
   els.confirmTitle.textContent = title;
   els.confirmMessage.textContent = message;
   els.confirmActionButton.textContent = confirmLabel;
   els.reasonField.classList.toggle('hidden', !needsReason);
   els.reasonInput.value = '';
+  els.choiceField.classList.toggle('hidden', !choice);
+  if (choice) {
+    els.choiceLabel.textContent = choice.label;
+    els.choiceInput.innerHTML = choice.options
+      .map((option) => `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`)
+      .join('');
+    els.choiceInput.value = choice.value ?? choice.options[0]?.value ?? '';
+  }
+  // Closing with Esc keeps the previous returnValue, which would replay an
+  // earlier "confirm" for a cancelled action; reset it every time.
+  els.confirmModal.returnValue = '';
   els.confirmModal.showModal();
 
   return new Promise((resolve) => {
     els.confirmModal.addEventListener(
       'close',
-      () => resolve(els.confirmModal.returnValue === 'confirm' ? els.reasonInput.value.trim() : null),
+      () => {
+        if (els.confirmModal.returnValue !== 'confirm') return resolve(null);
+        const reason = els.reasonInput.value.trim();
+        resolve(choice ? { reason, choice: els.choiceInput.value } : reason);
+      },
       { once: true },
     );
   });

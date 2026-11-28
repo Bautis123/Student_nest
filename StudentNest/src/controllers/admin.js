@@ -225,6 +225,67 @@ const updatePropertyVerification = async (req, res) => {
   }
 };
 
+// Reactivate an expired listing or extend a live one without a payment
+// (complimentary periods, demo/test listings, corrections). Always logged.
+const MAX_LISTING_EXTENSION_DAYS = 730;
+const extendListingPeriod = async (req, res) => {
+  const { id } = req.params;
+  const { days, reason } = req.body || {};
+
+  if (!Number.isInteger(days) || days < 1 || days > MAX_LISTING_EXTENSION_DAYS) {
+    return res.status(400).json({ message: `Choose a period between 1 and ${MAX_LISTING_EXTENSION_DAYS} days` });
+  }
+
+  try {
+    const current = await pool.query(
+      'SELECT id, title, is_approved, is_active, listing_expires_at FROM properties WHERE id = $1',
+      [id]
+    );
+    if (current.rows.length === 0) {
+      return res.status(404).json({ message: 'Property not found' });
+    }
+    const before = current.rows[0];
+    if (!before.is_approved) {
+      return res.status(400).json({ message: 'Approve the property before activating it' });
+    }
+
+    // Extends from the current expiry while it is still in the future, otherwise from now.
+    const result = await pool.query(
+      `UPDATE properties
+       SET is_active = true,
+           listing_expires_at = GREATEST(COALESCE(listing_expires_at, NOW()), NOW()) + make_interval(days => $2),
+           updated_at = NOW()
+       WHERE id = $1
+       RETURNING id, title, is_active, listing_expires_at`,
+      [id, days]
+    );
+    const property = result.rows[0];
+    const wasLive = before.is_active && before.listing_expires_at && new Date(before.listing_expires_at) > new Date();
+
+    res.json({
+      message: wasLive ? 'Listing extended' : 'Listing reactivated',
+      property,
+    });
+
+    await recordAdminLog(req, {
+      action: wasLive ? 'listing_extended' : 'listing_reactivated',
+      entityType: 'property',
+      entityId: id,
+      message: `${wasLive ? 'Extended' : 'Reactivated'} listing for ${days} day${days === 1 ? '' : 's'} without payment`,
+      metadata: {
+        days,
+        reason: typeof reason === 'string' && reason.trim() ? reason.trim().slice(0, 500) : undefined,
+        previous_expires_at: before.listing_expires_at,
+        previous_is_active: before.is_active,
+        new_expires_at: property.listing_expires_at,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 // Delete a property
 const deleteProperty = async (req, res) => {
   const { id } = req.params;
@@ -815,6 +876,7 @@ module.exports = {
   getProperties,
   updatePropertyStatus,
   updatePropertyVerification,
+  extendListingPeriod,
   deleteProperty,
   getStats,
   createAdmin,

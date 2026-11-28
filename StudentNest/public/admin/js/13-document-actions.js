@@ -98,6 +98,39 @@
     return;
   }
 
+  if (target.dataset.listingPeriod) {
+    const live = target.dataset.live === 'true';
+    const answer = await confirmAction({
+      title: live ? 'Extend listing?' : 'Reactivate listing?',
+      message: live
+        ? 'Adds time to this listing without a payment. The extra time starts when the current period ends.'
+        : 'Makes this listing visible to students again without a payment, starting today. Use this for demo listings, complimentary periods or corrections; landlords can also renew by paying in the app.',
+      choice: {
+        label: live ? 'Add' : 'Show to students for',
+        value: '30',
+        options: [
+          { value: '7', label: '7 days' },
+          { value: '14', label: '14 days' },
+          { value: '30', label: '30 days' },
+          { value: '90', label: '3 months' },
+          { value: '180', label: '6 months' },
+          { value: '365', label: '12 months' },
+        ],
+      },
+      needsReason: true,
+      confirmLabel: live ? 'Extend' : 'Reactivate',
+    });
+    if (answer === null) return;
+    await runAction(
+      () => api(`/api/admin/properties/${target.dataset.listingPeriod}/listing-period`, {
+        method: 'PATCH',
+        body: JSON.stringify({ days: Number(answer.choice), reason: answer.reason }),
+      }),
+      live ? 'Listing extended.' : 'Listing reactivated.',
+    );
+    return;
+  }
+
   if (target.dataset.deleteLandlord) {
     const confirmed = await confirmAction({
       title: 'Delete landlord?',

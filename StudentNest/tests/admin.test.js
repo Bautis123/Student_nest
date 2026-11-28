@@ -92,3 +92,48 @@ test('rejecting a property also clears its verified badge', async () => {
   await admin.updatePropertyStatus(request({ params: { id: 'prop' }, body: { is_approved: false } }), res);
   assert.match(queries[0].sql, /verified_at = CASE WHEN \$1 THEN verified_at ELSE NULL END/);
 });
+
+test('listing period must be a whole number of days within limits', async () => {
+  for (const days of [0, -3, 1.5, '30', 731, undefined]) {
+    reset(); const res = response();
+    await admin.extendListingPeriod(request({ params: { id: 'prop' }, body: { days } }), res);
+    assert.equal(res.statusCode, 400, `days=${days}`);
+    assert.equal(queries.length, 0);
+  }
+});
+
+test('an unapproved listing cannot be activated', async () => {
+  reset(); results = [{ rows: [{ id: 'prop', is_approved: false }] }]; const res = response();
+  await admin.extendListingPeriod(request({ params: { id: 'prop' }, body: { days: 30 } }), res);
+  assert.equal(res.statusCode, 400);
+  assert.equal(queries.length, 1);
+});
+
+test('reactivating an expired listing extends from now and is logged with the reason', async () => {
+  reset();
+  results = [
+    { rows: [{ id: 'prop', is_approved: true, is_active: false, listing_expires_at: '2020-01-01' }] },
+    { rows: [{ id: 'prop', is_active: true, listing_expires_at: '2027-01-01' }] },
+  ];
+  const res = response();
+  await admin.extendListingPeriod(request({ params: { id: 'prop' }, body: { days: 30, reason: ' Demo listing ' } }), res);
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body.message, 'Listing reactivated');
+  assert.match(queries[1].sql, /is_active = true/);
+  assert.match(queries[1].sql, /GREATEST\(COALESCE\(listing_expires_at, NOW\(\)\), NOW\(\)\) \+ make_interval\(days => \$2\)/);
+  assert.deepEqual(queries[1].params, ['prop', 30]);
+  const log = queries.find(({ sql }) => sql.includes('INSERT INTO admin_logs'));
+  assert.equal(log.params[2], 'listing_reactivated');
+  assert.match(log.params[7], /Demo listing/);
+});
+
+test('extending a live listing is logged as an extension', async () => {
+  reset();
+  results = [
+    { rows: [{ id: 'prop', is_approved: true, is_active: true, listing_expires_at: new Date(Date.now() + 86400000).toISOString() }] },
+    { rows: [{ id: 'prop', is_active: true }] },
+  ];
+  const res = response();
+  await admin.extendListingPeriod(request({ params: { id: 'prop' }, body: { days: 7 } }), res);
+  assert.equal(res.body.message, 'Listing extended');
+});

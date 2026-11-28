@@ -31,6 +31,7 @@ router.delete('/landlords/:id', admin.deleteLandlord);
 router.get('/properties', admin.getProperties);
 router.patch('/properties/:id', admin.updatePropertyStatus);
 router.patch('/properties/:id/verification', admin.updatePropertyVerification);
+router.patch('/properties/:id/listing-period', admin.extendListingPeriod);
 router.delete('/properties/:id', admin.deleteProperty);
 
 // Payments
