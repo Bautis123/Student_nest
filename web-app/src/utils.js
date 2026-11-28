@@ -33,3 +33,43 @@ export function detectOperator(phone) {
   return Object.keys(OPERATOR_PREFIXES).find(op => OPERATOR_PREFIXES[op].some(prefix => digits.startsWith(prefix))) || '';
 }
 export const formatDate = (value) => value ? new Date(value).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Africa/Lusaka' }) : '';
+
+// Travel estimates from the straight-line distance to campus. Real routes are
+// longer than a straight line, so we add a detour allowance; minibus time also
+// includes walking to the stop and waiting. Always shown as approximate.
+const ROUTE_DETOUR = 1.3;
+const WALK_KMH = 4.8;
+const MINIBUS_KMH = 18;
+const MINIBUS_OVERHEAD_MIN = 10;
+const MINIBUS_MIN_KM = 1.5; // shorter trips are simply walked
+export function distanceKm(lat1, lon1, lat2, lon2) {
+  if ([lat1, lon1, lat2, lon2].some(v => v === null || v === undefined || v === '' || !Number.isFinite(Number(v)))) return null;
+  const rad = v => (Number(v) * Math.PI) / 180;
+  const a = Math.sin((rad(lat2) - rad(lat1)) / 2) ** 2 + Math.cos(rad(lat1)) * Math.cos(rad(lat2)) * Math.sin((rad(lon2) - rad(lon1)) / 2) ** 2;
+  return Math.round(6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 100) / 100;
+}
+export function campusDistance(p) {
+  const stored = p?.distance_from_school;
+  if (stored !== null && stored !== undefined && stored !== '' && Number.isFinite(Number(stored))) return Number(stored);
+  return distanceKm(p?.latitude, p?.longitude, p?.school_lat, p?.school_lng);
+}
+export function travelEstimates(km) {
+  if (km === null || km === undefined || !Number.isFinite(Number(km)) || Number(km) < 0) return null;
+  const road = Number(km) * ROUTE_DETOUR;
+  return {
+    km: Number(km),
+    walkMinutes: Math.max(1, Math.round((road / WALK_KMH) * 60)),
+    busMinutes: road >= MINIBUS_MIN_KM ? Math.round((road / MINIBUS_KMH) * 60 + MINIBUS_OVERHEAD_MIN) : null,
+  };
+}
+export function formatMinutes(minutes) {
+  if (minutes < 60) return `${minutes} min`;
+  const h = Math.floor(minutes / 60), m = minutes % 60;
+  return m ? `${h} h ${m} min` : `${h} h`;
+}
+/** Short label for listing cards: walking when reasonable, otherwise minibus. */
+export function commuteLabel(p) {
+  const t = travelEstimates(campusDistance(p));
+  if (!t) return null;
+  return t.walkMinutes <= 40 || !t.busMinutes ? `~${formatMinutes(t.walkMinutes)} walk to campus` : `~${formatMinutes(t.busMinutes)} by minibus to campus`;
+}

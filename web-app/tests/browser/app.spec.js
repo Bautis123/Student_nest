@@ -46,6 +46,28 @@ test('verified homes show a badge and can be filtered', async ({ page }) => {
   await expect(page.locator('.verified-note')).toContainText('inspected this home');
 });
 
+test('map view pins homes and leads to travel times on the home page', async ({ page }) => {
+  await page.route('https://*.tile.openstreetmap.org/**', route => route.abort()); // keep tests offline
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/');
+  await expect(page.locator('.property-card').first()).toContainText('~20 min walk to campus');
+  await page.getByRole('button', { name: 'Map', exact: true }).click();
+  await expect(page).toHaveURL(/view=map/);
+  await expect(page.locator('.map-pin')).toHaveCount(2);
+  await page.getByRole('combobox', { name: 'Campus', exact: true }).selectOption('unza');
+  await expect(page.locator('.map-pin')).toHaveCount(1);
+  await page.locator('.map-pin').first().click();
+  await page.locator('.map-popup').getByRole('link', { name: /View home/ }).click();
+  await expect(page.getByRole('heading', { name: 'Getting to UNZA' })).toBeVisible();
+  await expect(page.locator('.travel-grid')).toContainText('~20 min');
+  await expect(page.locator('.detail-map')).toBeVisible();
+  await page.getByRole('link', { name: 'All homes' }).click();
+  await page.getByRole('button', { name: 'List', exact: true }).click();
+  await expect(page.locator('.property-card')).toHaveCount(2);
+  expect(errors).toEqual([]);
+});
+
 test('empty results and API failures are actionable', async ({ page }) => {
   await page.goto('/?q=not-a-home');
   await expect(page.getByRole('heading', { name: 'No homes found just yet' })).toBeVisible();
